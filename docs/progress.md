@@ -1,0 +1,43 @@
+# Progress Report - Bagaskara Cell Catalog
+
+Dokumen ini mencatat pekerjaan yang sudah selesai dikerjakan pada sesi ini dan langkah-masing untuk melanjutkan pengembangan di komputer/PC lain.
+
+---
+
+## 🛠️ Yang Sudah Selesai Dilakukan (Completed)
+
+### 1. Penyesuaian UI & Layout
+* **Symmetry & Logo:** Menyelaraskan tata letak header secara simetris, menggunakan aset logo baru (`logo-light.png` & `logo-dark.png`) untuk mode terang dan gelap.
+* **Wrap Text Judul Produk:** Memperbaiki pembungkusan teks (wrap text) pada judul produk di dalam card produk agar nama produk yang panjang tidak terpotong (line clamp 2 baris), namun dengan tetap mempertahankan ukuran tinggi card produk agar tetap seragam dan rapi.
+* **Spesifikasi Lengkap & Desain Responsive Modal:**
+  * **Default Terbuka:** Seluruh grup spesifikasi (Layar, Dapur Pacu, Kamera, dll.) dikonfigurasi untuk **terbuka secara default** saat modal detail dibuka.
+  * **Tampilan Desktop (Bersebelahan):** Kotak **"Spesifikasi Lengkap"** diletakkan di **kolom kiri (di bawah galeri foto)** pada desktop view untuk memanfaatkan ruang kosong yang tidak terpakai, sehingga menjaga kolom kanan tetap bersih, minimalis, dan tidak padat.
+  * **Tampilan Mobile (Stacked):** Pada mobile view, Spesifikasi Lengkap otomatis menumpuk di bagian paling bawah halaman modal (di bawah tombol WhatsApp) untuk kemudahan membaca seluler.
+* **Optimalisasi Kartu Produk Beranda:**
+  * Menyederhanaan spesifikasi di beranda menjadi 2 baris terstruktur: (Baris 1: Kapasitas Memori & Kapasitas Baterai, Baris 2: Nama chipset CPU yang disederhanakan dengan ikon roket `🚀`).
+  * Menyembunyikan deskripsi kamera yang panjang dari kartu beranda (tetap lengkap di dalam modal detail) untuk memastikan tinggi kartu 100% simetris dan rapi.
+
+### 2. Rotasi WhatsApp Lead & Lokasi Toko
+* **Lead Rotation:** Mengimplementasikan load balancing 50/50 secara otomatis antara `CS 1` dan `CS 2` menggunakan panjang nama produk, untuk membagi pesan masuk secara merata.
+* **Kontak & Lokasi Toko:** Memasukkan nomor WhatsApp, alamat toko fisik lengkap di Cerme Gresik, serta link Google Maps yang dapat diklik langsung di bagian footer halaman utama.
+
+### 3. Erafone Scraper Refactoring & Pengayaan Data
+* **Fokus HP & Tablet:** Memodifikasi `erafone_scraper.py` untuk mengeliminasi kategori aksesoris, sehingga hanya memproses produk jenis smartphone, handphone, ponsel, dan tablet.
+* **Scraper API Sekunder & Pengayaan Spesifikasi:**
+  * Memodifikasi parser untuk turut menembak API deskripsi sekunder Erafone (`.../products/{url_key}/description`) guna mengambil data bullet-point spesifikasi lengkap.
+  * Membuat script `scratch/fetch_and_enrich_specs.py` untuk memperkaya data CPU, GPU, layar, baterai, OS, SIM, dan berat di SQLite `database.db` dan CSV.
+
+### 4. Otomatisasi Import Data & Manajemen Stok Database
+* **Script Importer:** Membuat script TSX `scripts/import-scraped-data.ts` untuk mempermudah pemuatan data dari CSV hasil scrap langsung ke database SQLite local (`database.db`).
+* **CLI Stock Manager:** Membuat script interaktif `scripts/update-stock.ts` (dapat dijalankan melalui `npm run update-stock`) yang memungkinkan owner untuk memperbarui status stok varian HP secara cepat (mengubah status menjadi `ready` atau `habis`) langsung melalui command line interaktif tanpa perlu menyentuh file database secara manual.
+* **Dashboard Admin Web Visual (`/stok`):** Membuat halaman manajemen stok visual di route `/stok` dengan fitur input PIN keamanan, pencarian produk real-time, penambahan produk baru (merek, nama, kondisi, kelengkapan, garansi, catatan minus), pengelolaan varian (warna, kapasitas, harga), serta **tombol toggle satu klik** untuk memperbarui status stok (Ready vs Habis) secara visual dan instan pada `owner.db`.
+* **Remote Patterns:** Mendaftarkan domain `cdnpro.eraspace.com` ke dalam remotePatterns pada `next.config.ts` untuk optimasi gambar produk Next.js (`next/image`).
+
+---
+
+## 🚀 Yang Harus Dilakukan Selanjutnya (Next Steps / TODO)
+
+1. **Deploy ke Vercel (Fase 1 Production):**
+   * Pastikan database SQLite lokal dipack/disalin ke dalam file server serverless jika database offline tetap digunakan, atau migrasikan database ke cloud database (seperti Turso/LibSQL Cloud) untuk deployment production di Vercel agar data bersifat dinamis dan persisten.
+2. **Uji Coba Scraping Berkala:**
+   * Jalankan scraper berkala untuk memperbarui stok atau harga unit terbaru dari Erafone, kemudian jalankan kembali `npm run import-csv` untuk menyinkronkan data terbaru.
