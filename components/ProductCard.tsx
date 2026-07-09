@@ -67,6 +67,29 @@ export default function ProductCard({ product }: ProductCardProps) {
   if (!cleanedBattery && specs.length > 2) {
     cleanedBattery = specs[2];
   }
+
+  // Prevent duplicate values across pills
+  if (cleanedMemory && cleanedCpu && (
+    cleanedMemory.toLowerCase() === cleanedCpu.toLowerCase() ||
+    cleanedMemory.toLowerCase().includes(cleanedCpu.toLowerCase()) ||
+    cleanedCpu.toLowerCase().includes(cleanedMemory.toLowerCase())
+  )) {
+    cleanedMemory = "";
+  }
+  if (cleanedMemory && cleanedBattery && (
+    cleanedMemory.toLowerCase() === cleanedBattery.toLowerCase() ||
+    cleanedMemory.toLowerCase().includes(cleanedBattery.toLowerCase()) ||
+    cleanedBattery.toLowerCase().includes(cleanedMemory.toLowerCase())
+  )) {
+    cleanedMemory = "";
+  }
+  if (cleanedCpu && cleanedBattery && (
+    cleanedCpu.toLowerCase() === cleanedBattery.toLowerCase() ||
+    cleanedCpu.toLowerCase().includes(cleanedBattery.toLowerCase()) ||
+    cleanedBattery.toLowerCase().includes(cleanedCpu.toLowerCase())
+  )) {
+    cleanedCpu = "";
+  }
   
   // Find the first ready variant, otherwise fallback to the first variant
   const defaultVariant = product.variants.find(v => v.stock === "ready") || product.variants[0];
