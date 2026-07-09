@@ -3,8 +3,10 @@ import path from "path";
 
 export const dbOwner = createClient({
   url: process.env.DATABASE_OWNER_URL || `file:${path.join(process.cwd(), "database", "owner.db")}`,
+  authToken: process.env.DATABASE_OWNER_AUTH_TOKEN,
 });
 
 export const dbErafone = createClient({
   url: process.env.DATABASE_ERAFONE_URL || `file:${path.join(process.cwd(), "database", "erafone.db")}`,
+  authToken: process.env.DATABASE_ERAFONE_AUTH_TOKEN,
 });
