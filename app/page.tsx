@@ -280,20 +280,12 @@ export default async function Home({ searchParams }: PageProps) {
                   Shopee
                 </a>
                 <a
-                  href={siteConfig.marketplaceLinks.tokopedia}
+                  href={siteConfig.marketplaceLinks.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs font-bold text-orange-600 dark:text-orange-400 hover:underline"
+                  className="text-xs font-bold text-pink-600 dark:text-pink-400 hover:underline"
                 >
-                  Tokopedia
-                </a>
-                <a
-                  href={siteConfig.marketplaceLinks.tiktok}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs font-bold text-neutral-800 dark:text-zinc-300 hover:underline"
-                >
-                  TikTok
+                  Instagram
                 </a>
               </div>
             </div>

@@ -13,8 +13,7 @@ export const siteConfig = {
   address: "Perumahan Bhummi Cermai Apsari, Jl. Edelweis Blok N Nomor 6, Kecamatan Cerme, Kabupaten Gresik, Jawa Timur",
   googleMapsLink: "https://maps.app.goo.gl/zANqEbWzZmD3i4K76",
   marketplaceLinks: {
-    shopee: "https://shopee.co.id/bagaskaracell", // Sesuaikan dengan link toko jika ada
-    tokopedia: "https://tokopedia.com/bagaskaracell",
-    tiktok: "https://tiktok.com/@bagaskaracell"
+    shopee: "https://shopee.co.id/bagaskara.cell",
+    instagram: "https://instagram.com/bagaskara_cell"
   }
 };
