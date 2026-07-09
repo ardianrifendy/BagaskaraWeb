@@ -73,10 +73,6 @@ export default async function Home({ searchParams }: PageProps) {
           <Logo />
           
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-100 dark:border-emerald-900/50">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] md:text-xs font-bold text-emerald-800 dark:text-emerald-350">Toko Buka</span>
-            </div>
             <ThemeToggle />
           </div>
         </div>
