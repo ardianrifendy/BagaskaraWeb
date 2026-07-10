@@ -53,7 +53,7 @@ export default function BookSwitcher() {
           </div>
         </button>
 
-        {/* Tab 2: Katalog Pre-Order */}
+        {/* Tab 2: Katalog Harga */}
         <button
           onClick={() => handleBookChange("po")}
           className={`flex-1 py-3 px-1 flex items-center justify-center gap-1 rounded-lg z-10 cursor-pointer transition-colors duration-200 ${
@@ -63,8 +63,8 @@ export default function BookSwitcher() {
           }`}
         >
           <div className="flex items-center gap-1 text-xs">
-            <span>🔍</span>
-            <span>Cari</span>
+            <span>🏷️</span>
+            <span>Cek Harga</span>
           </div>
         </button>
 

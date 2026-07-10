@@ -12,6 +12,7 @@ interface PaginationProps {
     book?: string;
     q?: string;
     sort?: string;
+    category?: string;
   };
 }
 
@@ -30,6 +31,7 @@ export default function Pagination({ currentPage, totalPages, searchParams }: Pa
     if (searchParams.book) params.set("book", searchParams.book);
     if (searchParams.q) params.set("q", searchParams.q);
     if (searchParams.sort) params.set("sort", searchParams.sort);
+    if (searchParams.category) params.set("category", searchParams.category);
     
     // Set page (omit if first page to keep URL clean)
     if (pageNum > 1) {

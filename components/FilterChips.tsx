@@ -62,7 +62,7 @@ function CustomSelect({ label, value, options, onChange, placeholder }: CustomSe
 
       {/* Floating Options Menu */}
       {isOpen && (
-        <div className="absolute top-[calc(100%+6px)] left-0 w-full bg-white dark:bg-zinc-950 border border-neutral-200/60 dark:border-zinc-850 rounded-2xl shadow-xl z-30 max-h-60 overflow-y-auto p-1.5 animate-in fade-in slide-in-from-top-2 duration-150 scrollbar-thin scrollbar-thumb-neutral-200 dark:scrollbar-thumb-zinc-800">
+        <div className="absolute top-[calc(100%+6px)] left-0 w-full bg-white dark:bg-zinc-950 border border-neutral-200/60 dark:border-zinc-800 rounded-2xl shadow-xl z-30 max-h-60 overflow-y-auto p-1.5 animate-in fade-in slide-in-from-top-2 duration-150 scrollbar-thin scrollbar-thumb-neutral-200 dark:scrollbar-thumb-zinc-800">
           {/* Default Option (Placeholder) */}
           <button
             type="button"
@@ -72,8 +72,8 @@ function CustomSelect({ label, value, options, onChange, placeholder }: CustomSe
             }}
             className={`w-full text-left px-3 py-2.5 text-xs md:text-sm rounded-xl font-bold cursor-pointer transition-colors ${
               value === ""
-                ? "bg-orange-50 text-orange-600 dark:bg-orange-950/20 dark:text-orange-450"
-                : "text-neutral-700 dark:text-zinc-350 hover:bg-neutral-50 dark:hover:bg-zinc-900/60"
+                ? "bg-orange-50 text-orange-600 dark:bg-orange-950/20 dark:text-orange-400"
+                : "text-neutral-700 dark:text-zinc-300 hover:bg-neutral-50 dark:hover:bg-zinc-900/60"
             }`}
           >
             {placeholder}
@@ -91,8 +91,8 @@ function CustomSelect({ label, value, options, onChange, placeholder }: CustomSe
                 }}
                 className={`w-full text-left px-3 py-2.5 text-xs md:text-sm rounded-xl font-bold cursor-pointer transition-colors ${
                   isActive
-                    ? "bg-orange-50 text-orange-600 dark:bg-orange-950/20 dark:text-orange-450"
-                    : "text-neutral-700 dark:text-zinc-350 hover:bg-neutral-50 dark:hover:bg-zinc-900/60"
+                    ? "bg-orange-50 text-orange-600 dark:bg-orange-950/20 dark:text-orange-400"
+                    : "text-neutral-700 dark:text-zinc-300 hover:bg-neutral-50 dark:hover:bg-zinc-900/60"
                 }`}
               >
                 {opt.label}
@@ -113,6 +113,7 @@ export default function FilterChips({ availableBrands, availableConditions }: Fi
   const activeBrand = searchParams.get("brand") || "";
   const activeCondition = searchParams.get("condition") || "";
   const activeStatus = searchParams.get("status") || "";
+  const activeCategory = searchParams.get("category") || "";
 
   const handleFilterChange = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -131,6 +132,7 @@ export default function FilterChips({ availableBrands, availableConditions }: Fi
     params.delete("status");
     params.delete("budget");
     params.delete("q");
+    params.delete("category");
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
@@ -138,6 +140,7 @@ export default function FilterChips({ availableBrands, availableConditions }: Fi
     activeBrand || 
     activeCondition || 
     activeStatus || 
+    activeCategory ||
     searchParams.has("budget") || 
     searchParams.has("q")
   );
@@ -158,11 +161,25 @@ export default function FilterChips({ availableBrands, availableConditions }: Fi
     { label: "Habis / PO", value: "habis" }
   ];
 
+  const categoryOptions = [
+    { label: "Ponsel", value: "ponsel" },
+    { label: "Tablet", value: "tablet" }
+  ];
+
   return (
     <div className="w-full flex flex-col gap-3">
       {/* Dropdowns Grid */}
       <div className="flex flex-col gap-3">
           
+          {/* Category select */}
+          <CustomSelect
+            label="Kategori"
+            value={activeCategory}
+            options={categoryOptions}
+            onChange={(val) => handleFilterChange("category", val)}
+            placeholder="Semua Kategori"
+          />
+
           {/* Brand select */}
           <CustomSelect
             label="Merek"
@@ -197,7 +214,7 @@ export default function FilterChips({ availableBrands, availableConditions }: Fi
         <div className="pt-2">
           <button
             onClick={clearAllFilters}
-            className="w-full text-center text-xs font-bold text-red-650 dark:text-red-400 hover:text-red-750 dark:hover:text-red-300 bg-red-50 dark:bg-red-950/20 hover:bg-red-100/70 dark:hover:bg-red-950/50 border border-red-200/50 dark:border-red-900/30 py-2.5 rounded-xl transition-colors cursor-pointer"
+            className="w-full text-center text-xs font-bold text-red-600 dark:text-red-400 hover:text-red-750 dark:hover:text-red-300 bg-red-50 dark:bg-red-950/20 hover:bg-red-100/70 dark:hover:bg-red-950/50 border border-red-200/50 dark:border-red-900/30 py-2.5 rounded-xl transition-colors cursor-pointer"
           >
             Hapus Semua Filter ✕
           </button>

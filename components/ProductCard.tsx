@@ -77,7 +77,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         
         {/* Image Section */}
         <div className={`relative aspect-square w-full overflow-hidden flex items-center justify-center p-4 ${
-          bgType === "black" ? "bg-black" : "bg-white"
+          bgType === "black" ? "bg-black" : "bg-white dark:bg-black"
         }`}>
           {/* Product Image */}
           {imageUrl !== "/file.svg" ? (
@@ -86,7 +86,11 @@ export default function ProductCard({ product }: ProductCardProps) {
               alt={`${product.name} - ${cheapestVariant.color}`}
               fill
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-              className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+              className={`object-contain ${
+                product.brand.toLowerCase() === "poco"
+                  ? "p-0.5 scale-[1.15] group-hover:scale-[1.22]"
+                  : "p-3.5 group-hover:scale-105"
+              } transition-transform duration-300`}
               onError={handleImageError}
               priority={false}
             />
@@ -105,7 +109,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <span className="text-[10px] uppercase font-bold text-neutral-400 dark:text-zinc-500 tracking-wider">
             {product.brand}
           </span>
-          <h3 className="text-sm md:text-base font-bold text-neutral-805 dark:text-zinc-205 line-clamp-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors mt-0.5 min-h-[2.5rem]">
+          <h3 className="text-sm md:text-base font-bold text-neutral-800 dark:text-zinc-200 line-clamp-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors mt-0.5 min-h-[2.5rem]">
             {product.name}
           </h3>
 

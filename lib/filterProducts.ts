@@ -9,6 +9,7 @@ export interface FilterParams {
   book?: string;       // "ready" | "po" | "erafone"
   q?: string;          // Search query
   sort?: string;       // "price-asc" | "price-desc" | "newest"
+  category?: string;   // "ponsel" | "tablet"
 }
 
 /**
@@ -134,6 +135,16 @@ export async function getFilteredProducts(params: FilterParams): Promise<Product
       whereClauses.push("p.id IN (SELECT DISTINCT productId FROM variants WHERE stock = 'ready')");
     } else if (statusVal === "habis") {
       whereClauses.push("p.id NOT IN (SELECT DISTINCT productId FROM variants WHERE stock = 'ready')");
+    }
+  }
+
+  // 3.7. Category filter (ponsel / tablet)
+  if (params.category && params.category.trim()) {
+    const catVal = params.category.trim().toLowerCase();
+    if (catVal === "tablet") {
+      whereClauses.push("(LOWER(p.name) LIKE '%tab%' OR LOWER(p.name) LIKE '%pad%' OR LOWER(p.name) LIKE '%tablet%')");
+    } else if (catVal === "ponsel") {
+      whereClauses.push("NOT (LOWER(p.name) LIKE '%tab%' OR LOWER(p.name) LIKE '%pad%' OR LOWER(p.name) LIKE '%tablet%')");
     }
   }
 

@@ -39,8 +39,11 @@ console = Console()
 CATALOG_URL = "https://jeanne.eraspace.com/products/api/v4.1/products/"
 DETAIL_URL  = "https://jeanne.eraspace.com/products/api/v4.1/products/{url_key}"
 PRICE_URL   = "https://jeanne.eraspace.com/erpi-v3/api/v3/promo/price/{sku}"
+SEARCH_URL  = "https://jeanne.eraspace.com/products/api/v4.1/searchs/query"
 STORE_CODE  = "erafone"
 SIZE        = 30
+SEARCH_LIMIT = 50
+SEARCH_MAX_PAGES = 20
 PRODUCT_URL_BASE = "https://eraspace.com/erafone/"
 
 CATEGORIES = {
@@ -49,6 +52,7 @@ CATEGORIES = {
     "3": (7423, "AI Phone"),
     "4": (7424, "Tablet"),
     "5": ("ALL", "Semua Kategori di atas (Deduplicated)"),
+    "6": ("BRAND", "Scraping Berdasarkan Brand (Semua Kategori, Lengkap)"),
 }
 
 HEADERS = {
@@ -331,6 +335,10 @@ def fetch_catalog(session,cid,page):
     return _get(session,CATALOG_URL,HEADERS,
                 {"page":page,"size":SIZE,"category_id":cid,"store_code":STORE_CODE})
 
+def fetch_search(session,query,page):
+    return _get(session,SEARCH_URL,HEADERS,
+                {"page":page,"limit":SEARCH_LIMIT,"q":query,"store_code":STORE_CODE})
+
 def fetch_detail(session,url_key):
     d=_get(session,DETAIL_URL.format(url_key=url_key),HEADERS,{"store_code":STORE_CODE})
     return (d or {}).get("data")
@@ -382,6 +390,72 @@ def attr_hex(variant,label):
                 return val
     return ""
 
+
+# =========================================================================
+# [ SCRAPE BERDASARKAN BRAND (pakai endpoint search asli Erafone) ]
+# =========================================================================
+def select_brand_query():
+    brand_list = sorted(BRANDS.keys())
+    while True:
+        t = Table(show_header=False, box=None, padding=(0, 2))
+        t.add_column(style="bold green"); t.add_column()
+        for i, b in enumerate(brand_list, start=1):
+            t.add_row(f"[{i}]", b)
+        console.print(t)
+
+        raw = Prompt.ask("Pilih brand yang mau di-scrape (nomor dipisah koma, misal 1,3,5)")
+        raw = raw.strip()
+
+        try:
+            idxs = [int(x.strip()) for x in raw.split(",") if x.strip()]
+        except ValueError:
+            console.print("[red]Input tidak valid, coba lagi (contoh: 1,3,5).[/]")
+            continue
+
+        if not idxs:
+            console.print("[red]Minimal pilih 1 nomor, coba lagi.[/]")
+            continue
+        if any(i < 1 or i > len(brand_list) for i in idxs):
+            console.print(f"[red]Ada nomor di luar rentang 1-{len(brand_list)}, coba lagi.[/]")
+            continue
+
+        selected = [brand_list[i - 1] for i in dict.fromkeys(idxs)]
+        console.print(f"[green]Brand dipilih:[/] {', '.join(selected)}")
+        return selected
+
+def scrape_by_search(session, query):
+    # Query pakai endpoint search asli Erafone (sama seperti ketik di kolom pencarian
+    # web-nya), bukan scrape semua kategori lalu filter lokal — jadi produk yang
+    # kesasar di kategori lain (di luar 4 kategori utama) tetap ketemu.
+    bases = []
+    seen_skus = set()
+    page = 1
+    while page <= SEARCH_MAX_PAGES:
+        d = fetch_search(session, query, page)
+        items = catalog_items(d)
+        if not items:
+            break
+        for i in items:
+            # Search Erafone kadang fuzzy (mis. q=poco ikut nyelipin vivo/Infinix),
+            # jadi disaring lagi: nama produk harus benar-benar mengandung query-nya.
+            if query.lower() not in str(i.get("name", "")).lower():
+                continue
+            parsed = parse_base(i)
+            if not is_phone_or_tablet(parsed["Nama"], parsed["Tipe_Produk"]):
+                continue
+            sku = parsed["SKU_Induk"]
+            if sku in seen_skus:
+                continue
+            seen_skus.add(sku)
+            bases.append(parsed)
+        console.print(f"  [cyan]· '{query}'[/] halaman {page}: {len(bases)} HP/Tablet terkumpul.")
+        if len(items) < SEARCH_LIMIT:
+            break
+        page += 1
+        time.sleep(random.uniform(DELAY_MIN, DELAY_MAX))
+
+    console.print(f"[green]'{query}':[/] {len(bases)} HP/Tablet ditemukan.")
+    return bases
 
 # =========================================================================
 # [ MENU ]
@@ -712,7 +786,22 @@ def main():
     session=requests.Session(); today=datetime.date.today().isoformat()
     console.print()
     
-    if cid == "ALL":
+    if cid == "BRAND":
+        selected_brands = select_brand_query()
+        all_bases = []
+        seen_skus = set()
+        for bname in selected_brands:
+            console.print(f"\n[bold cyan]Mencari brand: {bname}...[/]")
+            found = scrape_by_search(session, bname)
+            for b in found:
+                sku = b.get("SKU_Induk")
+                if sku and sku not in seen_skus:
+                    seen_skus.add(sku)
+                    all_bases.append(b)
+        bases = all_bases
+        name = " & ".join(selected_brands)
+        console.print(f"\n[bold green]Selesai. Ditemukan {len(bases)} produk unik dari brand terpilih.[/]")
+    elif cid == "ALL":
         all_bases = []
         seen_skus = set()
         for k in ["1", "2", "3", "4"]:
@@ -728,7 +817,7 @@ def main():
         console.print(f"\n[bold green]Selesai menggabungkan. Ditemukan {len(bases)} produk unik (deduplicated).[/]")
     else:
         bases=scrape_catalog(session,cid,name)
-        
+
     if not bases: return
 
     if mode_varian:

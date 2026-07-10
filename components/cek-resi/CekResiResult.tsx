@@ -61,7 +61,7 @@ https://bagaskaracell.net/cek-resi?courier=${summary.courier}&awb=${awb}`;
   return (
     <div className="space-y-5">
       {/* Waybill Info Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-neutral-50 dark:bg-zinc-950/20 px-4 py-3 rounded-2xl border border-neutral-100 dark:border-zinc-850">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-neutral-50 dark:bg-zinc-950/20 px-4 py-3 rounded-2xl border border-neutral-100 dark:border-zinc-800">
         <div className="flex flex-col">
           <span className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 dark:text-zinc-500">
             {getCourierLabel(summary.courier)}
@@ -80,7 +80,7 @@ https://bagaskaracell.net/cek-resi?courier=${summary.courier}&awb=${awb}`;
       </div>
 
       {/* Highlighted Last Description */}
-      <div className="p-4 bg-orange-50/30 dark:bg-orange-950/10 rounded-2xl border border-orange-100/30 dark:border-orange-900/20 text-xs md:text-sm font-bold text-neutral-700 dark:text-zinc-350">
+      <div className="p-4 bg-orange-50/30 dark:bg-orange-950/10 rounded-2xl border border-orange-100/30 dark:border-orange-900/20 text-xs md:text-sm font-bold text-neutral-700 dark:text-zinc-300">
         <p className="text-[10px] text-orange-600 dark:text-orange-450 uppercase tracking-widest mb-1.5">Status Terakhir</p>
         {summary.lastDesc}
       </div>
@@ -92,7 +92,7 @@ https://bagaskaracell.net/cek-resi?courier=${summary.courier}&awb=${awb}`;
             <span className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 dark:text-zinc-500 mb-0.5">
               Penerima
             </span>
-            <span className="text-xs md:text-sm font-bold text-neutral-805 dark:text-zinc-200 break-words">
+            <span className="text-xs md:text-sm font-bold text-neutral-800 dark:text-zinc-200 break-words">
               {receiverName}
             </span>
           </div>
@@ -100,7 +100,7 @@ https://bagaskaracell.net/cek-resi?courier=${summary.courier}&awb=${awb}`;
             <span className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 dark:text-zinc-500 mb-0.5">
               Alamat / Tujuan
             </span>
-            <span className="text-xs md:text-sm font-bold text-neutral-705 dark:text-zinc-300 break-words leading-relaxed">
+            <span className="text-xs md:text-sm font-bold text-neutral-700 dark:text-zinc-300 break-words leading-relaxed">
               {receiverAddr}
             </span>
           </div>
@@ -109,11 +109,11 @@ https://bagaskaracell.net/cek-resi?courier=${summary.courier}&awb=${awb}`;
         {/* Package Specs Grid */}
         <div className="border-t border-neutral-100 dark:border-zinc-800/80 pt-4 grid grid-cols-2 gap-4 text-xs">
           <div>
-            <span className="text-[9px] uppercase font-extrabold tracking-widest text-neutral-450 dark:text-zinc-500 block mb-0.5">Berat Paket</span>
+            <span className="text-[9px] uppercase font-extrabold tracking-widest text-neutral-400 dark:text-zinc-500 block mb-0.5">Berat Paket</span>
             <span className="font-bold text-neutral-700 dark:text-zinc-300">{weightStr}</span>
           </div>
           <div>
-            <span className="text-[9px] uppercase font-extrabold tracking-widest text-neutral-450 dark:text-zinc-500 block mb-0.5">Layanan</span>
+            <span className="text-[9px] uppercase font-extrabold tracking-widest text-neutral-400 dark:text-zinc-500 block mb-0.5">Layanan</span>
             <span className="font-bold text-neutral-700 dark:text-zinc-300 uppercase">{summary.service || "Regular"}</span>
           </div>
         </div>
@@ -139,7 +139,7 @@ https://bagaskaracell.net/cek-resi?courier=${summary.courier}&awb=${awb}`;
           <button
             type="button"
             onClick={() => setShowHistory(!showHistory)}
-            className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-3 bg-neutral-50 dark:bg-zinc-900/60 hover:bg-neutral-100 dark:hover:bg-zinc-800 text-neutral-600 dark:text-zinc-350 hover:text-neutral-800 dark:hover:text-zinc-100 text-xs md:text-sm font-extrabold rounded-xl border border-neutral-200/60 dark:border-zinc-800 transition-all duration-200 cursor-pointer shadow-sm"
+            className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-3 bg-neutral-50 dark:bg-zinc-900/60 hover:bg-neutral-100 dark:hover:bg-zinc-800 text-neutral-600 dark:text-zinc-300 hover:text-neutral-800 dark:hover:text-zinc-100 text-xs md:text-sm font-extrabold rounded-xl border border-neutral-200/60 dark:border-zinc-800 transition-all duration-200 cursor-pointer shadow-sm"
           >
             {showHistory ? (
               <>
@@ -190,7 +190,7 @@ https://bagaskaracell.net/cek-resi?courier=${summary.courier}&awb=${awb}`;
                   </p>
                   {item.location && (
                     <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-neutral-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">
-                      <svg className="w-3 h-3 text-neutral-400 dark:text-zinc-650" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-3 h-3 text-neutral-400 dark:text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>

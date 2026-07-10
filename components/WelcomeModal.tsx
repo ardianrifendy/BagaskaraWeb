@@ -110,7 +110,7 @@ export default function WelcomeModal() {
                 <button
                   key={opt.value}
                   onClick={() => handleSelectBudget(opt.value)}
-                  className={`py-3 px-4 rounded-xl text-xs md:text-sm font-black border border-neutral-200 dark:border-zinc-800 bg-neutral-50 hover:bg-orange-50 hover:border-orange-500 hover:text-orange-600 dark:bg-zinc-900 dark:hover:bg-zinc-850 dark:text-zinc-200 dark:hover:text-orange-450 transition-all duration-200 cursor-pointer text-center ${
+                  className={`py-3 px-4 rounded-xl text-xs md:text-sm font-black border border-neutral-200 dark:border-zinc-800 bg-neutral-50 hover:bg-orange-50 hover:border-orange-500 hover:text-orange-600 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:text-zinc-200 dark:hover:text-orange-400 transition-all duration-200 cursor-pointer text-center ${
                     isLast ? "col-span-2" : ""
                   }`}
                 >

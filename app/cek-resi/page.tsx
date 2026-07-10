@@ -30,7 +30,7 @@ export default function CekResiPage() {
           <div className="flex items-center gap-2.5">
             <Link
               href="/cek-resi"
-              className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 flex items-center justify-center text-neutral-600 dark:text-zinc-350 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer"
+              className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 flex items-center justify-center text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer"
               title="Lacak Pengiriman (Cek Resi)"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -38,7 +38,6 @@ export default function CekResiPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 011-1v-4a1 1 0 011-1h2m4 4h1a1 1 0 001-1v-4a1 1 0 00-.8-.8l-2.7-2.7a1 1 0 00-.7-.5H15" />
               </svg>
             </Link>
-            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -62,7 +61,7 @@ export default function CekResiPage() {
           <h1 className="text-2xl md:text-3xl font-black text-neutral-800 dark:text-zinc-100 tracking-tight">
             Lacak Pengiriman
           </h1>
-          <p className="text-xs md:text-sm font-medium text-neutral-450 dark:text-zinc-450 max-w-sm mx-auto leading-relaxed">
+          <p className="text-xs md:text-sm font-medium text-neutral-400 dark:text-zinc-450 max-w-sm mx-auto leading-relaxed">
             Pantau status dan riwayat pengiriman pesanan handphone Anda dari Bagaskara Cell secara real-time.
           </p>
         </div>

@@ -213,7 +213,7 @@ export default function CekResiForm() {
                   <button
                     type="button"
                     onClick={() => removeRow(row.id)}
-                    className="absolute top-3.5 right-3.5 w-6 h-6 rounded-full bg-neutral-100 dark:bg-zinc-800 hover:bg-red-50 dark:hover:bg-red-950/30 text-neutral-450 hover:text-red-600 dark:hover:text-red-400 flex items-center justify-center transition-all cursor-pointer"
+                    className="absolute top-3.5 right-3.5 w-6 h-6 rounded-full bg-neutral-100 dark:bg-zinc-800 hover:bg-red-50 dark:hover:bg-red-950/30 text-neutral-400 hover:text-red-600 dark:hover:text-red-400 flex items-center justify-center transition-all cursor-pointer"
                     title="Hapus Resi Ini"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -305,7 +305,7 @@ export default function CekResiForm() {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100 dark:border-zinc-850 bg-white dark:bg-zinc-900 z-10">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10">
               <h3 className="text-xs md:text-sm font-black text-neutral-850 dark:text-zinc-150 uppercase tracking-widest">
                 Detail Pengiriman {multiResults.length > 1 && `(${multiResults.length} Paket)`}
               </h3>
@@ -322,7 +322,7 @@ export default function CekResiForm() {
 
             {/* Scrollable Tabs for Multi-results */}
             {multiResults.length > 1 && (
-              <div className="flex border-b border-neutral-100 dark:border-zinc-850 overflow-x-auto scrollbar-none px-4 py-2 gap-2 bg-neutral-50/50 dark:bg-zinc-950/20">
+              <div className="flex border-b border-neutral-100 dark:border-zinc-800 overflow-x-auto scrollbar-none px-4 py-2 gap-2 bg-neutral-50/50 dark:bg-zinc-950/20">
                 {multiResults.map((item, idx) => {
                   const isActive = idx === activeTab;
                   const label = getCourierLabel(item.courier) || item.courier.toUpperCase();
@@ -335,13 +335,13 @@ export default function CekResiForm() {
                       className={`flex-shrink-0 px-3.5 py-2 rounded-xl border text-left min-w-[130px] transition-all cursor-pointer ${
                         isActive
                           ? "bg-white dark:bg-zinc-800 border-neutral-200 dark:border-zinc-700 shadow-sm"
-                          : "bg-transparent border-transparent text-neutral-450 hover:text-neutral-700 dark:text-zinc-500 dark:hover:text-zinc-350"
+                          : "bg-transparent border-transparent text-neutral-400 hover:text-neutral-700 dark:text-zinc-500 dark:hover:text-zinc-300"
                       }`}
                     >
                       <span className={`text-[9px] font-black uppercase tracking-wider block ${isActive ? "text-orange-600 dark:text-orange-455" : ""}`}>
                         {label}
                       </span>
-                      <span className="text-xs font-black truncate max-w-[110px] block mt-0.5 text-neutral-805 dark:text-zinc-200">
+                      <span className="text-xs font-black truncate max-w-[110px] block mt-0.5 text-neutral-800 dark:text-zinc-200">
                         {item.awb}
                       </span>
                       <span className={`text-[9px] font-extrabold uppercase tracking-wider block mt-0.5 ${
@@ -388,7 +388,7 @@ export default function CekResiForm() {
                   <CekResiResult result={multiResults[activeTab].data} />
                 ) : null
               ) : (
-                <div className="text-center text-xs text-neutral-450 dark:text-zinc-500 py-10 font-bold">
+                <div className="text-center text-xs text-neutral-400 dark:text-zinc-500 py-10 font-bold">
                   Pilih resi untuk melihat detail
                 </div>
               )}
@@ -406,13 +406,13 @@ function ResultSkeleton() {
     <div className="space-y-5 animate-pulse">
       <div className="flex justify-between items-center pb-4 border-b border-neutral-100 dark:border-zinc-800/80">
         <div className="space-y-1.5 w-1/3">
-          <div className="h-2.5 bg-neutral-200 dark:bg-zinc-850 rounded w-1/2" />
-          <div className="h-4 bg-neutral-200 dark:bg-zinc-850 rounded" />
+          <div className="h-2.5 bg-neutral-200 dark:bg-zinc-800 rounded w-1/2" />
+          <div className="h-4 bg-neutral-200 dark:bg-zinc-800 rounded" />
         </div>
-        <div className="h-6 w-20 bg-neutral-200 dark:bg-zinc-850 rounded-full" />
+        <div className="h-6 w-20 bg-neutral-200 dark:bg-zinc-800 rounded-full" />
       </div>
-      <div className="h-10 bg-neutral-200 dark:bg-zinc-850 rounded-xl" />
-      <div className="h-44 bg-neutral-200 dark:bg-zinc-850 rounded-3xl" />
+      <div className="h-10 bg-neutral-200 dark:bg-zinc-800 rounded-xl" />
+      <div className="h-44 bg-neutral-200 dark:bg-zinc-800 rounded-3xl" />
     </div>
   );
 }

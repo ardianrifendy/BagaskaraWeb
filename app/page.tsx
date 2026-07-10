@@ -38,6 +38,7 @@ interface PageProps {
     book?: string;
     q?: string;
     sort?: string;
+    category?: string;
     produk?: string;
     page?: string;
   }>;
@@ -53,12 +54,13 @@ export default async function Home({ searchParams }: PageProps) {
   const book = resolvedSearchParams.book || "ready";
   const q = resolvedSearchParams.q || "";
   const sort = resolvedSearchParams.sort || "newest";
+  const category = resolvedSearchParams.category || "";
   const produkSlug = resolvedSearchParams.produk || "";
   const pageParam = resolvedSearchParams.page || "";
   const page = parseInt(pageParam) || 1;
 
   // Fetch filtered products and dynamic options from SQLite
-  const products = await getFilteredProducts({ budget, brand, condition, status, book, q, sort });
+  const products = await getFilteredProducts({ budget, brand, condition, status, book, q, sort, category });
   const { brands: availableBrands, conditions: availableConditions } = await getFilterOptions();
   const suggestions = await getSearchSuggestions();
 
@@ -96,7 +98,6 @@ export default async function Home({ searchParams }: PageProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 011-1v-4a1 1 0 011-1h2m4 4h1a1 1 0 001-1v-4a1 1 0 00-.8-.8l-2.7-2.7a1 1 0 00-.7-.5H15" />
               </svg>
             </Link>
-            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -111,12 +112,12 @@ export default async function Home({ searchParams }: PageProps) {
           </Suspense>
 
           {/* Mobile Collapsible Filters Accordion (md:hidden) */}
-          <details className="w-full md:hidden bg-white dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-805 rounded-2xl overflow-hidden shadow-sm">
+          <details className="w-full md:hidden bg-white dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-sm">
             <summary className="px-4 py-3 font-bold text-xs md:text-sm text-neutral-800 dark:text-zinc-200 flex items-center justify-between cursor-pointer select-none">
               <span className="flex items-center gap-1.5">
                 <span>⚙️</span> Filter & Kategori
               </span>
-              <span className="text-[10px] font-extrabold text-orange-655 dark:text-orange-400 uppercase">Ketuk untuk Mengatur</span>
+              <span className="text-[10px] font-extrabold text-orange-600 dark:text-orange-400 uppercase">Ketuk untuk Mengatur</span>
             </summary>
             <div className="p-4 border-t border-neutral-100 dark:border-zinc-800 space-y-4 bg-neutral-50/50 dark:bg-zinc-950/20">
               {/* Book Switcher */}
@@ -143,14 +144,15 @@ export default async function Home({ searchParams }: PageProps) {
           </details>
 
           {/* Active Filters Display */}
-          {((budget || brand || condition || status || q) && !isCatalogEmpty) && (
+          {((budget || brand || condition || status || q || category) && !isCatalogEmpty) && (
             <div className="text-xs font-semibold text-neutral-500 dark:text-zinc-400">
               Menampilkan hasil untuk:{" "}
-              {q && <span className="bg-orange-50 dark:bg-orange-950/40 text-orange-850 dark:text-orange-300 border border-orange-100 dark:border-orange-900/50 px-2 py-0.5 rounded-md mr-1">Cari: &quot;{q}&quot;</span>}
-              {budget && <span className="bg-orange-50 dark:bg-orange-950/40 text-orange-850 dark:text-orange-300 border border-orange-100 dark:border-orange-900/50 px-2 py-0.5 rounded-md mr-1">Budget: {budget}</span>}
-              {brand && <span className="bg-orange-50 dark:bg-orange-950/40 text-orange-850 dark:text-orange-300 border border-orange-100 dark:border-orange-900/50 px-2 py-0.5 rounded-md mr-1">Merk: {brand}</span>}
-              {condition && <span className="bg-orange-50 dark:bg-orange-950/40 text-orange-850 dark:text-orange-300 border border-orange-100 dark:border-orange-900/50 px-2 py-0.5 rounded-md mr-1">Kondisi: {condition}</span>}
-              {status && <span className="bg-orange-50 dark:bg-orange-950/40 text-orange-850 dark:text-orange-300 border border-orange-100 dark:border-orange-900/50 px-2 py-0.5 rounded-md">Status: {status === "ready" ? "Ready" : "Habis / PO"}</span>}
+              {q && <span className="bg-orange-50 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300 border border-orange-100 dark:border-orange-900/50 px-2 py-0.5 rounded-md mr-1">Cari: &quot;{q}&quot;</span>}
+              {category && <span className="bg-orange-50 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300 border border-orange-100 dark:border-orange-900/50 px-2 py-0.5 rounded-md mr-1">Kategori: {category === "tablet" ? "Tablet" : "Ponsel"}</span>}
+              {budget && <span className="bg-orange-50 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300 border border-orange-100 dark:border-orange-900/50 px-2 py-0.5 rounded-md mr-1">Budget: {budget}</span>}
+              {brand && <span className="bg-orange-50 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300 border border-orange-100 dark:border-orange-900/50 px-2 py-0.5 rounded-md mr-1">Merk: {brand}</span>}
+              {condition && <span className="bg-orange-50 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300 border border-orange-100 dark:border-orange-900/50 px-2 py-0.5 rounded-md mr-1">Kondisi: {condition}</span>}
+              {status && <span className="bg-orange-50 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300 border border-orange-100 dark:border-orange-900/50 px-2 py-0.5 rounded-md">Status: {status === "ready" ? "Ready" : "Habis / PO"}</span>}
             </div>
           )}
 
@@ -178,7 +180,7 @@ export default async function Home({ searchParams }: PageProps) {
 
               {/* General WhatsApp CTA for missing stock */}
               <div className="mt-10 p-5 bg-orange-50 dark:bg-orange-950/20 rounded-2xl border border-orange-100/50 dark:border-orange-900/30 max-w-md w-full flex flex-col items-center">
-                <span className="text-xs font-bold text-orange-850 dark:text-orange-400 uppercase tracking-wide">Butuh HP Lainnya?</span>
+                <span className="text-xs font-bold text-orange-800 dark:text-orange-400 uppercase tracking-wide">Butuh HP Lainnya?</span>
                 <p className="text-[11px] md:text-xs text-neutral-600 dark:text-zinc-400 text-center mt-1 mb-4">
                   Ada stok masuk harian yang mungkin belum sempat ter-upload di website ini. Tanya owner langsung via chat.
                 </p>
@@ -199,7 +201,7 @@ export default async function Home({ searchParams }: PageProps) {
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                searchParams={{ budget, brand, condition, status, book, q, sort }}
+                searchParams={{ budget, brand, condition, status, book, q, sort, category }}
               />
             </div>
           )}
@@ -208,7 +210,7 @@ export default async function Home({ searchParams }: PageProps) {
         {/* Left column (desktop): Sticky Filter Panel (hidden on mobile, sticky on desktop) */}
         <aside className="hidden md:flex w-[280px] shrink-0 order-1 md:order-1 flex-col gap-5 bg-white dark:bg-zinc-900/50 border border-neutral-200/50 dark:border-zinc-800 p-5 rounded-3xl sticky top-20 shadow-sm transition-colors duration-200">
           <div className="border-b border-neutral-100 dark:border-zinc-800 pb-3 flex items-center justify-between select-none">
-            <span className="text-xs font-black uppercase tracking-wider text-neutral-805 dark:text-zinc-205">
+            <span className="text-xs font-black uppercase tracking-wider text-neutral-800 dark:text-zinc-200">
               Filter Produk
             </span>
             <span className="text-xs text-neutral-400 dark:text-zinc-500">⚙️</span>
@@ -217,21 +219,21 @@ export default async function Home({ searchParams }: PageProps) {
           {/* Book Switcher */}
           <div className="space-y-1">
             <span className="text-[10px] font-black text-neutral-400 dark:text-zinc-500 uppercase tracking-wider select-none">Katalog HP</span>
-            <Suspense fallback={<div className="h-10 bg-neutral-100 dark:bg-zinc-850 animate-pulse rounded-xl" />}>
+            <Suspense fallback={<div className="h-10 bg-neutral-100 dark:bg-zinc-800 animate-pulse rounded-xl" />}>
               <BookSwitcher />
             </Suspense>
           </div>
 
           {/* Budget Picker */}
-          <div className="pt-2 border-t border-neutral-105 dark:border-zinc-800/80">
-            <Suspense fallback={<div className="h-24 bg-neutral-100 dark:bg-zinc-850 animate-pulse rounded-xl" />}>
+          <div className="pt-2 border-t border-neutral-100 dark:border-zinc-800/80">
+            <Suspense fallback={<div className="h-24 bg-neutral-100 dark:bg-zinc-800 animate-pulse rounded-xl" />}>
               <BudgetPicker />
             </Suspense>
           </div>
 
           {/* Dropdown Filters (Brand, Condition, Status) */}
-          <div className="pt-2 border-t border-neutral-105 dark:border-zinc-800/80">
-            <Suspense fallback={<div className="h-44 bg-neutral-100 dark:bg-zinc-850 animate-pulse rounded-xl" />}>
+          <div className="pt-2 border-t border-neutral-100 dark:border-zinc-800/80">
+            <Suspense fallback={<div className="h-44 bg-neutral-100 dark:bg-zinc-800 animate-pulse rounded-xl" />}>
               <FilterChips
                 availableBrands={availableBrands}
                 availableConditions={availableConditions}

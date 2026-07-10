@@ -24,9 +24,9 @@ export function buildWaLink(
 
   const formattedPrice = formatRupiah(price);
   
-  // Custom template based on whether the product is scraped (Erafone PO reference) or local store stock
+  // Custom template based on whether the product is scraped (general price catalog) or local store stock
   const template = isScraped
-    ? "Halo Bagaskara Cell, saya ingin memesan/indent {productName} ({variantColor} - {variantStorage}) seharga {price} dari Katalog Pre-Order. Bagaimana prosedur pemesanannya?"
+    ? "Halo Bagaskara Cell, saya tertarik dengan {productName} ({variantColor} - {variantStorage}) seharga {price} di Katalog Harga. Apakah tipe ini bisa dipesan?"
     : "Halo Bagaskara Cell, saya tertarik dengan {productName} ({variantColor} - {variantStorage}) seharga {price} yang Ready Stok di Gresik. Apakah bisa COD hari ini?";
 
   const text = template

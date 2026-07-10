@@ -124,7 +124,7 @@ export default function SearchSort({ suggestions = [] }: SearchSortProps) {
   const currentSortLabel = sortOptions.find((opt) => opt.value === activeSort)?.label || "Terbaru";
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-2 flex flex-col md:flex-row gap-3 items-center justify-between">
+    <div className="sticky top-[78px] z-30 w-full max-w-4xl mx-auto px-4 py-3.5 flex flex-col md:flex-row gap-3 items-center justify-between bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-neutral-200/60 dark:border-zinc-800/80 rounded-2xl shadow-md transition-all duration-300">
       
       {/* Search Input Bar with Autocomplete Suggestions */}
       <div className="relative w-full md:max-w-md" ref={searchContainerRef}>
@@ -151,7 +151,7 @@ export default function SearchSort({ suggestions = [] }: SearchSortProps) {
             <button
               type="button"
               onClick={handleClearSearch}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-450 hover:text-neutral-600 dark:hover:text-zinc-300 cursor-pointer text-xs"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 dark:hover:text-zinc-300 cursor-pointer text-xs"
             >
               ✕
             </button>
@@ -160,7 +160,7 @@ export default function SearchSort({ suggestions = [] }: SearchSortProps) {
 
         {/* Search Suggestions Dropdown Card */}
         {showSuggestions && query.trim() !== "" && (
-          <div className="absolute top-[calc(100%+6px)] left-0 w-full bg-white dark:bg-zinc-950 border border-neutral-200/60 dark:border-zinc-850 rounded-2xl shadow-xl z-40 p-1.5 flex flex-col gap-0.5 max-h-72 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150 scrollbar-thin scrollbar-thumb-neutral-200 dark:scrollbar-thumb-zinc-800">
+          <div className="absolute top-[calc(100%+6px)] left-0 w-full bg-white dark:bg-zinc-950 border border-neutral-200/60 dark:border-zinc-800 rounded-2xl shadow-xl z-40 p-1.5 flex flex-col gap-0.5 max-h-72 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150 scrollbar-thin scrollbar-thumb-neutral-200 dark:scrollbar-thumb-zinc-800">
             {filteredSuggestions.length > 0 ? (
               filteredSuggestions.map((item) => (
                 <button
@@ -225,7 +225,7 @@ export default function SearchSort({ suggestions = [] }: SearchSortProps) {
 
           {/* Floating Sort Menu */}
           {isSortOpen && (
-            <div className="absolute top-[calc(100%+6px)] right-0 w-full bg-white dark:bg-zinc-950 border border-neutral-200/60 dark:border-zinc-850 rounded-2xl shadow-xl z-30 p-1 animate-in fade-in slide-in-from-top-2 duration-150">
+            <div className="absolute top-[calc(100%+6px)] right-0 w-full bg-white dark:bg-zinc-950 border border-neutral-200/60 dark:border-zinc-800 rounded-2xl shadow-xl z-30 p-1 animate-in fade-in slide-in-from-top-2 duration-150">
               {sortOptions.map((opt) => {
                 const isActive = activeSort === opt.value;
                 return (
@@ -235,8 +235,8 @@ export default function SearchSort({ suggestions = [] }: SearchSortProps) {
                     onClick={() => handleSortChange(opt.value)}
                     className={`w-full text-left px-3 py-2.5 text-xs md:text-sm rounded-xl font-bold cursor-pointer transition-colors ${
                       isActive
-                        ? "bg-orange-50 text-orange-600 dark:bg-orange-950/20 dark:text-orange-450"
-                        : "text-neutral-700 dark:text-zinc-350 hover:bg-neutral-50 dark:hover:bg-zinc-900/60"
+                        ? "bg-orange-50 text-orange-600 dark:bg-orange-950/20 dark:text-orange-400"
+                        : "text-neutral-700 dark:text-zinc-300 hover:bg-neutral-50 dark:hover:bg-zinc-900/60"
                     }`}
                   >
                     {opt.label}

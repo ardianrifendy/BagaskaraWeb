@@ -49,7 +49,7 @@ export default function BudgetPicker() {
               className={`py-2 px-2.5 rounded-xl text-xs font-extrabold border transition-all duration-200 cursor-pointer text-center ${
                 isActive
                   ? "bg-orange-600 border-orange-600 text-white shadow-sm"
-                  : "bg-neutral-50 dark:bg-zinc-955 border-neutral-200 dark:border-zinc-850 text-neutral-605 dark:text-zinc-350 hover:border-neutral-300 dark:hover:border-zinc-750 hover:bg-neutral-100/60 dark:hover:bg-zinc-900/60"
+                  : "bg-neutral-50 dark:bg-zinc-950 border-neutral-200 dark:border-zinc-800 text-neutral-600 dark:text-zinc-300 hover:border-neutral-300 dark:hover:border-zinc-700 hover:bg-neutral-100/60 dark:hover:bg-zinc-900/60"
               }`}
             >
               {opt.label}

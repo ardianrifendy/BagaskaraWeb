@@ -34,7 +34,7 @@ export default function Badge({ type, className = "" }: BadgeProps) {
       break;
     case "po":
       label = "Pesan PO";
-      styles = "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-950/40 dark:text-orange-350 dark:border-orange-900/30";
+      styles = "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-900/30";
       break;
   }
 
@@ -50,7 +50,7 @@ export default function Badge({ type, className = "" }: BadgeProps) {
         <span className="w-1.5 h-1.5 mr-1 bg-white rounded-full animate-pulse inline-block" />
       )}
       {isStock && type === "po" && (
-        <span className="w-1.5 h-1.5 mr-1 bg-orange-600 dark:bg-orange-450 rounded-full animate-pulse inline-block" />
+        <span className="w-1.5 h-1.5 mr-1 bg-orange-600 dark:bg-orange-400 rounded-full animate-pulse inline-block" />
       )}
       {label}
     </span>

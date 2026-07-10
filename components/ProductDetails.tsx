@@ -225,7 +225,7 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
         {/* Left Column: Image Gallery */}
         <div className="flex flex-col gap-4">
           <div className={`relative aspect-square w-full border border-neutral-100 dark:border-zinc-800 rounded-2xl overflow-hidden flex items-center justify-center p-6 ${
-            bgType === "black" ? "bg-black" : "bg-white"
+            bgType === "black" ? "bg-black" : "bg-white dark:bg-black"
           }`}>
             
             {activeImage !== "/file.svg" ? (
@@ -235,7 +235,9 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
                 fill
                 priority
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-contain p-4"
+                className={`object-contain ${
+                  product.brand.toLowerCase() === "poco" ? "p-0.5 scale-[1.15]" : "p-4"
+                }`}
                 onError={handleImageError}
               />
             ) : (
@@ -282,7 +284,7 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
                     key={idx}
                     onClick={() => setActiveImageIndex(idx)}
                     className={`relative w-16 h-16 rounded-xl border overflow-hidden flex-shrink-0 cursor-pointer ${
-                      bgType === "black" ? "bg-black" : "bg-white"
+                      bgType === "black" ? "bg-black" : "bg-white dark:bg-black"
                     } ${
                       isActive ? "border-orange-500 ring-2 ring-orange-500/20" : "border-neutral-200 dark:border-zinc-800 hover:border-neutral-300 dark:hover:border-zinc-700"
                     }`}
@@ -316,7 +318,7 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
                         {/* Accordion Trigger Header */}
                         <button
                           onClick={() => toggleGroup(group.group)}
-                          className="w-full bg-neutral-50/50 dark:bg-zinc-900/10 hover:bg-neutral-50 dark:hover:bg-zinc-900/30 px-4 py-3 flex items-center justify-between text-xs font-bold text-neutral-700 dark:text-zinc-350 border-b border-neutral-100/50 dark:border-zinc-800/50 cursor-pointer"
+                          className="w-full bg-neutral-50/50 dark:bg-zinc-900/10 hover:bg-neutral-50 dark:hover:bg-zinc-900/30 px-4 py-3 flex items-center justify-between text-xs font-bold text-neutral-700 dark:text-zinc-300 border-b border-neutral-100/50 dark:border-zinc-800/50 cursor-pointer"
                         >
                           <span>{group.group}</span>
                           <svg
@@ -345,7 +347,7 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
                                   <td className="px-4 py-3 w-1/3 font-bold text-neutral-400 dark:text-zinc-500 uppercase tracking-wide text-[9px] md:text-[10px]">
                                     {item.label}
                                   </td>
-                                  <td className="px-4 py-3 text-neutral-750 dark:text-zinc-350 font-semibold leading-relaxed">
+                                  <td className="px-4 py-3 text-neutral-700 dark:text-zinc-300 font-semibold leading-relaxed">
                                     {item.value}
                                   </td>
                                 </tr>
@@ -390,7 +392,7 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[9px] font-bold text-neutral-400 dark:text-zinc-500 uppercase tracking-wider">{hl.label}</span>
-                    <span className="text-xs font-black text-neutral-750 dark:text-zinc-200 leading-tight">{hl.value}</span>
+                    <span className="text-xs font-black text-neutral-700 dark:text-zinc-200 leading-tight">{hl.value}</span>
                   </div>
                 </div>
               ))}
@@ -456,7 +458,7 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
                       className={`px-4 py-2.5 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
                         isActive
                           ? "bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-100 dark:shadow-none"
-                          : "bg-white dark:bg-zinc-900 border-neutral-200 dark:border-zinc-800 text-neutral-600 dark:text-zinc-350 hover:border-neutral-300 dark:hover:border-zinc-700"
+                          : "bg-white dark:bg-zinc-900 border-neutral-200 dark:border-zinc-800 text-neutral-600 dark:text-zinc-300 hover:border-neutral-300 dark:hover:border-zinc-700"
                       } ${!isAvailableInColor ? "opacity-60 border-dashed" : ""}`}
                     >
                       {storage}
@@ -471,7 +473,7 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
           <div className="bg-neutral-50 dark:bg-zinc-800/30 rounded-2xl border border-neutral-100 dark:border-zinc-800 p-4 flex flex-col gap-3 mt-2">
             <span className="text-[10px] text-neutral-400 dark:text-zinc-500 font-bold uppercase tracking-wider">Informasi Unit</span>
             
-            <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs font-semibold text-neutral-600 dark:text-zinc-350">
+            <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs font-semibold text-neutral-600 dark:text-zinc-300">
               <div className="flex flex-col">
                 <span className="text-[10px] text-neutral-400 dark:text-zinc-500">Kondisi Fisik:</span>
                 <span className="capitalize text-neutral-800 dark:text-zinc-200">{product.condition}</span>
@@ -533,7 +535,7 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
                   {/* Accordion Trigger Header */}
                   <button
                     onClick={() => toggleGroup(group.group)}
-                    className="w-full bg-neutral-50/50 dark:bg-zinc-900/10 hover:bg-neutral-50 dark:hover:bg-zinc-900/30 px-4 py-3 flex items-center justify-between text-xs font-bold text-neutral-700 dark:text-zinc-350 border-b border-neutral-100/50 dark:border-zinc-800/50 cursor-pointer"
+                    className="w-full bg-neutral-50/50 dark:bg-zinc-900/10 hover:bg-neutral-50 dark:hover:bg-zinc-900/30 px-4 py-3 flex items-center justify-between text-xs font-bold text-neutral-700 dark:text-zinc-300 border-b border-neutral-100/50 dark:border-zinc-800/50 cursor-pointer"
                   >
                     <span>{group.group}</span>
                     <svg
@@ -562,7 +564,7 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
                             <td className="px-4 py-2.5 w-1/3 font-bold text-neutral-400 dark:text-zinc-500 uppercase tracking-wide text-[9px] md:text-[10px]">
                               {item.label}
                             </td>
-                            <td className="px-4 py-2.5 text-neutral-750 dark:text-zinc-300 font-semibold leading-relaxed">
+                            <td className="px-4 py-2.5 text-neutral-700 dark:text-zinc-300 font-semibold leading-relaxed">
                               {item.value}
                             </td>
                           </tr>
@@ -584,7 +586,7 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
             Deskripsi Produk
           </span>
           <div 
-            className="product-description text-sm text-neutral-750 dark:text-zinc-300 leading-relaxed"
+            className="product-description text-sm text-neutral-700 dark:text-zinc-300 leading-relaxed"
             dangerouslySetInnerHTML={{ __html: product.description }}
           />
         </div>
