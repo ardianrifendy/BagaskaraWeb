@@ -34,32 +34,28 @@ export default function BudgetPicker() {
   };
 
   return (
-    <div className="w-full py-6 px-4 bg-gradient-to-b from-neutral-50 to-white dark:from-zinc-950 dark:to-zinc-900/60 border-b border-neutral-100 dark:border-zinc-800/80 transition-colors duration-200">
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-xs md:text-sm font-bold text-neutral-400 dark:text-zinc-500 uppercase tracking-wider mb-3.5">
-          Cari HP Sesuai Budget Anda
-        </h2>
-
-        {/* Budget Chips Grid/Row */}
-        <div className="grid grid-cols-2 md:flex md:flex-wrap md:justify-center gap-2.5 max-w-lg md:max-w-none mx-auto">
-          {BUDGET_OPTIONS.map((opt) => {
-            const isActive = activeBudget === opt.value;
-            return (
-              <button
-                key={opt.value}
-                onClick={() => handleSelectBudget(opt.value)}
-                className={`py-3 px-4 rounded-xl text-sm font-bold border transition-all duration-200 cursor-pointer text-center ${
-                  isActive
-                    ? "bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-100 dark:shadow-none scale-[1.02]"
-                    : "bg-white dark:bg-zinc-900 border-neutral-200 dark:border-zinc-800 text-neutral-600 dark:text-zinc-350 hover:border-neutral-300 dark:hover:border-zinc-700 hover:bg-neutral-50 dark:hover:bg-zinc-800 active:bg-neutral-100 dark:active:bg-zinc-800"
-                }`}
-              >
-                {opt.label}
-              </button>
-            );
-          })}
-
-        </div>
+    <div className="w-full">
+      <h3 className="text-[10px] font-black uppercase tracking-wider text-neutral-400 dark:text-zinc-500 mb-2 select-none">
+        Saring Budget
+      </h3>
+      {/* Budget Chips Grid */}
+      <div className="grid grid-cols-2 gap-2">
+        {BUDGET_OPTIONS.map((opt) => {
+          const isActive = activeBudget === opt.value;
+          return (
+            <button
+              key={opt.value}
+              onClick={() => handleSelectBudget(opt.value)}
+              className={`py-2 px-2.5 rounded-xl text-xs font-extrabold border transition-all duration-200 cursor-pointer text-center ${
+                isActive
+                  ? "bg-orange-600 border-orange-600 text-white shadow-sm"
+                  : "bg-neutral-50 dark:bg-zinc-955 border-neutral-200 dark:border-zinc-850 text-neutral-605 dark:text-zinc-350 hover:border-neutral-300 dark:hover:border-zinc-750 hover:bg-neutral-100/60 dark:hover:bg-zinc-900/60"
+              }`}
+            >
+              {opt.label}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

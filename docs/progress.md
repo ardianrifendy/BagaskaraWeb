@@ -46,13 +46,18 @@ Dokumen ini mencatat pekerjaan yang sudah selesai dikerjakan pada sesi ini dan l
   * Memindahkan 3 trust badge utama ("Garansi Resmi" | "Quality Check" | "Siap Kirim") ke dalam modal selamat datang tepat di bawah subtitle.
 * **Penyederhanaan Kartu Produk (Product Card Grid):**
   * Meminimalkan muatan kartu katalog beranda agar **HANYA** menampilkan foto produk, brand (Merek), nama tipe unit, serta harga terendah ("Mulai Dari").
-  * Mengeliminasi badge spesifikasi ringkas, pilihan RAM/storage, pilihan warna, dan tombol CTA WhatsApp dari baris kartu beranda (seluruh elemen interaktif ini dipindahkan ke halaman/modal detail produk ketika kartu diklik).
-  * Memastikan seluruh area kartu bertindak sebagai link satu arah ke modal spesifikasi detail unit demi kenyamanan eksplorasi pengguna.
+  * Mengeliminasi badge spesifikasi ringkas, pilihan RAM/storage, pilihan warna, dan tombol CTA WhatsApp dari baris kartu beranda.
+* **Relokasi & Layout Filter di Sisi Kanan (Ala Erafone):**
+  * **Tampilan Desktop:** Memindahkan filter (Book Switcher, Budget Picker, Brand/Condition/Status Dropdowns) ke sidebar kanan (`w-[280px] md:sticky`) dengan layout grid `1fr_280px` modern, menyandingkannya di sebelah kanan katalog HP layaknya situs Erafone.
+  * **Tampilan Mobile:** Menyembunyikan sidebar desktop dan menggantinya dengan menu filter collapsible native (`<details>`) di bagian atas katalog agar tidak memakan ruang gulir vertikal pengguna.
+  * **Penyederhanaan Komponen:** Menyederhanakan wrapper dan style BookSwitcher, BudgetPicker, dan FilterChips agar terintegrasi secara modular dan rapi tanpa double borders/nested cards.
 
 ---
 
 ## 🚀 Yang Harus Dilakukan Selanjutnya (Next Steps / TODO)
 
-1. **Uji Coba Scraping Berkala:**
-   * Jalankan scraper berkala untuk memperbarui stok atau harga unit terbaru dari Erafone, kemudian jalankan kembali `npm run import-csv` untuk menyinkronkan data terbaru.
+1. **Verifikasi Tampilan Production:**
+   * Lakukan push perubahan ke GitHub dan deploy otomatis ke Vercel (`bagaskaracell.net`) lalu uji secara manual di desktop dan mobile.
+2. **Scraping Berkala:**
+   * Jalankan scraper berkala untuk memperbarui stok atau harga unit terbaru dari Erafone.
 

@@ -159,11 +159,9 @@ export default function FilterChips({ availableBrands, availableConditions }: Fi
   ];
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-3">
-      <div className="bg-white dark:bg-black border border-neutral-100 dark:border-zinc-800 rounded-2xl p-4 md:p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-        
-        {/* Dropdowns Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 flex-grow">
+    <div className="w-full flex flex-col gap-3">
+      {/* Dropdowns Grid */}
+      <div className="flex flex-col gap-3">
           
           {/* Brand select */}
           <CustomSelect
@@ -192,21 +190,19 @@ export default function FilterChips({ availableBrands, availableConditions }: Fi
             placeholder="Semua Status"
           />
 
-        </div>
-
-        {/* Clear Filters Button */}
-        {hasAnyActiveFilter && (
-          <div className="flex items-end justify-end mt-2 md:mt-5">
-            <button
-              onClick={clearAllFilters}
-              className="text-xs font-bold text-red-600 dark:text-red-400 hover:text-red-750 dark:hover:text-red-300 bg-red-50 dark:bg-red-950/20 hover:bg-red-100/70 dark:hover:bg-red-950/50 border border-red-200/50 dark:border-red-900/30 px-4 py-2.5 rounded-xl transition-colors cursor-pointer whitespace-nowrap"
-            >
-              Hapus Filter ✕
-            </button>
-          </div>
-        )}
-
       </div>
+
+      {/* Clear Filters Button */}
+      {hasAnyActiveFilter && (
+        <div className="pt-2">
+          <button
+            onClick={clearAllFilters}
+            className="w-full text-center text-xs font-bold text-red-650 dark:text-red-400 hover:text-red-750 dark:hover:text-red-300 bg-red-50 dark:bg-red-950/20 hover:bg-red-100/70 dark:hover:bg-red-950/50 border border-red-200/50 dark:border-red-900/30 py-2.5 rounded-xl transition-colors cursor-pointer"
+          >
+            Hapus Semua Filter ✕
+          </button>
+        </div>
+      )}
     </div>
   );
 }

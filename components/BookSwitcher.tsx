@@ -25,51 +25,51 @@ export default function BookSwitcher() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 pt-6 pb-2">
-      <div className="bg-neutral-100 dark:bg-zinc-900 p-1.5 rounded-2xl flex border border-neutral-200/50 dark:border-zinc-800 shadow-inner relative overflow-hidden">
+    <div className="w-full">
+      <div className="bg-neutral-100 dark:bg-zinc-950 p-1 rounded-xl flex border border-neutral-200/50 dark:border-zinc-800/80 shadow-inner relative overflow-hidden">
         
         {/* Switch Background Slider (Visual Effect) */}
         <div 
-          className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white dark:bg-black rounded-xl shadow-md transition-all duration-300 ease-out z-0 ${
+          className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white dark:bg-black rounded-lg shadow-sm transition-all duration-300 ease-out z-0 ${
             activeBook === "erafone" 
-              ? "left-[calc(50%+3px)]" 
-              : "left-[6px]"
+              ? "left-[calc(50%+2px)]" 
+              : "left-[4px]"
           }`}
         />
 
         {/* Tab 1: Stok Ready Toko */}
         <button
           onClick={() => handleBookChange("ready")}
-          className={`flex-1 py-3 px-2 flex flex-col items-center justify-center gap-0.5 rounded-xl z-10 cursor-pointer transition-colors duration-200 ${
+          className={`flex-1 py-2 px-1 flex flex-col items-center justify-center gap-0.5 rounded-lg z-10 cursor-pointer transition-colors duration-200 ${
             activeBook === "ready"
               ? "text-orange-600 dark:text-orange-450 font-black"
               : "text-neutral-500 dark:text-zinc-400 hover:text-neutral-700 dark:hover:text-zinc-200 font-bold"
           }`}
         >
-          <div className="flex items-center gap-1.5 text-xs md:text-sm">
+          <div className="flex items-center gap-1 text-xs">
             <span>📦</span>
-            <span>Stok Ready Toko</span>
+            <span>Stok Ready</span>
           </div>
-          <span className="text-[9px] md:text-[10px] opacity-75 font-semibold leading-none">
-            Siap COD / Kirim Hari Ini
+          <span className="text-[8px] opacity-75 font-semibold leading-none">
+            Siap Kirim
           </span>
         </button>
 
         {/* Tab 2: Katalog Erafone */}
         <button
           onClick={() => handleBookChange("erafone")}
-          className={`flex-1 py-3 px-2 flex flex-col items-center justify-center gap-0.5 rounded-xl z-10 cursor-pointer transition-colors duration-200 ${
+          className={`flex-1 py-2 px-1 flex flex-col items-center justify-center gap-0.5 rounded-lg z-10 cursor-pointer transition-colors duration-200 ${
             activeBook === "erafone"
               ? "text-orange-600 dark:text-orange-450 font-black"
               : "text-neutral-500 dark:text-zinc-400 hover:text-neutral-700 dark:hover:text-zinc-200 font-bold"
           }`}
         >
-          <div className="flex items-center gap-1.5 text-xs md:text-sm">
+          <div className="flex items-center gap-1 text-xs">
             <span>🔍</span>
-            <span>Katalog Erafone</span>
+            <span>PO Erafone</span>
           </div>
-          <span className="text-[9px] md:text-[10px] opacity-75 font-semibold leading-none">
-            Bisa Pesan / Indent PO
+          <span className="text-[8px] opacity-75 font-semibold leading-none">
+            Indent 1-3 Hari
           </span>
         </button>
 
