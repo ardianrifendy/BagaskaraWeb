@@ -180,11 +180,11 @@ export default function SearchSort({ suggestions = [] }: SearchSortProps) {
                   {/* Status Indicator Tag */}
                   {item.isScraped === 1 ? (
                     <span className="text-[9px] font-bold px-2 py-0.5 rounded-md border border-orange-200/50 bg-orange-50/50 text-orange-600 dark:border-orange-900/30 dark:bg-orange-950/20 dark:text-orange-400 whitespace-nowrap">
-                      PO (1-3 Hari)
+                      PO / Indent
                     </span>
                   ) : (
                     <span className="text-[9px] font-bold px-2 py-0.5 rounded-md border border-emerald-200/50 bg-emerald-50/50 text-emerald-600 dark:border-emerald-900/30 dark:bg-emerald-950/20 dark:text-emerald-400 whitespace-nowrap">
-                      Stok Ready
+                      Ready Stok
                     </span>
                   )}
                 </button>

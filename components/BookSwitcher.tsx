@@ -48,7 +48,7 @@ export default function BookSwitcher() {
         >
           <div className="flex items-center gap-1 text-xs">
             <span>📦</span>
-            <span>Stok Ready</span>
+            <span>Ready Stok</span>
           </div>
           <span className="text-[8px] opacity-75 font-semibold leading-none">
             Siap Kirim
@@ -66,7 +66,7 @@ export default function BookSwitcher() {
         >
           <div className="flex items-center gap-1 text-xs">
             <span>🔍</span>
-            <span>PO Erafone</span>
+            <span>Cari Model HP</span>
           </div>
           <span className="text-[8px] opacity-75 font-semibold leading-none">
             Indent 1-3 Hari
