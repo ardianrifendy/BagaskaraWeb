@@ -47,10 +47,10 @@ export default function CekResiResult({ result }: CekResiResultProps) {
   const receiverName = detail.receiver || summary.receiver || "-";
   
   if (isJnt) {
-    // For J&T, BinderByte often maps Sender Name to detail.origin
-    // and copies the recipient's name to both shipper and receiver.
-    if (detail.origin && (detail.origin.includes("*") || detail.origin.length > 12)) {
-      senderName = detail.origin;
+    // For J&T packages on Bagaskara Cell website:
+    // If BinderByte returned identical shipper and receiver, or if shipper is missing
+    if (detail.shipper === detail.receiver || !detail.shipper) {
+      senderName = "Bagaskara Cell";
     }
   }
 
@@ -87,12 +87,22 @@ export default function CekResiResult({ result }: CekResiResultProps) {
   }
 
   // Format resolved addresses using the mapping helper
-  const resolvedSenderAddr = formatLocation(senderLocation) || 
-                             formatLocation(detail.origin !== senderName ? detail.origin : "") || 
-                             "Cerme, Gresik, Jawa Timur";
-  const resolvedReceiverAddr = formatLocation(receiverLocation) || 
-                               formatLocation(detail.destination) || 
-                               "Palangkaraya, Kalimantan Tengah";
+  let resolvedSenderAddr = formatLocation(senderLocation) || "Cerme, Gresik, Jawa Timur";
+  let resolvedReceiverAddr = "";
+
+  if (isJnt) {
+    // For J&T, detail.origin contains recipient's company/address details (e.g. Wira Toyota)
+    // and receiverLocation contains the destination city (e.g. PKY GATEWAY -> Palangkaraya)
+    const city = formatLocation(receiverLocation) || "Palangkaraya, Kalimantan Tengah";
+    if (detail.origin && detail.origin !== receiverName) {
+      resolvedReceiverAddr = `${detail.origin} (${city})`;
+    } else {
+      resolvedReceiverAddr = city;
+    }
+  } else {
+    resolvedSenderAddr = formatLocation(senderLocation) || formatLocation(detail.origin) || "Asal";
+    resolvedReceiverAddr = formatLocation(receiverLocation) || formatLocation(detail.destination) || "Tujuan";
+  }
 
   // 3. Format package weight (convert 800 grams to 0.8 Kg if it is >= 100)
   let weightStr = "-";
