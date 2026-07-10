@@ -48,6 +48,7 @@ CATEGORIES = {
     "2": (7422, "Smartphone"),
     "3": (7423, "AI Phone"),
     "4": (7424, "Tablet"),
+    "5": ("ALL", "Semua Kategori di atas (Deduplicated)"),
 }
 
 HEADERS = {
@@ -710,7 +711,24 @@ def main():
     cid,name,mode_varian,ambil_harga,download=show_menu()
     session=requests.Session(); today=datetime.date.today().isoformat()
     console.print()
-    bases=scrape_catalog(session,cid,name)
+    
+    if cid == "ALL":
+        all_bases = []
+        seen_skus = set()
+        for k in ["1", "2", "3", "4"]:
+            cat_id, cat_name = CATEGORIES[k]
+            console.print(f"\n[bold cyan]Mulai Scraping Kategori: {cat_name}...[/]")
+            cat_bases = scrape_catalog(session, cat_id, cat_name)
+            for b in cat_bases:
+                sku = b.get("SKU_Induk")
+                if sku and sku not in seen_skus:
+                    seen_skus.add(sku)
+                    all_bases.append(b)
+        bases = all_bases
+        console.print(f"\n[bold green]Selesai menggabungkan. Ditemukan {len(bases)} produk unik (deduplicated).[/]")
+    else:
+        bases=scrape_catalog(session,cid,name)
+        
     if not bases: return
 
     if mode_varian:
