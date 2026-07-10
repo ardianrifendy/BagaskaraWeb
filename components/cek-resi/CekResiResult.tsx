@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { getCourierLabel } from "@/lib/couriers";
 import type { TrackingResult } from "@/types/tracking";
 
@@ -6,6 +9,7 @@ interface CekResiResultProps {
 }
 
 export default function CekResiResult({ result }: CekResiResultProps) {
+  const [showHistory, setShowHistory] = useState(false);
   const { summary, detail, history } = result;
 
   const isDelivered = summary.status.toLowerCase().includes("delivered") || 
@@ -61,47 +65,76 @@ export default function CekResiResult({ result }: CekResiResultProps) {
         </dl>
       </div>
 
-      {/* History Timeline */}
-      <div className="relative pl-6 border-l-2 border-neutral-200/80 dark:border-zinc-800 space-y-6 ml-3">
-        {history.map((item, index) => {
-          const isLatest = index === 0;
-          return (
-            <div key={`${item.date}-${index}`} className="relative group">
-              {/* Timeline Indicator Node */}
-              <span
-                className={`absolute -left-[31px] top-1.5 h-3.5 w-3.5 rounded-full flex items-center justify-center transition-all ${
-                  isLatest
-                    ? "bg-orange-500 ring-4 ring-orange-500/20 dark:ring-orange-500/30 scale-110"
-                    : "bg-neutral-300 dark:bg-zinc-700 group-hover:bg-neutral-400 dark:group-hover:bg-zinc-500"
-                }`}
-              >
-                {isLatest && <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />}
-              </span>
+      {/* Toggle Button for History */}
+      {history && history.length > 0 && (
+        <div className="flex justify-center pt-2">
+          <button
+            type="button"
+            onClick={() => setShowHistory(!showHistory)}
+            className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-3 bg-neutral-50 dark:bg-zinc-900/60 hover:bg-neutral-100 dark:hover:bg-zinc-800 text-neutral-600 dark:text-zinc-350 hover:text-neutral-800 dark:hover:text-zinc-100 text-xs md:text-sm font-extrabold rounded-xl border border-neutral-200/60 dark:border-zinc-800 transition-all duration-205 cursor-pointer shadow-sm"
+          >
+            {showHistory ? (
+              <>
+                Sembunyikan Riwayat Perjalanan
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" />
+                </svg>
+              </>
+            ) : (
+              <>
+                Lihat Riwayat Perjalanan
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                </svg>
+              </>
+            )}
+          </button>
+        </div>
+      )}
 
-              {/* Checkpoint Detail */}
-              <div className="flex flex-col gap-1">
-                <span className="text-[10px] font-extrabold text-neutral-400 dark:text-zinc-500 tracking-wide uppercase">
-                  {item.date}
+      {/* History Timeline */}
+      {showHistory && history && history.length > 0 && (
+        <div className="relative pl-6 border-l-2 border-neutral-200/80 dark:border-zinc-800 space-y-6 ml-3 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
+          {history.map((item, index) => {
+            const isLatest = index === 0;
+            return (
+              <div key={`${item.date}-${index}`} className="relative group">
+                {/* Timeline Indicator Node */}
+                <span
+                  className={`absolute -left-[31px] top-1.5 h-3.5 w-3.5 rounded-full flex items-center justify-center transition-all ${
+                    isLatest
+                      ? "bg-orange-500 ring-4 ring-orange-500/20 dark:ring-orange-500/30 scale-110"
+                      : "bg-neutral-300 dark:bg-zinc-700 group-hover:bg-neutral-400 dark:group-hover:bg-zinc-500"
+                  }`}
+                >
+                  {isLatest && <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />}
                 </span>
-                <p className={`text-xs md:text-sm font-bold leading-relaxed ${
-                  isLatest ? "text-neutral-800 dark:text-zinc-200" : "text-neutral-600 dark:text-zinc-400"
-                }`}>
-                  {item.desc}
-                </p>
-                {item.location && (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-neutral-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">
-                    <svg className="w-3 h-3 text-neutral-400 dark:text-zinc-650" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    {item.location}
+
+                {/* Checkpoint Detail */}
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] font-extrabold text-neutral-400 dark:text-zinc-500 tracking-wide uppercase">
+                    {item.date}
                   </span>
-                )}
+                  <p className={`text-xs md:text-sm font-bold leading-relaxed ${
+                    isLatest ? "text-neutral-800 dark:text-zinc-200" : "text-neutral-600 dark:text-zinc-400"
+                  }`}>
+                    {item.desc}
+                  </p>
+                  {item.location && (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-neutral-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">
+                      <svg className="w-3 h-3 text-neutral-400 dark:text-zinc-650" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      {item.location}
+                    </span>
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
