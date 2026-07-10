@@ -13,6 +13,7 @@ import { siteConfig } from "../config/site";
 import { buildWaLink } from "../lib/buildWaLink";
 import BookSwitcher from "../components/BookSwitcher";
 import WelcomeModal from "../components/WelcomeModal";
+import Pagination from "../components/Pagination";
 
 // Next.js metadata for SEO
 export const metadata = {
@@ -37,6 +38,7 @@ interface PageProps {
     q?: string;
     sort?: string;
     produk?: string;
+    page?: string;
   }>;
 }
 
@@ -51,11 +53,21 @@ export default async function Home({ searchParams }: PageProps) {
   const q = resolvedSearchParams.q || "";
   const sort = resolvedSearchParams.sort || "newest";
   const produkSlug = resolvedSearchParams.produk || "";
+  const pageParam = resolvedSearchParams.page || "";
+  const page = parseInt(pageParam) || 1;
 
   // Fetch filtered products and dynamic options from SQLite
   const products = await getFilteredProducts({ budget, brand, condition, status, book, q, sort });
   const { brands: availableBrands, conditions: availableConditions } = await getFilterOptions();
   const suggestions = await getSearchSuggestions();
+
+  // Pagination Math
+  const ITEMS_PER_PAGE = 12;
+  const totalProducts = products.length;
+  const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
+  const currentPage = Math.min(Math.max(1, page), totalPages || 1);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedProducts = products.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   // If no products match, fetch the nearest products in price
   const isCatalogEmpty = products.length === 0;
@@ -166,11 +178,18 @@ export default async function Home({ searchParams }: PageProps) {
               </div>
             </div>
           ) : (
-            /* Normal Catalog Grid */
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 animate-in fade-in duration-200">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+            /* Normal Catalog Grid with Pagination */
+            <div className="flex flex-col gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 animate-in fade-in duration-200">
+                {paginatedProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                searchParams={{ budget, brand, condition, status, book, q, sort }}
+              />
             </div>
           )}
         </main>
