@@ -13,7 +13,7 @@ export default function CekResiResult({ result }: CekResiResultProps) {
                       summary.status.toLowerCase().includes("sukses");
 
   return (
-    <div className="mt-8 space-y-6 animate-in fade-in slide-in-from-bottom-3 duration-300">
+    <div className="space-y-6">
       {/* Summary Card */}
       <div className="rounded-3xl border border-neutral-100 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-5 shadow-sm backdrop-blur-md">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 dark:border-zinc-800/80 pb-4">
@@ -44,19 +44,19 @@ export default function CekResiResult({ result }: CekResiResultProps) {
         <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-neutral-100 dark:border-zinc-800/80 pt-4 text-xs font-bold text-neutral-500 dark:text-zinc-400">
           <div>
             <dt className="text-[10px] uppercase tracking-wider text-neutral-400 dark:text-zinc-500 mb-0.5">Asal</dt>
-            <dd className="text-neutral-700 dark:text-zinc-300">{detail.origin || "-"}</dd>
+            <dd className="text-neutral-700 dark:text-zinc-300 break-words">{detail.origin || "-"}</dd>
           </div>
           <div>
             <dt className="text-[10px] uppercase tracking-wider text-neutral-400 dark:text-zinc-500 mb-0.5">Tujuan</dt>
-            <dd className="text-neutral-700 dark:text-zinc-300">{detail.destination || "-"}</dd>
+            <dd className="text-neutral-700 dark:text-zinc-300 break-words">{detail.destination || "-"}</dd>
           </div>
           <div>
             <dt className="text-[10px] uppercase tracking-wider text-neutral-400 dark:text-zinc-500 mb-0.5">Penerima</dt>
-            <dd className="text-neutral-700 dark:text-zinc-300">{summary.receiver || "-"}</dd>
+            <dd className="text-neutral-700 dark:text-zinc-300 break-words">{summary.receiver || "-"}</dd>
           </div>
           <div>
             <dt className="text-[10px] uppercase tracking-wider text-neutral-400 dark:text-zinc-500 mb-0.5">Berat</dt>
-            <dd className="text-neutral-700 dark:text-zinc-300">{summary.weight ? `${summary.weight} Kg` : "-"}</dd>
+            <dd className="text-neutral-700 dark:text-zinc-300 break-words">{summary.weight ? `${summary.weight} Kg` : "-"}</dd>
           </div>
         </dl>
       </div>

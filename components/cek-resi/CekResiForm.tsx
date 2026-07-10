@@ -59,6 +59,24 @@ export default function CekResiForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleCloseModal = () => {
+    setResult(null);
+    setStatus("idle");
+    router.replace("/cek-resi", { scroll: false });
+  };
+
+  // Lock body scroll when tracking modal is open
+  useEffect(() => {
+    if (status === "success") {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [status]);
+
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
 
@@ -162,7 +180,38 @@ export default function CekResiForm() {
         </div>
       )}
 
-      {status === "success" && result && <CekResiResult result={result} />}
+      {status === "success" && result && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/60 dark:bg-black/85 backdrop-blur-sm flex items-center justify-center p-3 md:p-6"
+          onClick={handleCloseModal}
+        >
+          <div 
+            className="relative bg-white dark:bg-zinc-900 w-full max-w-lg rounded-3xl border border-neutral-100 dark:border-zinc-800 shadow-2xl overflow-hidden max-h-[85vh] flex flex-col animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100 dark:border-zinc-800/80">
+              <h3 className="text-xs md:text-sm font-black text-neutral-850 dark:text-zinc-150 uppercase tracking-widest">
+                Detail Pengiriman
+              </h3>
+              <button
+                onClick={handleCloseModal}
+                className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-zinc-800 text-neutral-500 dark:text-zinc-400 hover:text-neutral-850 dark:hover:text-zinc-200 hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all flex items-center justify-center cursor-pointer shadow-sm animate-none"
+                title="Tutup"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Scrollable Timeline */}
+            <div className="overflow-y-auto flex-1 p-5 md:p-6">
+              <CekResiResult result={result} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
