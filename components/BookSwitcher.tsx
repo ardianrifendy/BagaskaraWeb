@@ -8,9 +8,10 @@ export default function BookSwitcher() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const activeBook = searchParams.get("book") || "ready";
+  const rawBook = searchParams.get("book") || "ready";
+  const activeBook = rawBook === "po" || rawBook === "erafone" ? "po" : "ready";
 
-  const handleBookChange = (book: "ready" | "erafone") => {
+  const handleBookChange = (book: "ready" | "po") => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("book", book);
     
@@ -19,7 +20,7 @@ export default function BookSwitcher() {
     params.delete("brand");
     params.delete("condition");
     params.delete("status");
-    params.delete("budget"); // Reset budget as Erafone prices might vary widely
+    params.delete("budget"); // Reset budget as pre-order prices might vary widely
     
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
@@ -31,7 +32,7 @@ export default function BookSwitcher() {
         {/* Switch Background Slider (Visual Effect) */}
         <div 
           className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white dark:bg-black rounded-lg shadow-sm transition-all duration-300 ease-out z-0 ${
-            activeBook === "erafone" 
+            activeBook === "po" 
               ? "left-[calc(50%+2px)]" 
               : "left-[4px]"
           }`}
@@ -42,8 +43,8 @@ export default function BookSwitcher() {
           onClick={() => handleBookChange("ready")}
           className={`flex-1 py-3 px-1 flex items-center justify-center gap-1 rounded-lg z-10 cursor-pointer transition-colors duration-200 ${
             activeBook === "ready"
-              ? "text-orange-600 dark:text-orange-450 font-black"
-              : "text-neutral-500 dark:text-zinc-400 hover:text-neutral-700 dark:hover:text-zinc-200 font-bold"
+              ? "text-orange-600 dark:text-orange-455 font-black"
+              : "text-neutral-500 dark:text-zinc-450 hover:text-neutral-700 dark:hover:text-zinc-200 font-bold"
           }`}
         >
           <div className="flex items-center gap-1 text-xs">
@@ -52,13 +53,13 @@ export default function BookSwitcher() {
           </div>
         </button>
 
-        {/* Tab 2: Katalog Erafone */}
+        {/* Tab 2: Katalog Pre-Order */}
         <button
-          onClick={() => handleBookChange("erafone")}
+          onClick={() => handleBookChange("po")}
           className={`flex-1 py-3 px-1 flex items-center justify-center gap-1 rounded-lg z-10 cursor-pointer transition-colors duration-200 ${
-            activeBook === "erafone"
-              ? "text-orange-600 dark:text-orange-450 font-black"
-              : "text-neutral-500 dark:text-zinc-400 hover:text-neutral-700 dark:hover:text-zinc-200 font-bold"
+            activeBook === "po"
+              ? "text-orange-600 dark:text-orange-455 font-black"
+              : "text-neutral-500 dark:text-zinc-450 hover:text-neutral-700 dark:hover:text-zinc-200 font-bold"
           }`}
         >
           <div className="flex items-center gap-1 text-xs">

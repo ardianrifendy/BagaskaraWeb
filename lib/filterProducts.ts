@@ -6,7 +6,7 @@ export interface FilterParams {
   brand?: string;      // Comma-separated (e.g., "xiaomi,samsung")
   condition?: string;  // Comma-separated (e.g., "baru,second")
   status?: string;     // "ready" | "habis"
-  book?: string;       // "ready" | "erafone"
+  book?: string;       // "ready" | "po" | "erafone"
   q?: string;          // Search query
   sort?: string;       // "price-asc" | "price-desc" | "newest"
 }
@@ -92,9 +92,9 @@ export async function getFilteredProducts(params: FilterParams): Promise<Product
   const whereClauses: string[] = [];
   const args: (string | number)[] = [];
 
-  // 0. Book catalog filter (Ready Stock vs Erafone PO reference)
+  // 0. Book catalog filter (Ready Stock vs PO reference)
   const bookParam = params.book || "ready";
-  if (bookParam === "erafone") {
+  if (bookParam === "po" || bookParam === "erafone") {
     whereClauses.push("p.isScraped = 1");
   } else {
     whereClauses.push("p.isScraped = 0");
@@ -173,7 +173,7 @@ export async function getFilteredProducts(params: FilterParams): Promise<Product
     ${orderSql}
   `;
 
-  const targetDb = params.book === "erafone" ? dbErafone : dbOwner;
+  const targetDb = (params.book === "po" || params.book === "erafone") ? dbErafone : dbOwner;
 
   try {
     const res = await targetDb.execute({ sql: query, args });
@@ -306,7 +306,7 @@ export async function getFallbackProducts(budgetStr?: string, book?: string): Pr
     else if (min !== undefined) targetPrice = min;
   }
 
-  const targetDb = book === "erafone" ? dbErafone : dbOwner;
+  const targetDb = (book === "po" || book === "erafone") ? dbErafone : dbOwner;
 
   const query = `
     SELECT p.*, MIN(v.price) as minPrice
