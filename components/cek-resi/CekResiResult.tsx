@@ -16,11 +16,9 @@ export default function CekResiResult({ result }: CekResiResultProps) {
                       summary.status.toLowerCase().includes("diterima") ||
                       summary.status.toLowerCase().includes("sukses");
 
-  // Map fields directly from the BinderByte API response
-  const senderName = detail.shipper || "-";
-  const receiverName = detail.receiver || summary.receiver || "-";
-  const resolvedSenderAddr = detail.origin || "-";
-  const resolvedReceiverAddr = detail.destination || "-";
+  // Map receiver name and address from the API response
+  const receiverName = detail.receiver || summary.receiver || detail.shipper || "-";
+  const receiverAddr = detail.destination || detail.origin || "-";
 
   // Format package weight (convert grams to Kg if weight >= 100)
   let weightStr = "-";
@@ -62,26 +60,26 @@ export default function CekResiResult({ result }: CekResiResultProps) {
         {summary.lastDesc}
       </div>
 
-      {/* Sender & Receiver Info */}
+      {/* Receiver Info Card */}
       <div className="rounded-3xl border border-neutral-100 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-5 shadow-sm space-y-4">
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-3.5 text-xs">
+        <div className="space-y-3 text-xs">
           <div className="flex flex-col">
-            <dt className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 dark:text-zinc-500 mb-0.5">Pengirim</dt>
-            <dd className="font-bold text-neutral-805 dark:text-zinc-200 break-words">{senderName}</dd>
+            <span className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 dark:text-zinc-500 mb-0.5">
+              Penerima
+            </span>
+            <span className="text-xs md:text-sm font-bold text-neutral-805 dark:text-zinc-200 break-words">
+              {receiverName}
+            </span>
           </div>
           <div className="flex flex-col">
-            <dt className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 dark:text-zinc-500 mb-0.5">Penerima</dt>
-            <dd className="font-bold text-neutral-805 dark:text-zinc-200 break-words">{receiverName}</dd>
+            <span className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 dark:text-zinc-500 mb-0.5">
+              Alamat / Tujuan
+            </span>
+            <span className="text-xs md:text-sm font-bold text-neutral-705 dark:text-zinc-300 break-words leading-relaxed">
+              {receiverAddr}
+            </span>
           </div>
-          <div className="flex flex-col">
-            <dt className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 dark:text-zinc-500 mb-0.5">Asal (Origin)</dt>
-            <dd className="font-bold text-neutral-700 dark:text-zinc-300 break-words">{resolvedSenderAddr}</dd>
-          </div>
-          <div className="flex flex-col">
-            <dt className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 dark:text-zinc-500 mb-0.5">Tujuan (Destination)</dt>
-            <dd className="font-bold text-neutral-700 dark:text-zinc-300 break-words">{resolvedReceiverAddr}</dd>
-          </div>
-        </dl>
+        </div>
 
         {/* Package Specs Grid */}
         <div className="border-t border-neutral-100 dark:border-zinc-800/80 pt-4 grid grid-cols-2 gap-4 text-xs">
