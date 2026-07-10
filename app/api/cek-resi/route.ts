@@ -38,8 +38,27 @@ function errorResponse(
   status: number,
   error: string,
   courier: string,
-  awb: string
-): NextResponse<CekResiApiResponse> {
+  awb: string,
+  isText: boolean
+): NextResponse {
+  if (isText) {
+    const courierLabel = courier ? courier.toUpperCase() : "LOGISTIK";
+    const awbStr = awb || "-";
+    const text = `❌ *PELACAKAN GAGAL*
+----------------------------------------
+*No. Resi:* ${awbStr} (${courierLabel})
+*Pesan:* ${error}
+
+Silakan cek kembali nomor resi dan kurir yang Anda masukkan.`;
+
+    return new NextResponse(text, {
+      status,
+      headers: {
+        "content-type": "text/plain; charset=utf-8",
+      },
+    });
+  }
+
   return NextResponse.json(
     { ok: false, error, waFallbackMessage: buildWaFallbackMessage(courier, awb) },
     { status }
@@ -50,13 +69,15 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const courierParam = searchParams.get("courier")?.trim().toLowerCase() ?? "";
   const awbParam = searchParams.get("awb")?.trim() ?? "";
+  const formatParam = searchParams.get("format")?.trim().toLowerCase() ?? "";
+  const isText = formatParam === "text";
 
   if (!courierParam || !awbParam) {
-    return errorResponse(400, "Kurir dan nomor resi wajib diisi.", courierParam, awbParam);
+    return errorResponse(400, "Kurir dan nomor resi wajib diisi.", courierParam, awbParam, isText);
   }
 
   if (!isSupportedCourier(courierParam)) {
-    return errorResponse(400, "Kurir tidak didukung.", courierParam, awbParam);
+    return errorResponse(400, "Kurir tidak didukung.", courierParam, awbParam, isText);
   }
 
   if (isRateLimited(getClientIp(request))) {
@@ -64,12 +85,57 @@ export async function GET(request: NextRequest) {
       429,
       "Terlalu banyak percobaan, coba lagi sebentar lagi.",
       courierParam,
-      awbParam
+      awbParam,
+      isText
     );
   }
 
   try {
     const result = await trackPackage(courierParam, awbParam);
+
+    if (isText) {
+      const courierLabel = result.summary.courier || courierParam.toUpperCase();
+      const status = result.summary.status || "-";
+      const receiverName = result.detail.receiver || result.summary.receiver || result.detail.shipper || "-";
+      const receiverAddr = result.detail.destination || result.detail.origin || "-";
+      
+      let weightStr = "-";
+      if (result.summary.weight) {
+        const w = parseFloat(result.summary.weight.toString());
+        if (!isNaN(w)) {
+          if (w >= 100) {
+            weightStr = `${w / 1000} Kg (${w} gram)`;
+          } else {
+            weightStr = `${w} Kg`;
+          }
+        }
+      }
+      const service = result.summary.service || "Regular";
+      const lastDesc = result.summary.lastDesc || "-";
+
+      const text = `📦 *STATUS PENGIRIMAN (${courierLabel})*
+----------------------------------------
+*No. Resi:* ${result.summary.awb}
+*Status:* ${status}
+
+*Penerima:* ${receiverName}
+*Tujuan:* ${receiverAddr}
+*Berat:* ${weightStr}
+*Layanan:* ${service}
+
+*Posisi Terakhir:*
+"${lastDesc}"
+
+🌐 *Lihat detail perjalanan lengkap:*
+https://bagaskaracell.net/cek-resi?courier=${courierParam}&awb=${result.summary.awb}`;
+
+      return new NextResponse(text, {
+        headers: {
+          "content-type": "text/plain; charset=utf-8",
+        },
+      });
+    }
+
     const body: CekResiApiResponse = { ok: true, result };
     return NextResponse.json(body);
   } catch (err) {
@@ -80,10 +146,10 @@ export async function GET(request: NextRequest) {
           : err.reason === "not_found"
             ? 404
             : 502;
-      return errorResponse(status, err.message, courierParam, awbParam);
+      return errorResponse(status, err.message, courierParam, awbParam, isText);
     }
 
     console.error("[api/cek-resi] unexpected error", err);
-    return errorResponse(500, "Terjadi kesalahan, coba lagi nanti.", courierParam, awbParam);
+    return errorResponse(500, "Terjadi kesalahan, coba lagi nanti.", courierParam, awbParam, isText);
   }
 }

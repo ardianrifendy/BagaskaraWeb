@@ -33,6 +33,31 @@ export default function CekResiResult({ result }: CekResiResultProps) {
     }
   }
 
+  const handleShareWa = () => {
+    const courierLabel = getCourierLabel(summary.courier);
+    const awb = summary.awb;
+    const status = summary.status;
+    const lastDesc = summary.lastDesc || "-";
+    const text = `📦 *STATUS PENGIRIMAN (${courierLabel})*
+----------------------------------------
+*No. Resi:* ${awb}
+*Status:* ${status}
+
+*Penerima:* ${receiverName}
+*Tujuan:* ${receiverAddr}
+*Berat:* ${weightStr}
+*Layanan:* ${summary.service || "Regular"}
+
+*Posisi Terakhir:*
+"${lastDesc}"
+
+🌐 *Lihat detail perjalanan lengkap:*
+https://bagaskaracell.net/cek-resi?courier=${summary.courier}&awb=${awb}`;
+
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url, "_blank");
+  };
+
   return (
     <div className="space-y-5">
       {/* Waybill Info Header */}
@@ -91,6 +116,20 @@ export default function CekResiResult({ result }: CekResiResultProps) {
             <span className="text-[9px] uppercase font-extrabold tracking-widest text-neutral-450 dark:text-zinc-500 block mb-0.5">Layanan</span>
             <span className="font-bold text-neutral-700 dark:text-zinc-300 uppercase">{summary.service || "Regular"}</span>
           </div>
+        </div>
+
+        {/* WhatsApp Share Button */}
+        <div className="border-t border-neutral-100 dark:border-zinc-800/80 pt-4">
+          <button
+            type="button"
+            onClick={handleShareWa}
+            className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-extrabold rounded-xl transition-all duration-200 cursor-pointer shadow-sm shadow-emerald-600/10"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984a9.96 9.96 0 0 0 1.37 5.054L2 22l5.138-1.348a9.936 9.936 0 0 0 4.87 1.272h.004c5.505 0 9.99-4.478 9.99-9.984C22.007 6.478 17.521 2 12.012 2zm6.09 14.12c-.25.706-1.464 1.379-2.023 1.466-.497.078-1.144.139-3.327-.767-2.793-1.161-4.577-3.99-4.717-4.178-.14-.188-1.127-1.498-1.127-2.859 0-1.361.713-2.029.967-2.302.253-.274.554-.343.74-.343.185 0 .37.002.532.01.169.008.397-.064.62.474.228.552.78 1.902.848 2.04.068.138.113.3.02.485-.091.188-.137.3-.272.457-.137.156-.289.349-.413.468-.137.13-.28.27-.12.544.16.273.71 1.171 1.523 1.892.657.581 1.212.76 1.523.888.31.13.493.109.676-.1.183-.21.782-.906.993-1.214.21-.309.423-.258.713-.15.29.109 1.843.869 2.161 1.028.318.158.53.238.607.366.077.129.077.747-.174 1.454z" />
+            </svg>
+            Bagikan Status ke WhatsApp
+          </button>
         </div>
       </div>
 
