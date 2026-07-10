@@ -48,7 +48,7 @@ export default function BookSwitcher() {
         >
           <div className="flex items-center gap-1 text-xs">
             <span>📦</span>
-            <span>Ready Stok</span>
+            <span>Ready</span>
           </div>
         </button>
 
@@ -63,7 +63,7 @@ export default function BookSwitcher() {
         >
           <div className="flex items-center gap-1 text-xs">
             <span>🔍</span>
-            <span>Cari Model HP</span>
+            <span>Cari</span>
           </div>
         </button>
 
