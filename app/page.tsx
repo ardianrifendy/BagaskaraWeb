@@ -78,47 +78,6 @@ export default async function Home({ searchParams }: PageProps) {
         </div>
       </header>
 
-      {/* Hero Section (Max ½ HP screen height, optimized for mobile) */}
-      <section className="w-full bg-white dark:bg-zinc-900/50 border-b border-neutral-100 dark:border-zinc-800/80 px-4 py-8 text-center flex flex-col items-center justify-center transition-colors duration-200">
-        <div className="max-w-xl mx-auto">
-          {/* Marketplace Badges / Trust Signal */}
-          <div className="inline-flex items-center gap-2 bg-neutral-100 dark:bg-zinc-800/80 px-3 py-1 rounded-full mb-3">
-            <span className="text-amber-500 text-xs">⭐️ 4.9/5.0</span>
-            <span className="w-1 h-1 rounded-full bg-neutral-305 dark:bg-zinc-650" />
-            <span className="text-neutral-500 dark:text-zinc-400 text-[10px] md:text-xs font-semibold">Gresik Trust Seller</span>
-          </div>
-
-          <h1 className="text-2xl md:text-3xl font-black tracking-tight text-neutral-900 dark:text-zinc-100 leading-tight">
-            Cari HP Murah & Bergaransi di Gresik
-          </h1>
-          <p className="text-xs md:text-sm text-neutral-500 dark:text-zinc-400 mt-2 max-w-sm mx-auto">
-            Bisa COD area Gresik kota, atau datang langsung ke toko fisik kami. Transaksi aman, barang siap pakai.
-          </p>
-
-          {/* Quick Features List */}
-          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 mt-4 text-[10px] md:text-xs font-bold text-neutral-600 dark:text-zinc-400">
-            <span className="flex items-center gap-1">
-              <svg className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-              </svg>
-              Garansi Toko
-            </span>
-            <span className="flex items-center gap-1">
-              <svg className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-              </svg>
-              Bisa COD Gresik
-            </span>
-            <span className="flex items-center gap-1">
-              <svg className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-              </svg>
-              Quality Check Ketat
-            </span>
-          </div>
-        </div>
-      </section>
-
       {/* Filter & Budget picker area */}
       <div className="w-full">
         <Suspense fallback={<div className="h-16 bg-white dark:bg-black border-b border-neutral-100 dark:border-zinc-800/80 animate-pulse" />}>

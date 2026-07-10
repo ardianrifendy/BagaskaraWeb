@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { siteConfig } from "../config/site";
 import Logo from "./Logo";
 
 const BUDGET_OPTIONS = [
@@ -73,11 +72,33 @@ export default function WelcomeModal() {
             <Logo />
           </div>
           <h2 className="text-xl md:text-2xl font-black text-neutral-900 dark:text-zinc-100 tracking-tight mt-2">
-            Selamat Datang di {siteConfig.name}
+            Selamat Datang di Bagaskara Cell
           </h2>
           <p className="text-xs md:text-sm text-neutral-500 dark:text-zinc-400 leading-relaxed max-w-sm">
-            Temukan handphone & tablet berkualitas, bergaransi, dan siap COD di Gresik. Silakan pilih budget Anda untuk menyaring produk secara instan:
+            Temukan smartphone dan tablet berkualitas dengan garansi resmi. Pilih rentang harga untuk mulai mencari produk yang sesuai.
           </p>
+          
+          {/* Trust Badges */}
+          <div className="flex flex-wrap justify-center gap-x-3 gap-y-1.5 mt-3 text-[10px] md:text-xs font-bold text-neutral-600 dark:text-zinc-400">
+            <span className="flex items-center gap-1">
+              <svg className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" />
+              </svg>
+              Garansi Resmi
+            </span>
+            <span className="flex items-center gap-1">
+              <svg className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" />
+              </svg>
+              Quality Check
+            </span>
+            <span className="flex items-center gap-1">
+              <svg className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" />
+              </svg>
+              Siap Kirim
+            </span>
+          </div>
         </div>
 
         {/* Budget Selection Options */}
