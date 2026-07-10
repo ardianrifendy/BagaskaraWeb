@@ -40,7 +40,7 @@ npm install
 ```bash
 npm run dev
 ```
-Buka [http://localhost:3000](http://localhost:3000) untuk melihat web katalog secara lokal, atau [http://localhost:3000/stok](http://localhost:3000/stok) untuk mengelola stok secara visual.
+Buka [http://localhost:3000](http://localhost:3000) (Lokal) atau [https://bagaskaracell.net](https://bagaskaracell.net) (Produksi) untuk melihat web katalog. Untuk mengelola stok secara visual, buka [http://localhost:3000/stok](http://localhost:3000/stok) atau [https://bagaskaracell.net/stok](https://bagaskaracell.net/stok).
 
 ### 3. Jalankan Linter & Type Check
 ```bash
@@ -61,7 +61,7 @@ npm run build
 ## 🔄 Cara Pembaruan & Manajemen Stok
 
 ### Metode A: Melalui Dashboard Web Visual (Sangat Direkomendasikan)
-1. Buka [http://localhost:3000/stok](http://localhost:3000/stok) di browser.
+1. Buka [https://bagaskaracell.net/stok](https://bagaskaracell.net/stok) (atau [http://localhost:3000/stok](http://localhost:3000/stok) jika lokal) di browser.
 2. Masukkan PIN keamanan toko: `bagaskara`.
 3. Anda dapat mencari HP, menambah HP baru, menambah varian, dan mengubah status stok menjadi **Ready** atau **Habis** dengan sekali klik.
 

@@ -19,7 +19,9 @@ Folder ini berisi 2 database SQLite terpisah untuk memisahkan stok fisik toko An
 Anda dapat memperbarui status stok produk (mengubah status menjadi **Tersedia** atau **Habis**) dengan cara berikut:
 
 ### Metode A: Melalui Dashboard Web Visual (Sangat Direkomendasikan & Paling Mudah)
-1. Buka halaman dashboard stok di browser Anda: [http://localhost:3000/stok](http://localhost:3000/stok)
+1. Buka halaman dashboard stok di browser Anda:
+   * **Lokal:** [http://localhost:3000/stok](http://localhost:3000/stok)
+   * **Produksi (Live):** [https://bagaskaracell.net/stok](https://bagaskaracell.net/stok)
 2. Masukkan PIN keamanan toko Anda (default: `bagaskara`).
 3. Anda akan masuk ke dashboard visual yang sangat ramah pengguna:
    * **Cari HP:** Gunakan bilah pencarian real-time untuk menemukan unit dengan cepat.

@@ -33,11 +33,15 @@ Dokumen ini mencatat pekerjaan yang sudah selesai dikerjakan pada sesi ini dan l
 * **Dashboard Admin Web Visual (`/stok`):** Membuat halaman manajemen stok visual di route `/stok` dengan fitur input PIN keamanan, pencarian produk real-time, penambahan produk baru (merek, nama, kondisi, kelengkapan, garansi, catatan minus), pengelolaan varian (warna, kapasitas, harga), serta **tombol toggle satu klik** untuk memperbarui status stok (Ready vs Habis) secara visual dan instan pada `owner.db`.
 * **Remote Patterns:** Mendaftarkan domain `cdnpro.eraspace.com` ke dalam remotePatterns pada `next.config.ts` untuk optimasi gambar produk Next.js (`next/image`).
 
+### 5. Deployment & Production Setup
+* **Vercel Deployment:** Berhasil melakukan deployment production-ready ke platform Vercel dengan penyesuaian region serverless function ke Singapore (`sin1`) untuk responsivitas optimal.
+* **Custom Domain:** Menghubungkan domain kustom **`bagaskaracell.net`** ke platform Vercel.
+* **Database & WAL Mode:** Melakukan split database (`owner.db` & `erafone.db`) dan mengubah mode jurnal SQLite menjadi `DELETE` agar kompatibel secara penuh untuk dibaca secara read-only dalam lingkungan serverless Vercel.
+
 ---
 
 ## 🚀 Yang Harus Dilakukan Selanjutnya (Next Steps / TODO)
 
-1. **Deploy ke Vercel (Fase 1 Production):**
-   * Pastikan database SQLite lokal dipack/disalin ke dalam file server serverless jika database offline tetap digunakan, atau migrasikan database ke cloud database (seperti Turso/LibSQL Cloud) untuk deployment production di Vercel agar data bersifat dinamis dan persisten.
-2. **Uji Coba Scraping Berkala:**
+1. **Uji Coba Scraping Berkala:**
    * Jalankan scraper berkala untuk memperbarui stok atau harga unit terbaru dari Erafone, kemudian jalankan kembali `npm run import-csv` untuk menyinkronkan data terbaru.
+

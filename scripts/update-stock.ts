@@ -27,7 +27,7 @@ async function main() {
     const keyword = await ask("Cari nama HP (contoh: 'Redmi Note 13' atau kosongkan untuk semua): ");
     
     let query = "SELECT id, name, brand, 0 as isErafone FROM products";
-    let args: any[] = [];
+    let args: string[] = [];
     if (keyword) {
       query += " WHERE name LIKE ? OR brand LIKE ?";
       args = [`%${keyword}%`, `%${keyword}%`];

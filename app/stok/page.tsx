@@ -78,6 +78,7 @@ export default function StokManagerPage() {
   useEffect(() => {
     const auth = localStorage.getItem("bagaskara_stok_auth");
     if (auth === "true") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsAuthenticated(true);
     } else {
       setIsAuthenticated(false);
@@ -494,7 +495,7 @@ export default function StokManagerPage() {
                       <div className="flex flex-col gap-2.5">
                         {variants.length === 0 ? (
                           <div className="text-center py-6">
-                            <span className="text-xs text-neutral-400 font-semibold">HP ini belum memiliki varian. Klik "Tambah Varian" untuk memulai.</span>
+                            <span className="text-xs text-neutral-400 font-semibold">{"HP ini belum memiliki varian. Klik \"Tambah Varian\" untuk memulai."}</span>
                           </div>
                         ) : (
                           variants.map((v) => {

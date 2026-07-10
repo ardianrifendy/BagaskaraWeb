@@ -14,7 +14,7 @@ export async function getOwnerProducts(searchQuery: string = "") {
       FROM products p
       LEFT JOIN variants v ON p.id = v.productId
     `;
-    let args: any[] = [];
+    let args: string[] = [];
     if (searchQuery) {
       sql += " WHERE p.name LIKE ? OR p.brand LIKE ?";
       args = [`%${searchQuery}%`, `%${searchQuery}%`];
@@ -109,9 +109,10 @@ export async function saveProduct(data: {
     revalidatePath("/");
     revalidatePath("/stok");
     return { success: true, productId: id };
-  } catch (err: any) {
+  } catch (err) {
     console.error("Error saveProduct:", err);
-    return { success: false, error: err.message || "Gagal menyimpan produk" };
+    const message = err instanceof Error ? err.message : "Gagal menyimpan produk";
+    return { success: false, error: message };
   }
 }
 
@@ -122,9 +123,10 @@ export async function deleteProduct(id: string) {
     revalidatePath("/");
     revalidatePath("/stok");
     return { success: true };
-  } catch (err: any) {
+  } catch (err) {
     console.error("Error deleteProduct:", err);
-    return { success: false, error: err.message };
+    const message = err instanceof Error ? err.message : "Gagal menghapus produk";
+    return { success: false, error: message };
   }
 }
 
@@ -174,9 +176,10 @@ export async function saveVariant(data: {
     revalidatePath("/");
     revalidatePath("/stok");
     return { success: true };
-  } catch (err: any) {
+  } catch (err) {
     console.error("Error saveVariant:", err);
-    return { success: false, error: err.message || "Gagal menyimpan varian" };
+    const message = err instanceof Error ? err.message : "Gagal menyimpan varian";
+    return { success: false, error: message };
   }
 }
 
@@ -197,8 +200,9 @@ export async function deleteVariant(id: string, productId: string) {
     revalidatePath("/");
     revalidatePath("/stok");
     return { success: true };
-  } catch (err: any) {
+  } catch (err) {
     console.error("Error deleteVariant:", err);
-    return { success: false, error: err.message };
+    const message = err instanceof Error ? err.message : "Gagal menghapus varian";
+    return { success: false, error: message };
   }
 }

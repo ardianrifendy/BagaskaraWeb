@@ -24,6 +24,7 @@ export default function WelcomeModal() {
     // Check if user has already visited in this session/browser
     const hasVisited = localStorage.getItem("bagaskara-welcome-shown");
     if (!hasVisited) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsOpen(true);
     }
   }, []);

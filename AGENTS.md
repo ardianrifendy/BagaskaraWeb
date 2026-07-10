@@ -7,9 +7,9 @@ Instruksi untuk AI coding agents (Claude Code, Copilot, Cursor, Codex, dll) yang
 Katalog HP mobile-first untuk toko retail Bagaskara Cell. Customer memfilter stok berdasarkan **budget**, melihat spesifikasi, lalu menghubungi owner via **tombol WhatsApp pre-filled**. Bukan e-commerce — tidak ada checkout/pembayaran.
 
 - Framework: **Next.js (App Router) + TypeScript + Tailwind CSS**
-- Deploy: **Vercel**
-- Data Fase 1: `data/products.json` (belum ada database)
-- Dokumen acuan: `IMPLEMENTATION.md` (roadmap & fase), `CLAUDE.md` (konvensi detail)
+- Deploy: **Vercel** (Live: `https://bagaskaracell.net`)
+- Data: **Split SQLite Databases** (`database/owner.db` & `database/erafone.db`)
+- Dokumen acuan: `docs/IMPLEMENTATION.md` (roadmap & fase), `AGENTS.md` (konvensi detail)
 
 ## Setup & Perintah
 
@@ -19,13 +19,15 @@ npm run dev          # dev server di localhost:3000
 npm run build        # production build
 npm run lint         # eslint
 npx tsc --noEmit     # type check
+npm run import-csv   # import hasil scraping
+npm run update-stock # CLI Stock Manager
 ```
 
 ## Aturan Wajib untuk Agent
 
 ### Sebelum coding
-- Baca `IMPLEMENTATION.md` dan pastikan task yang diminta sesuai **fase aktif**. Jangan mengerjakan fitur Fase 2/3 (database, admin, compare) saat project masih Fase 1, kecuali diminta eksplisit.
-- **Ikuti Pipeline Pengerjaan (`IMPLEMENTATION.md` §5) secara berurutan**: Step 0 Foundation → Step 1 Kontrak Data → Step 2 Utility → Step 3 Komponen → Step 4 Landing → Step 5 Detail → Step 6 Responsive → Step 7 SEO/Deploy → Step 8 UAT. Jangan memulai step baru sebelum exit criteria step sebelumnya terpenuhi.
+- Baca `docs/IMPLEMENTATION.md` dan pastikan task yang diminta sesuai **fase aktif**. Jangan mengerjakan fitur Fase 2/3 (database, admin, compare) saat project masih Fase 1, kecuali diminta eksplisit.
+- **Ikuti Pipeline Pengerjaan (`docs/IMPLEMENTATION.md` §5) secara berurutan**: Step 0 Foundation → Step 1 Kontrak Data → Step 2 Utility → Step 3 Komponen → Step 4 Landing → Step 5 Detail → Step 6 Responsive → Step 7 SEO/Deploy → Step 8 UAT. Jangan memulai step baru sebelum exit criteria step sebelumnya terpenuhi.
 - Jangan menambah scope. Jika task ambigu, pilih interpretasi paling sederhana yang memenuhi kebutuhan.
 
 ### Saat coding
@@ -46,13 +48,16 @@ npx tsc --noEmit     # type check
 ## Struktur Direktori
 
 ```
-app/            # routes (App Router)
-components/     # komponen React, PascalCase
-data/           # products.json (Fase 1)
-types/          # TypeScript interfaces
-lib/            # util: formatRupiah, buildWaLink, filterProducts
-config/         # site.ts — identitas toko
-public/images/  # foto produk
+app/             # routes (App Router) termasuk /stok
+components/      # komponen React, PascalCase
+database/        # berkas database SQLite (owner.db, erafone.db)
+docs/            # dokumentasi (IMPLEMENTATION.md, progress.md)
+types/           # TypeScript interfaces
+lib/             # util: formatRupiah, buildWaLink, filterProducts, db
+config/          # site.ts — identitas toko, siteConfig
+public/images/   # foto produk & aset logo
+scripts/         # skrip pengembang (seeding, stock CLI manager, importer CSV)
+erafone_scraper/ # berkas python scraper dan dependensinya
 ```
 
 ## Pola Penting

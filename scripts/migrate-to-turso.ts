@@ -1,4 +1,4 @@
-import { createClient } from "@libsql/client";
+import { createClient, Client } from "@libsql/client";
 import path from "path";
 
 const OWNER_URL = process.argv[2];
@@ -27,7 +27,7 @@ const remoteErafone = createClient({
   authToken: ERAFONE_TOKEN
 });
 
-async function migrateDb(local: any, remote: any, dbName: string) {
+async function migrateDb(local: Client, remote: Client, dbName: string) {
   console.log(`Memulai migrasi untuk ${dbName}...`);
 
   // Create tables on remote if they don't exist
