@@ -40,7 +40,7 @@ export default function BookSwitcher() {
         {/* Tab 1: Stok Ready Toko */}
         <button
           onClick={() => handleBookChange("ready")}
-          className={`flex-1 py-2 px-1 flex flex-col items-center justify-center gap-0.5 rounded-lg z-10 cursor-pointer transition-colors duration-200 ${
+          className={`flex-1 py-3 px-1 flex items-center justify-center gap-1 rounded-lg z-10 cursor-pointer transition-colors duration-200 ${
             activeBook === "ready"
               ? "text-orange-600 dark:text-orange-450 font-black"
               : "text-neutral-500 dark:text-zinc-400 hover:text-neutral-700 dark:hover:text-zinc-200 font-bold"
@@ -50,15 +50,12 @@ export default function BookSwitcher() {
             <span>📦</span>
             <span>Ready Stok</span>
           </div>
-          <span className="text-[8px] opacity-75 font-semibold leading-none">
-            Siap Kirim
-          </span>
         </button>
 
         {/* Tab 2: Katalog Erafone */}
         <button
           onClick={() => handleBookChange("erafone")}
-          className={`flex-1 py-2 px-1 flex flex-col items-center justify-center gap-0.5 rounded-lg z-10 cursor-pointer transition-colors duration-200 ${
+          className={`flex-1 py-3 px-1 flex items-center justify-center gap-1 rounded-lg z-10 cursor-pointer transition-colors duration-200 ${
             activeBook === "erafone"
               ? "text-orange-600 dark:text-orange-450 font-black"
               : "text-neutral-500 dark:text-zinc-400 hover:text-neutral-700 dark:hover:text-zinc-200 font-bold"
@@ -68,9 +65,6 @@ export default function BookSwitcher() {
             <span>🔍</span>
             <span>Cari Model HP</span>
           </div>
-          <span className="text-[8px] opacity-75 font-semibold leading-none">
-            Indent 1-3 Hari
-          </span>
         </button>
 
       </div>

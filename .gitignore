@@ -45,3 +45,11 @@ next-env.d.ts
 # Scraper scratch directory
 erafone_scraper/scratch/
 
+# Scraped images
+/images/
+
+# Scraper generated catalogs
+/katalog_*.csv
+/katalog_*.xlsx
+
+
