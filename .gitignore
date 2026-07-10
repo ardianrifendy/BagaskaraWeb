@@ -47,7 +47,6 @@ erafone_scraper/scratch/
 
 # Scraped images
 /images/
-/public/images/*/
 
 # Scraper generated catalogs
 /katalog_*.csv
