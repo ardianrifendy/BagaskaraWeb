@@ -8,6 +8,7 @@ import Badge from "./Badge";
 import PriceTag from "./PriceTag";
 import WhatsAppButton from "./WhatsAppButton";
 import imageBgs from "../config/image_bgs.json";
+import { getLocalImageSrc } from "../lib/imageResolver";
 
 interface ProductDetailsProps {
   product: Product;
@@ -67,7 +68,7 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
   const defaultVariant = product.variants.find(v => v.stock === "ready") || product.variants[0];
   const [activeVariant, setActiveVariant] = useState<Variant>(defaultVariant);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [imgError, setImgError] = useState(false);
+  const [failedPaths, setFailedPaths] = useState<Record<string, boolean>>({});
 
   // Specs accordion state: open all groups by default
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
@@ -140,7 +141,6 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
     if (target) {
       setActiveVariant(target);
       setActiveImageIndex(0);
-      setImgError(false);
     }
   };
 
@@ -159,13 +159,37 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
     if (target) {
       setActiveVariant(target);
       setActiveImageIndex(0);
-      setImgError(false);
     }
   };
 
-  const activeImage = imgError || !activeVariant?.images?.[activeImageIndex]
-    ? "/file.svg"
-    : activeVariant.images[activeImageIndex];
+  const remoteUrl = activeVariant?.images?.[activeImageIndex];
+  const localImageSrc = (remoteUrl && activeVariant)
+    ? getLocalImageSrc(
+        product.brand,
+        product.name,
+        activeVariant.color,
+        activeVariant.skuInduk,
+        activeImageIndex,
+        remoteUrl
+      )
+    : undefined;
+
+  let activeImage = "/file.svg";
+  if (remoteUrl) {
+    if (localImageSrc && !failedPaths[localImageSrc]) {
+      activeImage = localImageSrc;
+    } else if (!failedPaths[remoteUrl]) {
+      activeImage = remoteUrl;
+    }
+  }
+
+  const handleImageError = () => {
+    if (localImageSrc && activeImage === localImageSrc) {
+      setFailedPaths(prev => ({ ...prev, [localImageSrc]: true }));
+    } else if (remoteUrl && activeImage === remoteUrl) {
+      setFailedPaths(prev => ({ ...prev, [remoteUrl]: true }));
+    }
+  };
 
   return (
     <div className={`max-w-4xl mx-auto px-4 py-6 flex flex-col gap-6 ${isModal ? "dark:bg-black" : ""}`}>
@@ -204,7 +228,7 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
             bgType === "black" ? "bg-black" : "bg-white"
           }`}>
             
-            {activeVariant?.images?.[activeImageIndex] && !imgError ? (
+            {activeImage !== "/file.svg" ? (
               <Image
                 src={activeImage}
                 alt={`${product.name} - ${activeVariant.color}`}
@@ -212,7 +236,7 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
                 priority
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-contain p-4"
-                onError={() => setImgError(true)}
+                onError={handleImageError}
               />
             ) : (
               <div className="flex flex-col items-center justify-center text-neutral-300 dark:text-zinc-700 gap-1.5">
@@ -229,6 +253,30 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
             <div className="flex gap-2 overflow-x-auto pb-1">
               {activeVariant.images.map((img, idx) => {
                 const isActive = activeImageIndex === idx;
+                const localThumbSrc = getLocalImageSrc(
+                  product.brand,
+                  product.name,
+                  activeVariant.color,
+                  activeVariant.skuInduk,
+                  idx,
+                  img
+                );
+
+                let thumbSrc = img;
+                if (localThumbSrc && !failedPaths[localThumbSrc]) {
+                  thumbSrc = localThumbSrc;
+                } else if (failedPaths[img]) {
+                  thumbSrc = "/file.svg";
+                }
+
+                const handleThumbError = () => {
+                  if (localThumbSrc && thumbSrc === localThumbSrc) {
+                    setFailedPaths(prev => ({ ...prev, [localThumbSrc]: true }));
+                  } else if (img && thumbSrc === img) {
+                    setFailedPaths(prev => ({ ...prev, [img]: true }));
+                  }
+                };
+
                 return (
                   <button
                     key={idx}
@@ -240,11 +288,12 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
                     }`}
                   >
                     <Image
-                      src={img}
+                      src={thumbSrc}
                       alt={`${product.name} thumb ${idx}`}
                       fill
                       sizes="64px"
                       className="object-contain p-1"
+                      onError={handleThumbError}
                     />
                   </button>
                 );
@@ -525,6 +574,19 @@ export default function ProductDetails({ product, isModal = false, onClose }: Pr
               );
             })}
           </div>
+        </div>
+      )}
+
+      {/* Product Description */}
+      {product.description && (
+        <div className="bg-white dark:bg-black p-6 md:p-8 rounded-3xl border border-neutral-100 dark:border-zinc-800 shadow-sm mt-6">
+          <span className="text-xs text-neutral-400 dark:text-zinc-500 font-extrabold uppercase tracking-wider border-b border-neutral-100 dark:border-zinc-800 pb-2.5 mb-4 block">
+            Deskripsi Produk
+          </span>
+          <div 
+            className="product-description text-sm text-neutral-750 dark:text-zinc-300 leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: product.description }}
+          />
         </div>
       )}
 

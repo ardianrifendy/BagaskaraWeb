@@ -142,8 +142,8 @@ async function main() {
 
       await dbErafone.execute({
         sql: `
-          INSERT INTO products (id, brand, name, condition, specSummary, specs, highlights, warranty, completeness, defects, createdAt, isScraped)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+          INSERT INTO products (id, brand, name, condition, specSummary, specs, highlights, warranty, completeness, defects, createdAt, isScraped, description)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
           ON CONFLICT(id) DO UPDATE SET
             brand=excluded.brand,
             name=excluded.name,
@@ -154,7 +154,8 @@ async function main() {
             warranty=excluded.warranty,
             completeness=excluded.completeness,
             defects=excluded.defects,
-            isScraped=1
+            isScraped=1,
+            description=excluded.description
         `,
         args: [
           productId,
@@ -167,7 +168,8 @@ async function main() {
           r.warranty || "Garansi Resmi",
           r.completeness || "Fullset",
           r.defects || "[]",
-          r.createdAt || new Date().toISOString()
+          r.createdAt || new Date().toISOString(),
+          r.description || ""
         ]
       });
     }
@@ -196,8 +198,8 @@ async function main() {
 
       await dbErafone.execute({
         sql: `
-          INSERT INTO variants (id, productId, color, colorHex, storage, price, strikePrice, stock, images)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          INSERT INTO variants (id, productId, color, colorHex, storage, price, strikePrice, stock, images, skuInduk)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           ON CONFLICT(id) DO UPDATE SET
             productId=excluded.productId,
             color=excluded.color,
@@ -206,7 +208,8 @@ async function main() {
             price=excluded.price,
             strikePrice=excluded.strikePrice,
             stock=excluded.stock,
-            images=excluded.images
+            images=excluded.images,
+            skuInduk=excluded.skuInduk
         `,
         args: [
           r.variantId,
@@ -217,7 +220,8 @@ async function main() {
           price,
           strikePrice,
           stock,
-          imagesJson
+          imagesJson,
+          r.SKU_Induk || ""
         ]
       });
       successCount++;

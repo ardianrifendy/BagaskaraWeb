@@ -75,6 +75,7 @@ function safeJsonParse<T>(jsonStr: string, fallback: T): T {
 interface DBVariantRow {
   id: string;
   productId: string;
+  skuInduk?: string;
   color: string;
   colorHex: string;
   storage: string;
@@ -190,6 +191,7 @@ export async function getFilteredProducts(params: FilterParams): Promise<Product
         return {
           id: vRow.id,
           productId: vRow.productId,
+          skuInduk: vRow.skuInduk,
           color: vRow.color,
           colorHex: vRow.colorHex,
           storage: vRow.storage,
@@ -213,6 +215,7 @@ export async function getFilteredProducts(params: FilterParams): Promise<Product
         defects: safeJsonParse<string[]>(row.defects as string, []),
         createdAt: row.createdAt as string,
         isScraped: row.isScraped !== undefined ? Number(row.isScraped) : undefined,
+        description: row.description ? (row.description as string) : undefined,
         variants
       });
     }
@@ -258,6 +261,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       return {
         id: vRow.id,
         productId: vRow.productId,
+        skuInduk: vRow.skuInduk,
         color: vRow.color,
         colorHex: vRow.colorHex,
         storage: vRow.storage,
@@ -281,6 +285,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       defects: safeJsonParse<string[]>(row.defects as string, []),
       createdAt: row.createdAt as string,
       isScraped: row.isScraped !== undefined ? Number(row.isScraped) : undefined,
+      description: row.description ? (row.description as string) : undefined,
       variants
     };
   } catch (error) {
@@ -327,6 +332,7 @@ export async function getFallbackProducts(budgetStr?: string, book?: string): Pr
         return {
           id: vRow.id,
           productId: vRow.productId,
+          skuInduk: vRow.skuInduk,
           color: vRow.color,
           colorHex: vRow.colorHex,
           storage: vRow.storage,
@@ -350,6 +356,7 @@ export async function getFallbackProducts(budgetStr?: string, book?: string): Pr
         defects: safeJsonParse<string[]>(row.defects as string, []),
         createdAt: row.createdAt as string,
         isScraped: row.isScraped !== undefined ? Number(row.isScraped) : undefined,
+        description: row.description ? (row.description as string) : undefined,
         variants
       });
     }

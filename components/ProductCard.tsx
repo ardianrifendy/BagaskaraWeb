@@ -8,6 +8,7 @@ import { Product } from "../types/product";
 import Badge from "./Badge";
 import PriceTag from "./PriceTag";
 import imageBgs from "../config/image_bgs.json";
+import { getLocalImageSrc } from "../lib/imageResolver";
 
 interface ProductCardProps {
   product: Product;
@@ -24,12 +25,36 @@ export default function ProductCard({ product }: ProductCardProps) {
     product.variants[0]
   );
   
-  const [imgError, setImgError] = useState(false);
+  const [failedPaths, setFailedPaths] = useState<Record<string, boolean>>({});
 
-  // Image path (using a default placeholder if not available or failed)
-  const imageUrl = imgError || !cheapestVariant?.images?.[0]
-    ? "/file.svg"
-    : cheapestVariant.images[0];
+  const remoteUrl = cheapestVariant?.images?.[0];
+  const localImageSrc = (remoteUrl && cheapestVariant)
+    ? getLocalImageSrc(
+        product.brand,
+        product.name,
+        cheapestVariant.color,
+        cheapestVariant.skuInduk,
+        0,
+        remoteUrl
+      )
+    : undefined;
+
+  let imageUrl = "/file.svg";
+  if (remoteUrl) {
+    if (localImageSrc && !failedPaths[localImageSrc]) {
+      imageUrl = localImageSrc;
+    } else if (!failedPaths[remoteUrl]) {
+      imageUrl = remoteUrl;
+    }
+  }
+
+  const handleImageError = () => {
+    if (localImageSrc && imageUrl === localImageSrc) {
+      setFailedPaths(prev => ({ ...prev, [localImageSrc]: true }));
+    } else if (remoteUrl && imageUrl === remoteUrl) {
+      setFailedPaths(prev => ({ ...prev, [remoteUrl]: true }));
+    }
+  };
 
   // Build dynamic URL preserving current search filters, only adding the active product slug
   const params = new URLSearchParams(searchParams.toString());
@@ -55,14 +80,14 @@ export default function ProductCard({ product }: ProductCardProps) {
           bgType === "black" ? "bg-black" : "bg-white"
         }`}>
           {/* Product Image */}
-          {cheapestVariant?.images?.[0] && !imgError ? (
+          {imageUrl !== "/file.svg" ? (
             <Image
               src={imageUrl}
               alt={`${product.name} - ${cheapestVariant.color}`}
               fill
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
               className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
-              onError={() => setImgError(true)}
+              onError={handleImageError}
               priority={false}
             />
           ) : (

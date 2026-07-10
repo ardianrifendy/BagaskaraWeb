@@ -12,11 +12,13 @@ export interface Product {
   defects?: string[];      // minus untuk barang second
   createdAt: string;       // untuk sort "terbaru" & section "Baru Masuk"
   isScraped?: number;      // 0 for local store, 1 for Erafone PO reference
+  description?: string;    // deskripsi HTML lengkap dari Erafone (opsional)
 }
 
 export interface Variant {
   id: string;
   productId?: string;      // Optional field to map back to product when queried individually
+  skuInduk?: string;       // SKU Induk from Erafone scraper (optional)
   color: string;           // "Midnight Black"
   colorHex: string;        // "#1a1a2e" — untuk swatch
   storage: string;         // "8/256"
