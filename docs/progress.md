@@ -37,6 +37,17 @@ Dokumen ini mencatat pekerjaan yang sudah selesai dikerjakan pada sesi ini dan l
 * **Vercel Deployment:** Berhasil melakukan deployment production-ready ke platform Vercel dengan penyesuaian region serverless function ke Singapore (`sin1`) untuk responsivitas optimal.
 * **Custom Domain:** Menghubungkan domain kustom **`bagaskaracell.net`** ke platform Vercel.
 * **Database & WAL Mode:** Melakukan split database (`owner.db` & `erafone.db`) dan mengubah mode jurnal SQLite menjadi `DELETE` agar kompatibel secara penuh untuk dibaca secara read-only dalam lingkungan serverless Vercel.
+* **Pemberantasan Error Linter & Build:** Memperbaiki semua masalah ESLint (`set-state-in-effect`, unescaped quotes) dan menghapus penggunaan `any` tipe data di seluruh komponen/scripts, memastikan `npx tsc --noEmit` bersih dan `npm run build` sukses 100%.
+
+### 6. Desain Ulang UI & Penyederhanaan Katalog Beranda (Fase UAT)
+* **Pembersihan Section Hero:** Menghapus bagian Hero/Trust bar berulang di halaman utama beranda untuk menghadirkan desain minimalis modern.
+* **Pembaruan Welcome Popup Modal:**
+  * Mengganti subtitle pop-up dengan copy netral yang sopan dan profesional (bebas bahasa lokal-spesifik seperti "Gresik").
+  * Memindahkan 3 trust badge utama ("Garansi Resmi" | "Quality Check" | "Siap Kirim") ke dalam modal selamat datang tepat di bawah subtitle.
+* **Penyederhanaan Kartu Produk (Product Card Grid):**
+  * Meminimalkan muatan kartu katalog beranda agar **HANYA** menampilkan foto produk, brand (Merek), nama tipe unit, serta harga terendah ("Mulai Dari").
+  * Mengeliminasi badge spesifikasi ringkas, pilihan RAM/storage, pilihan warna, dan tombol CTA WhatsApp dari baris kartu beranda (seluruh elemen interaktif ini dipindahkan ke halaman/modal detail produk ketika kartu diklik).
+  * Memastikan seluruh area kartu bertindak sebagai link satu arah ke modal spesifikasi detail unit demi kenyamanan eksplorasi pengguna.
 
 ---
 
