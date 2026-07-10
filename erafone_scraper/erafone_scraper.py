@@ -373,6 +373,15 @@ def attr_val(variant,label):
             return a.get("option_label") or a.get("value")
     return ""
 
+def attr_hex(variant,label):
+    for a in variant.get("attribute",[]):
+        if a.get("attribute_label")==label:
+            val = a.get("value")
+            if val and str(val).startswith("#"):
+                return val
+    return ""
+
+
 # =========================================================================
 # [ MENU ]
 # =========================================================================
@@ -447,6 +456,7 @@ def expand_variants(session,bases,ambil_harga):
             detail=fetch_detail(session,b["url_key"]) if b["url_key"] else None
             desc_data=fetch_description(session,b["url_key"]) if b["url_key"] else None
             short_desc=(desc_data or {}).get("short_description", "")
+            full_desc=(desc_data or {}).get("description", "")
             variants=(detail or {}).get("variants") or []
             link=(PRODUCT_URL_BASE+b["url_key"]) if b["url_key"] else ""
             
@@ -497,6 +507,7 @@ def expand_variants(session,bases,ambil_harga):
                     "specSummary": spec_summary,
                     "specs": specs_json,
                     "highlights": highlights_json,
+                    "description": full_desc,
                     "warranty": "Garansi Resmi",
                     "completeness": "Fullset",
                     "defects": "[]",
@@ -543,6 +554,11 @@ def expand_variants(session,bases,ambil_harga):
                     v_suffix = generate_slug(f"{kap}-{warna}")
                     variantId = f"{productId}-{v_suffix}" if v_suffix else v.get("sku")
                     
+                    # Try to get direct Hex code from variant attributes
+                    hex_color = attr_hex(v, "Warna")
+                    if not hex_color:
+                        hex_color = get_color_hex(warna)
+                    
                     rows.append({
                         # Product fields
                         "productId": productId,
@@ -552,6 +568,7 @@ def expand_variants(session,bases,ambil_harga):
                         "specSummary": spec_summary,
                         "specs": specs_json,
                         "highlights": highlights_json,
+                        "description": full_desc,
                         "warranty": "Garansi Resmi",
                         "completeness": "Fullset",
                         "defects": "[]",
@@ -560,7 +577,7 @@ def expand_variants(session,bases,ambil_harga):
                         # Variant fields
                         "variantId": variantId,
                         "color": warna,
-                        "colorHex": get_color_hex(warna),
+                        "colorHex": hex_color or "#8e8e93",
                         "storage": kap,
                         "price": promo or 0,
                         "strikePrice": strike_price,
@@ -600,6 +617,7 @@ def simple_rows(bases):
             "specSummary": "-",
             "specs": specs_json,
             "highlights": highlights_json,
+            "description": "",
             "warranty": "Garansi Resmi",
             "completeness": "Fullset",
             "defects": "[]",
