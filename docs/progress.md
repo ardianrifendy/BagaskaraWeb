@@ -47,8 +47,8 @@ Dokumen ini mencatat pekerjaan yang sudah selesai dikerjakan pada sesi ini dan l
 * **Penyederhanaan Kartu Produk (Product Card Grid):**
   * Meminimalkan muatan kartu katalog beranda agar **HANYA** menampilkan foto produk, brand (Merek), nama tipe unit, serta harga terendah ("Mulai Dari").
   * Mengeliminasi badge spesifikasi ringkas, pilihan RAM/storage, pilihan warna, dan tombol CTA WhatsApp dari baris kartu beranda.
-* **Relokasi & Layout Filter di Sisi Kanan (Ala Erafone):**
-  * **Tampilan Desktop:** Memindahkan filter (Book Switcher, Budget Picker, Brand/Condition/Status Dropdowns) ke sidebar kanan (`w-[280px] md:sticky`) dengan layout grid `1fr_280px` modern, menyandingkannya di sebelah kanan katalog HP layaknya situs Erafone.
+* **Relokasi & Layout Filter di Sisi Kiri (Ala Erafone):**
+  * **Tampilan Desktop:** Memindahkan filter (Book Switcher, Budget Picker, Brand/Condition/Status Dropdowns) ke sidebar kiri (`w-[280px] md:sticky`) dengan layout grid `280px_1fr` modern, menyandingkannya di sebelah kiri katalog HP layaknya situs Erafone.
   * **Tampilan Mobile:** Menyembunyikan sidebar desktop dan menggantinya dengan menu filter collapsible native (`<details>`) di bagian atas katalog agar tidak memakan ruang gulir vertikal pengguna.
   * **Penyederhanaan Komponen:** Menyederhanakan wrapper dan style BookSwitcher, BudgetPicker, dan FilterChips agar terintegrasi secara modular dan rapi tanpa double borders/nested cards.
 

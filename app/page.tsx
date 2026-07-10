@@ -79,10 +79,10 @@ export default async function Home({ searchParams }: PageProps) {
       </header>
 
       {/* Main Page Layout Container */}
-      <div className="max-w-6xl w-full mx-auto px-4 py-6 flex flex-col md:grid md:grid-cols-[1fr_280px] gap-6 flex-grow items-start">
+      <div className="max-w-6xl w-full mx-auto px-4 py-6 flex flex-col md:grid md:grid-cols-[280px_1fr] gap-6 flex-grow items-start">
         
-        {/* Left column: Search, Sorting, and Product Grid */}
-        <main className="w-full order-2 md:order-1 flex flex-col gap-4">
+        {/* Right column (desktop): Search, Sorting, and Product Grid */}
+        <main className="w-full order-2 md:order-2 flex flex-col gap-4">
           <Suspense fallback={<div className="h-12 w-full bg-white dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-800/80 rounded-xl animate-pulse" />}>
             <SearchSort suggestions={suggestions} />
           </Suspense>
@@ -175,8 +175,8 @@ export default async function Home({ searchParams }: PageProps) {
           )}
         </main>
 
-        {/* Right column: Sticky Filter Panel (hidden on mobile, sticky on desktop) */}
-        <aside className="hidden md:flex w-[280px] shrink-0 order-1 md:order-2 flex-col gap-5 bg-white dark:bg-zinc-900/50 border border-neutral-200/50 dark:border-zinc-800 p-5 rounded-3xl sticky top-20 shadow-sm transition-colors duration-200">
+        {/* Left column (desktop): Sticky Filter Panel (hidden on mobile, sticky on desktop) */}
+        <aside className="hidden md:flex w-[280px] shrink-0 order-1 md:order-1 flex-col gap-5 bg-white dark:bg-zinc-900/50 border border-neutral-200/50 dark:border-zinc-800 p-5 rounded-3xl sticky top-20 shadow-sm transition-colors duration-200">
           <div className="border-b border-neutral-100 dark:border-zinc-800 pb-3 flex items-center justify-between select-none">
             <span className="text-xs font-black uppercase tracking-wider text-neutral-805 dark:text-zinc-205">
               Filter Produk
