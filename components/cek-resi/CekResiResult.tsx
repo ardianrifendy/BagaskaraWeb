@@ -8,30 +8,6 @@ interface CekResiResultProps {
   result: TrackingResult;
 }
 
-// Map hub/airport codes to user-friendly City, Province names
-function formatLocation(loc: string): string {
-  if (!loc) return "";
-  const clean = loc.toUpperCase().trim();
-  
-  if (clean.includes("CERME")) {
-    return "Cerme, Gresik, Jawa Timur";
-  }
-  if (clean.includes("GSK") || clean.includes("GRESIK")) {
-    return "Gresik, Jawa Timur";
-  }
-  if (clean.includes("PKY") || clean.includes("PALANGKARAYA")) {
-    return "Palangkaraya, Kalimantan Tengah";
-  }
-  if (clean.includes("SBY") || clean.includes("SURABAYA")) {
-    return "Surabaya, Jawa Timur";
-  }
-  if (clean.includes("JKT") || clean.includes("JAKARTA")) {
-    return "Jakarta";
-  }
-  
-  return clean.replace(/_/g, " ");
-}
-
 export default function CekResiResult({ result }: CekResiResultProps) {
   const [showHistory, setShowHistory] = useState(false);
   const { summary, detail, history } = result;
@@ -40,71 +16,15 @@ export default function CekResiResult({ result }: CekResiResultProps) {
                       summary.status.toLowerCase().includes("diterima") ||
                       summary.status.toLowerCase().includes("sukses");
 
-  // 1. Resolve Sender & Recipient names
-  const isJnt = summary.courier?.toLowerCase().includes("j&t") || summary.courier?.toLowerCase() === "jnt";
-  
-  let senderName = detail.shipper || "-";
+  // 1. Map Sender & Recipient names directly from BinderByte response
+  const senderName = detail.shipper || "-";
   const receiverName = detail.receiver || summary.receiver || "-";
-  
-  if (isJnt) {
-    // For J&T packages on Bagaskara Cell website:
-    // If BinderByte returned identical shipper and receiver, or if shipper is missing
-    if (detail.shipper === detail.receiver || !detail.shipper) {
-      senderName = "Bagaskara Cell";
-    }
-  }
 
-  // 2. Extract city/district location info from history checkpoints
-  let senderLocation = "";
-  let receiverLocation = "";
+  // 2. Map Origin & Destination locations directly from BinderByte response
+  const resolvedSenderAddr = detail.origin || "-";
+  const resolvedReceiverAddr = detail.destination || "-";
 
-  if (history && history.length > 0) {
-    // Sender location: look at the earliest checkpoint (at the bottom of history)
-    const reversedHistory = [...history].reverse();
-    const receivedCheckpoint = reversedHistory.find(h => 
-      h.desc.toLowerCase().includes("diterima oleh") || 
-      h.desc.toLowerCase().includes("diterima di") ||
-      h.desc.toLowerCase().includes("manifest") ||
-      h.desc.toLowerCase().includes("drop point")
-    );
-
-    if (receivedCheckpoint) {
-      const match = receivedCheckpoint.desc.match(/(?:diterima oleh|diterima di|oleh|di)\s+([A-Z0-9_]+)/i);
-      senderLocation = match ? match[1] : "";
-    }
-
-    // Receiver location: look at the latest checkpoint description
-    const destinationCheckpoint = history.find(h => 
-      h.desc.toLowerCase().includes("dikirimkan ke") || 
-      h.desc.toLowerCase().includes("menuju") ||
-      h.desc.toLowerCase().includes("gateway")
-    );
-
-    if (destinationCheckpoint) {
-      const match = destinationCheckpoint.desc.match(/(?:ke|menuju)\s+([A-Z0-9_]+)/i);
-      receiverLocation = match ? match[1] : "";
-    }
-  }
-
-  // Format resolved addresses using the mapping helper
-  let resolvedSenderAddr = formatLocation(senderLocation) || "Cerme, Gresik, Jawa Timur";
-  let resolvedReceiverAddr = "";
-
-  if (isJnt) {
-    // For J&T, detail.origin contains recipient's company/address details (e.g. Wira Toyota)
-    // and receiverLocation contains the destination city (e.g. PKY GATEWAY -> Palangkaraya)
-    const city = formatLocation(receiverLocation) || "Palangkaraya, Kalimantan Tengah";
-    if (detail.origin && detail.origin !== receiverName) {
-      resolvedReceiverAddr = `${detail.origin} (${city})`;
-    } else {
-      resolvedReceiverAddr = city;
-    }
-  } else {
-    resolvedSenderAddr = formatLocation(senderLocation) || formatLocation(detail.origin) || "Asal";
-    resolvedReceiverAddr = formatLocation(receiverLocation) || formatLocation(detail.destination) || "Tujuan";
-  }
-
-  // 3. Format package weight (convert 800 grams to 0.8 Kg if it is >= 100)
+  // 3. Format package weight
   let weightStr = "-";
   if (summary.weight) {
     const w = parseFloat(summary.weight.toString());
