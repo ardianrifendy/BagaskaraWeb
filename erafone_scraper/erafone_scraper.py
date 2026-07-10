@@ -44,11 +44,10 @@ SIZE        = 30
 PRODUCT_URL_BASE = "https://eraspace.com/erafone/"
 
 CATEGORIES = {
-    "1": (7413, "Semua Device (HP+Tablet+Laptop+Mac) [*]"),
-    "2": (7422, "Smartphone"), "3": (7423, "AI Phone"), "4": (7424, "Tablet"),
-    "5": (7425, "Laptop"), "6": (7418, "Audio"), "7": (7417, "Wearable"),
-    "8": (7414, "Mobile Accessories"), "9": (7419, "Camera & Video"),
-    "10": (7420, "Consumer Electronics"),
+    "1": (7413, "Gadget & Devices"),
+    "2": (7422, "Smartphone"),
+    "3": (7423, "AI Phone"),
+    "4": (7424, "Tablet"),
 }
 
 HEADERS = {
