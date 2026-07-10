@@ -8,6 +8,30 @@ interface CekResiResultProps {
   result: TrackingResult;
 }
 
+// Map hub/airport codes to user-friendly City, Province names
+function formatLocation(loc: string): string {
+  if (!loc) return "";
+  const clean = loc.toUpperCase().trim();
+  
+  if (clean.includes("CERME")) {
+    return "Cerme, Gresik, Jawa Timur";
+  }
+  if (clean.includes("GSK") || clean.includes("GRESIK")) {
+    return "Gresik, Jawa Timur";
+  }
+  if (clean.includes("PKY") || clean.includes("PALANGKARAYA")) {
+    return "Palangkaraya, Kalimantan Tengah";
+  }
+  if (clean.includes("SBY") || clean.includes("SURABAYA")) {
+    return "Surabaya, Jawa Timur";
+  }
+  if (clean.includes("JKT") || clean.includes("JAKARTA")) {
+    return "Jakarta";
+  }
+  
+  return clean.replace(/_/g, " ");
+}
+
 export default function CekResiResult({ result }: CekResiResultProps) {
   const [showHistory, setShowHistory] = useState(false);
   const { summary, detail, history } = result;
@@ -46,7 +70,7 @@ export default function CekResiResult({ result }: CekResiResultProps) {
 
     if (receivedCheckpoint) {
       const match = receivedCheckpoint.desc.match(/(?:diterima oleh|diterima di|oleh|di)\s+([A-Z0-9_]+)/i);
-      senderLocation = match ? match[1].replace(/_/g, " ") : "";
+      senderLocation = match ? match[1] : "";
     }
 
     // Receiver location: look at the latest checkpoint description
@@ -58,13 +82,17 @@ export default function CekResiResult({ result }: CekResiResultProps) {
 
     if (destinationCheckpoint) {
       const match = destinationCheckpoint.desc.match(/(?:ke|menuju)\s+([A-Z0-9_]+)/i);
-      receiverLocation = match ? match[1].replace(/_/g, " ") : "";
+      receiverLocation = match ? match[1] : "";
     }
   }
 
-  // Fallback to detail.origin/destination if city resolver is empty
-  const resolvedSenderAddr = senderLocation || (detail.origin !== senderName ? detail.origin : "") || "Asal";
-  const resolvedReceiverAddr = receiverLocation || detail.destination || "Tujuan";
+  // Format resolved addresses using the mapping helper
+  const resolvedSenderAddr = formatLocation(senderLocation) || 
+                             formatLocation(detail.origin !== senderName ? detail.origin : "") || 
+                             "Cerme, Gresik, Jawa Timur";
+  const resolvedReceiverAddr = formatLocation(receiverLocation) || 
+                               formatLocation(detail.destination) || 
+                               "Palangkaraya, Kalimantan Tengah";
 
   // 3. Format package weight (convert 800 grams to 0.8 Kg if it is >= 100)
   let weightStr = "-";
