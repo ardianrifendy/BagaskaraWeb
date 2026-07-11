@@ -6,6 +6,20 @@ export interface CategoryEntry {
   keywords: string[];
 }
 
+export const getShopeeGroupLabel = (goxBiasaPct: number): string => {
+  switch (goxBiasaPct) {
+    case 1.0: return 'Grup A';
+    case 2.0: return 'Grup B';
+    case 3.5: return 'Grup C';
+    case 5.5: return 'Grup D';
+    case 6.0: return 'Grup E';
+    case 6.5: return 'Grup F';
+    case 7.5: return 'Grup G';
+    case 8.0: return 'Grup H';
+    default: return 'Grup A';
+  }
+};
+
 export const CATEGORY_DICTIONARY: CategoryEntry[] = [
   // ==================== ELEKTRONIK ====================
   {

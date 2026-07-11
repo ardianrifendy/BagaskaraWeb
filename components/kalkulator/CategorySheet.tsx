@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CATEGORY_DICTIONARY } from '@/lib/kalkulator/detect/keywords';
+import { CATEGORY_DICTIONARY, getShopeeGroupLabel } from '@/lib/kalkulator/detect/keywords';
 
 interface CategorySheetProps {
   isOpen: boolean;
@@ -97,8 +97,16 @@ export const CategorySheet: React.FC<CategorySheetProps> = ({
                 >
                   <div>
                     <div className="text-sm font-extrabold tracking-tight text-neutral-800">{cat.label}</div>
-                    <div className="text-[10px] text-neutral-400 mt-1 font-extrabold">
-                      Admin Reg: {cat.adminPct.regular}% · Mall: {cat.adminPct.mall}% · GOX: {cat.goxPct.biasa}%
+                    <div className="text-[10px] text-neutral-400 mt-1 font-extrabold flex items-center gap-1.5 flex-wrap">
+                      <span className="bg-neutral-100 dark:bg-zinc-800 text-neutral-500 px-1 py-0.5 rounded text-[8px] uppercase tracking-wider font-extrabold border border-neutral-205/70 select-none">
+                        Shopee {getShopeeGroupLabel(cat.goxPct.biasa)}
+                      </span>
+                      <span>·</span>
+                      <span>Admin Reg: {cat.adminPct.regular}%</span>
+                      <span>·</span>
+                      <span>Mall: {cat.adminPct.mall}%</span>
+                      <span>·</span>
+                      <span>GOX: {cat.goxPct.biasa}%</span>
                     </div>
                   </div>
                   {isSelected && (

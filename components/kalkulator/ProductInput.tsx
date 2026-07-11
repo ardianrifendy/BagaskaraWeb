@@ -1,6 +1,6 @@
 import React from 'react';
 import { detectCategory } from '@/lib/kalkulator/detect/detect';
-import { CATEGORY_DICTIONARY } from '@/lib/kalkulator/detect/keywords';
+import { CATEGORY_DICTIONARY, getShopeeGroupLabel } from '@/lib/kalkulator/detect/keywords';
 
 interface ProductInputProps {
   name: string;
@@ -82,14 +82,19 @@ export const ProductInputComponent: React.FC<ProductInputProps> = ({
 
       {/* Status kategori terpilih saat ini */}
       <div className="flex items-center justify-between text-xs bg-neutral-50 p-2.5 rounded-xl border border-neutral-200/80">
-        <div>
+        <div className="flex flex-wrap items-center gap-1.5">
           <span className="font-extrabold text-neutral-400">Kategori Terpilih: </span>
           <span className="font-black text-orange-600 uppercase">{activeCategory?.label || 'Tidak diketahui'}</span>
+          {activeCategory && (
+            <span className="bg-neutral-200/60 text-[9px] font-extrabold text-neutral-500 px-1.5 py-0.5 rounded uppercase tracking-wider select-none">
+              Shopee {getShopeeGroupLabel(activeCategory.goxPct.biasa)}
+            </span>
+          )}
         </div>
         <button
           type="button"
           onClick={onOpenSelector}
-          className="text-orange-600 font-extrabold hover:underline cursor-pointer"
+          className="text-orange-600 font-extrabold hover:underline cursor-pointer flex-shrink-0"
         >
           [ubah]
         </button>
