@@ -91,10 +91,16 @@ export default function CalculatorPage() {
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Logo />
           <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              className="text-xs font-black px-3.5 py-2.5 rounded-xl border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-neutral-50 dark:hover:bg-zinc-750 text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 transition-all flex items-center gap-1.5 shadow-sm shadow-neutral-100 dark:shadow-none cursor-pointer"
+            >
+              🏠 Beranda
+            </Link>
             <button
               type="button"
               onClick={() => setIsSettingsOpen(true)}
-              className="p-2.5 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 hover:text-orange-600 transition-all shadow-sm shadow-neutral-100 flex items-center justify-center cursor-pointer"
+              className="p-2.5 rounded-xl border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-neutral-50 dark:hover:bg-zinc-750 text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 transition-all shadow-sm shadow-neutral-100 dark:shadow-none flex items-center justify-center cursor-pointer"
               title="Pengaturan Profil Toko"
             >
               ⚙️
