@@ -1,0 +1,243 @@
+{
+  "meta": {
+    "platform": "Shopee Indonesia",
+    "currency": "IDR",
+    "scraped_at": "2026-07-11",
+    "notes": "Semua persentase adalah tarif FINAL (sudah termasuk PPN). Shopee dapat mengubah tarif sewaktu-waktu.",
+    "sources": {
+      "biaya_admin_resmi": "https://seller.shopee.co.id/edu/article/15965 (Rincian Biaya Penjual per Kategori Produk, update 25 Feb 2026)",
+      "biaya_admin_umum": "https://seller.shopee.co.id/edu/article/7187/1000",
+      "gox_resmi": "https://seller.shopee.co.id/edu/article/7216 (Rincian Persentase GOX, efektif 2 Mei 2026)",
+      "gox_ketentuan": "https://seller.shopee.co.id/edu/article/27684",
+      "rangkuman_pihak_ketiga": [
+        "https://sotagle.com/artikel/biaya-admin-shopee-per-kategori-produk/",
+        "https://sotagle.com/artikel/biaya-gratis-ongkir-xtra-shopee/",
+        "https://sotagle.com/artikel/biaya-jualan-shopee-rincian-lengkap-seller/"
+      ]
+    },
+    "effective_dates": {
+      "biaya_administrasi": "2026-01-01",
+      "gratis_ongkir_xtra": "2026-05-02",
+      "biaya_proses_pesanan": "2025-07-20",
+      "pre_order_surcharge": "2026-01-01"
+    }
+  },
+
+  "formulas": {
+    "biaya_administrasi": "(harga_asli_produk - diskon_produk - voucher_ditanggung_penjual) * persen_kategori",
+    "biaya_gox": "min((harga_asli_produk - diskon_produk - voucher_ditanggung_penjual) * persen_gox, cap_gox_per_kuantitas)",
+    "biaya_pembayaran_mall": "min((harga_asli_produk - diskon_voucher_penjual) * 0.018, 50000) per kuantitas",
+    "catatan": "Tidak ada biaya yang dikenakan ke ongkir. Biaya admin TIDAK punya batas maksimum per kuantitas. Semua dipotong otomatis saat dana dilepas ke Saldo Penjual."
+  },
+
+  "admin_fee_tiers": {
+    "non_star_dan_star_starplus": [2.50, 4.25, 5.25, 6.50, 6.75, 8.25, 9.00, 9.50, 10.00],
+    "shopee_mall": [2.50, 3.20, 4.20, 4.70, 6.20, 7.20, 7.70, 9.95, 10.20, 10.45, 11.70],
+    "catatan": "Persentase Non-Star dan Star/Star+ identik per kategori. Tarif 10% = 20% lebih rendah dari tarif dasar 12,50%."
+  },
+
+  "admin_fees_regular": {
+    "_seller_types": ["non_star", "star", "star_plus"],
+    "fashion": {
+      "4.25": ["Logam Mulia", "Perhiasan Berharga", "Perhiasan Bayi & Anak (gelang, anting, kalung, cincin)"],
+      "8.25": ["Pakaian Pria (atasan, celana, jaket, dll)", "Pakaian Wanita (atasan, dress, rok, dll)", "Fashion Muslim (mukena, outerwear, pakaian muslim pria/wanita/anak, set)", "Aksesoris Tambahan: Masker"],
+      "9.00": ["Aksesoris Fashion (rambut, anting, cincin, dasi, gelang, ikat pinggang, kacamata, kalung, syal, topi, dll)", "Jam Tangan", "Sepatu Pria", "Sepatu Wanita", "Tas Pria", "Tas Wanita", "Koper & Tas Travel", "Fashion Bayi & Anak (pakaian, sepatu, tas)", "Stocking"],
+      "10.00": ["Kaos Kaki (pria & wanita)", "Baju Olahraga & Baju Renang Muslim", "Tas Duffel"]
+    },
+    "fmcg": {
+      "6.50": ["Telur", "Vitamin & Suplemen Bayi"],
+      "6.75": ["Susu Formula & Makanan Bayi", "Bahan Baking", "Bahan Pokok (beras, mie, pasta, biji-bijian, seafood kering)", "Kebutuhan Memasak", "Makanan Segar & Beku", "Menu Sarapan", "Es Krim"],
+      "8.25": ["Ibu & Bayi (kamar bayi, kesehatan bayi, perlengkapan mandi, mainan umum, set hadiah)", "Susu & Olahan (umum)", "Perawatan & Kecantikan (kosmetik, skincare, parfum, perawatan rambut/tubuh)"],
+      "9.00": ["Popok & Pispot", "Kesehatan Seksual", "Obat & Alat Kesehatan (alat ukur tekanan/gula darah, dll)", "Perawatan Diri (sikat gigi, pasta gigi, pembalut, dll)", "Suplemen Makanan", "Makanan Instan", "Roti & Kue"],
+      "9.50": ["Ibu & Bayi (keamanan bayi, kesehatan kehamilan, pompa ASI, perlengkapan travelling)", "Obat & Alat Kesehatan (OTC, obat tradisional)", "Makanan Ringan (permen, cokelat, biskuit, keripik)", "Bahan Pokok kaleng", "Minuman", "Minuman Alkohol", "Set Hadiah & Hampers"],
+      "10.00": ["Mainan Inflatable & Perosotan", "Hand Sanitizer"]
+    },
+    "elektronik": {
+      "5.25": ["Handphone", "Tablet", "Proyektor & Aksesoris", "Desktop", "Komponen Desktop & Laptop", "Laptop", "Monitor", "Penyimpanan Data", "Printer & Scanner", "Peralatan Kantor"],
+      "6.50": ["Peralatan Listrik Besar (mesin cuci, AC, kipas)", "Perangkat Dapur", "TV & Aksesoris", "Kamera & Lensa & Drone", "Sound Card"],
+      "6.75": ["Earphone/Headphone/Headset", "Aksesoris HP (modem, USB)", "Aksesoris Desktop & Laptop", "Keyboard & Mouse", "Komponen Network", "Software"],
+      "9.00": ["Amplifier & Mixer", "Mikrofon", "Perangkat Audio & Speaker", "Peralatan Listrik (remot, telepon)", "Rokok Elektronik", "Aksesoris Konsol", "Kartu Perdana", "Walkie Talkie"],
+      "9.50": ["Media Player", "Baterai", "Konsol & Video Game", "Perangkat Wearable (smartwatch)", "Kamera Keamanan/CCTV", "Aksesoris Kamera (tripod, gimbal, lighting)"],
+      "10.00": ["Kelistrikan", "Aksesoris HP (casing, charger, tongsis, dll)"]
+    },
+    "lifestyle": {
+      "2.50": ["Mobil (unit)", "Sepeda Motor (unit)"],
+      "6.50": ["Perlengkapan Dapur: Sealer"],
+      "8.25": ["Aksesoris & Suku Cadang Mobil (eksterior/interior/perawatan)", "Aksesoris Motor", "Helm", "Suku Cadang Motor", "Buku Bayi", "Jas Hujan (olahraga)"],
+      "9.00": ["Alat Tulis", "Buku Tulis & Kertas", "Surat-Menyurat", "Buku Bacaan", "E-Book", "Oli & Pelumas Kendaraan", "Souvenir & Hadiah", "Bunga", "Kursi & Bangku", "Perawatan Rumah (tisu, pembersih, detergen)", "Perlengkapan Pesta"],
+      "9.50": ["Perlengkapan Sekolah & Kantor", "Bubble Wrap", "Buku Bacaan (komik/audio)", "Hewan Peliharaan (semua)", "Hobi & Koleksi (musik, koleksi, games)", "Suku Cadang Mobil", "Lampu"],
+      "10.00": ["Perlengkapan Menggambar", "Majalah & Koran", "Perlengkapan Rumah (furniture, dekorasi, kamar mandi/tidur, peralatan makan, dapur, taman, alat pengaman, pertukangan)", "Olahraga & Outdoor (alat, pakaian, sepatu, aksesoris)"]
+    },
+    "lainnya": {
+      "8.25": ["E-Money"],
+      "9.00": ["Gaming"],
+      "9.50": ["Belanja (Ritel)", "Layanan", "Listrik/Gas/Air", "Makanan & Minuman (dine-in/takeaway)", "Shopee (Official, Saldo Iklan)", "Streaming", "Telco (Data, Pulsa)", "Tiket Event", "Travel & Tour"]
+    }
+  },
+
+  "admin_fees_mall": {
+    "_seller_types": ["shopee_mall"],
+    "_biaya_tambahan": "Shopee Mall juga dikenakan Biaya Pembayaran 1,8% terpisah (lihat other_fees.biaya_pembayaran_mall)",
+    "fashion": {
+      "3.20": ["Logam Mulia", "Perhiasan Berharga"],
+      "7.70": ["Anting", "Cincin", "Gelang", "Kalung", "Set Aksesoris", "Aksesoris Tambahan (bros, pin, liontin, manset)"],
+      "9.95": ["Pakaian Pria & Wanita (umum)", "Fashion Muslim (mukena, pakaian muslim)", "Perhiasan Bayi & Anak", "Aksesoris Tambahan (tato, sapu tangan)"],
+      "10.20": ["Aksesoris Rambut", "Dasi", "Ikat Pinggang", "Kacamata", "Syal", "Topi", "Kaos Kaki", "Jam Tangan", "Sepatu Pria/Wanita", "Tas Pria/Wanita", "Koper & Tas Travel", "Fashion Bayi & Anak"],
+      "10.45": ["Aksesoris Tambahan: Masker"],
+      "11.70": ["Baju Olahraga & Renang Muslim", "Tas Duffel"]
+    },
+    "fmcg": {
+      "6.20": ["Bahan Baking", "Bahan Pokok (umum)", "Kebutuhan Memasak (umum)", "Makanan Segar & Beku (umum)", "Telur"],
+      "7.20": ["Kesehatan Bayi", "Perlengkapan Mandi Bayi", "Popok", "Makanan Instan", "Kaldu/Bumbu Instan", "Tahu", "Obat & Alat Kesehatan (alat ukur)", "Perawatan Diri (sikat gigi, dll)", "Suplemen Makanan"],
+      "7.70": ["Kesehatan Seksual", "Obat & Alat Kesehatan (OTC)", "Mainan bayi (balok/puzzle)", "Susu Formula & Makanan Bayi", "Alat Perawatan Bayi"],
+      "9.95": ["Perawatan Diri (pembalut, tampon)", "Makanan Segar & Beku (vegetarian, beku olahan)", "Es Krim", "Perawatan & Kecantikan (seluruh)"],
+      "10.20": ["Ibu & Bayi (kamar bayi, keamanan, travelling, mainan umum)", "Hand Sanitizer", "Makanan Ringan", "Minuman", "Roti & Kue", "Susu & Olahan", "Bahan Pokok kaleng", "Menu Sarapan"],
+      "11.70": ["Mainan Inflatable & Perosotan"]
+    },
+    "elektronik": {
+      "4.20": ["Proyektor & Aksesoris", "Desktop", "Komponen Desktop & Laptop", "Laptop", "Monitor", "Penyimpanan Data", "Printer & Scanner", "Peralatan Kantor"],
+      "4.70": ["Handphone", "Tablet", "Sound Card"],
+      "6.20": ["Peralatan Listrik Kecil (mesin jahit, setrika, purifier)"],
+      "7.20": ["Audio (amplifier, earphone, speaker)", "Peralatan Listrik Besar", "Perangkat Dapur", "TV", "Rokok Elektronik", "Aksesoris Konsol", "Aksesoris HP (modem, USB, powerbank)", "Aksesoris Drone/Lensa/Kamera", "Keyboard & Mouse", "Kartu Perdana"],
+      "7.70": ["Media Player", "Baterai", "Water Heater", "Konsol & Video Game", "Smartwatch", "Kamera Keamanan", "Komponen Network"],
+      "9.95": ["Kabel & Konverter Audio/Video", "Perangkat Wearable (GPS)"],
+      "10.20": ["Kelistrikan", "Aksesoris HP (casing, charger)", "Aksesoris Kamera", "Aksesoris Desktop & Laptop", "Software", "Elektronik/Komputer/Kamera Lainnya"]
+    },
+    "lifestyle": {
+      "2.50": ["Mobil (unit)", "Sepeda Motor (unit)"],
+      "7.20": ["Alat Tulis", "Buku Tulis & Kertas", "Surat-Menyurat", "Buku Bacaan", "E-Book", "Kursi & Bangku", "Minyak Esensial", "Sealer"],
+      "7.70": ["Bubble Wrap", "Perlengkapan Sekolah & Kantor", "Buku Bacaan (komik/audio)", "Hewan Peliharaan (semua)", "Hobi & Koleksi (musik, koleksi, games)", "Lampu"],
+      "9.95": ["Buku Tulis & Kertas: Art Paper"],
+      "10.45": ["Souvenir & Hadiah", "Aksesoris & Suku Cadang Mobil", "Oli & Pelumas", "Aksesoris/Suku Cadang/Helm Motor", "Jas Hujan", "Bunga", "Perlengkapan Pesta"],
+      "11.70": ["Perlengkapan Menggambar", "Majalah & Koran", "Olahraga & Outdoor", "Perlengkapan Rumah (furniture, dekorasi, kamar mandi/tidur, dapur, taman, alat pengaman, pertukangan)"]
+    },
+    "lainnya": {
+      "7.20": ["Gaming"],
+      "7.70": ["Belanja (Ritel)", "E-Money", "Layanan", "Listrik/Gas/Air", "Makanan & Minuman", "Shopee", "Streaming", "Telco", "Tiket Event", "Travel & Tour"]
+    }
+  },
+
+  "gox": {
+    "_program": "Gratis Ongkir XTRA (opsional). Biaya dikenakan untuk SEMUA pesanan terselesaikan, pakai voucher GOX maupun tidak. Efektif 2 Mei 2026.",
+    "definisi_ukuran": {
+      "biasa": "berat < 5kg DAN panjang/lebar/tinggi < 60cm DAN dimensi < 20.000 cm3",
+      "khusus": "berat >= 5kg ATAU panjang/lebar/tinggi >= 60cm ATAU dimensi >= 20.000 cm3"
+    },
+    "cap_per_kuantitas": { "biasa": 40000, "khusus": 60000 },
+    "tier_mapping_biasa_ke_khusus": {
+      "1.0": 2.5,
+      "2.0": 3.5,
+      "3.5": 5.0,
+      "5.5": 7.0,
+      "6.0": 7.5,
+      "6.5": 8.0,
+      "7.5": 9.0,
+      "8.0": 9.5
+    },
+    "diskon_pengguna_iklan": "Biaya layanan bisa turun hingga 1,5% via Promo Khusus Pengguna Iklan (syarat: biaya iklan bersih minimal 3% dari total penjualan)",
+    "rates_ukuran_biasa": {
+      "elektronik": {
+        "1.0": ["Handphone", "Tablet", "Desktop", "Laptop", "Monitor"],
+        "2.0": ["Komponen Desktop & Laptop (RAM, motherboard, VGA, PSU)", "Printer & Scanner"],
+        "3.5": ["Proyektor & Aksesoris", "Penyimpanan Data (SSD, HDD, flashdisk)", "Peralatan Kantor"],
+        "5.5": ["Audio (earphone, speaker, mikrofon, amplifier)", "Baterai", "Peralatan Listrik Besar & Kecil", "Perangkat Dapur", "TV", "Rokok Elektronik", "Gaming & Konsol (semua)", "Aksesoris HP (powerbank, casing, charger, kartu memori)", "Smartwatch & Wearable", "Kartu Perdana", "Walkie Talkie", "Kamera & Lensa & Drone (semua)", "Aksesoris Desktop/Laptop", "Keyboard & Mouse", "Komponen Network", "Software", "Elektronik Lainnya"],
+        "6.0": ["Peralatan Listrik Kecil: Flosser Elektrik"],
+        "6.5": ["Kelistrikan (alarm, saklar, stop kontak, bel, anti petir)"]
+      },
+      "fashion": {
+        "2.0": ["Logam Mulia", "Perhiasan Berharga", "Perhiasan Bayi & Anak"],
+        "5.5": ["Aksesoris Fashion Lainnya", "Aksesoris/Pakaian/Sepatu Bayi & Anak (umum)", "Fashion Bayi & Anak Lainnya"],
+        "6.5": ["Pakaian Pria (semua)", "Sepatu Pria", "Sepatu Wanita", "Kaos Kaki & Stocking (wanita)"],
+        "7.5": ["Pakaian Wanita (atasan, dress, rok, dll)", "Fashion Muslim (umum)", "Tas Pria", "Tas Wanita", "Koper & Tas Travel (umum)", "Aksesoris Tambahan: Masker"],
+        "8.0": ["Aksesoris Fashion (anting, cincin, gelang, kalung, kacamata, syal, topi, dasi, ikat pinggang, aksesoris rambut)", "Jam Tangan (semua)", "Tas Duffel", "Baju Olahraga & Renang Muslim", "Fashion Bayi & Anak (jas hujan, sepatu boot hujan)"]
+      },
+      "fmcg": {
+        "5.5": ["Ibu & Bayi (kamar bayi, popok, perlengkapan makan/mandi/travelling, susu formula, set hadiah)", "Kesehatan Seksual", "Perawatan Diri (popok dewasa, cairan lensa)", "Perawatan & Kecantikan (seluruh: kosmetik, skincare, parfum, perawatan rambut/tubuh)"],
+        "6.0": ["Obat-obatan & Alat Kesehatan", "Perawatan Diri (sikat gigi, pasta gigi, pembalut, dll)", "Suplemen Makanan", "Makanan & Minuman (seluruh: bahan pokok, makanan ringan, minuman, susu, dll)"],
+        "8.0": ["Ibu & Bayi: Mainan", "Perawatan Diri: Lensa Kontak"]
+      },
+      "lifestyle": {
+        "5.5": ["Alat Tulis", "Perlengkapan Sekolah & Kantor", "Perlengkapan Menggambar", "Bubble Wrap", "Buku Bacaan (komik)", "E-Book", "Majalah & Koran", "Perlengkapan Rumah (pengharum, peralatan makan, perlengkapan dapur, keagamaan)"],
+        "6.0": ["Buku Tulis & Kertas", "Buku Bacaan (umum)", "Alat & Aksesoris Musik", "Album Foto", "Hewan Peliharaan Lainnya"],
+        "6.5": ["Perlengkapan Menjahit", "Furniture", "Kamar Tidur (kasur, bantal, sprei)", "Lampu"],
+        "7.5": ["Pembungkus Kado", "CD/DVD & Piringan Hitam", "Souvenir & Hadiah", "Grooming/Pakaian/Perawatan Hewan", "Mobil (semua, termasuk unit)", "Sepeda Motor (semua, termasuk unit)", "Olahraga (pakaian, jas hujan)", "Perlengkapan Rumah (kamar mandi, pertukangan, alat pengaman, taman, pesta, perawatan rumah)"],
+        "8.0": ["Buku Bayi", "Koleksi (action figure, dll)", "Mainan & Games", "Aksesoris/Litter/Makanan Hewan", "Olahraga (alat, sepatu, aksesoris)", "Perlengkapan Rumah (dekorasi, organizer, perlengkapan dapur)"]
+      },
+      "lainnya": {
+        "5.5": ["Belanja (Ritel)", "Gaming", "Layanan", "Listrik/Gas/Air", "Makanan & Minuman (dine-in/takeaway)", "Streaming", "Telco (Data, Pulsa)", "Tiket Event", "Travel & Tour"],
+        "7.5": ["E-Money"]
+      }
+    },
+    "bebas_biaya": [
+      { "join_date": "sebelum 2025-07-27", "kuota": "500 pesanan pertama terselesaikan" },
+      { "join_date": "setelah 2025-07-27", "kuota": "500 pesanan pertama ATAU 180 hari sejak upload produk pertama (mana yang lebih dulu)" },
+      { "join_date": "2026-05-01 s/d 2026-06-30", "kuota": "1.000 pesanan pertama ATAU 365 hari sejak upload produk pertama" },
+      { "catatan": "Upload produk pertama >= 1 Feb 2026 wajib selesaikan Misi Khusus dulu lalu klaim" }
+    ]
+  },
+
+  "promo_xtra": {
+    "rate_percent": 4.5,
+    "cap_per_kuantitas": 60000,
+    "applies_to": "Semua status penjual (Non-Star, Star, Star+, Mall) — tarif sama",
+    "formula": "(harga_asli_produk - diskon_produk - voucher_ditanggung_penjual) * 4.5%, maks Rp60.000/kuantitas",
+    "ketentuan": "Dikenakan untuk SEMUA transaksi berhasil, pakai Voucher Promo XTRA maupun tidak. Sudah termasuk PPN. Tambahan di atas Biaya Administrasi. Non-Star <50 pesanan yang gabung setelah 11 Sep 2025 tetap kena Biaya Admin Non-Star.",
+    "effective": "2025-11-01",
+    "source": "https://help.shopee.co.id/portal/4/article/71223-Syarat-dan-Ketentuan-Program-Promo-Xtra (terakhir diubah 5 Nov 2025)"
+  },
+
+  "promo_xtra_plus": {
+    "rate_percent": 6.5,
+    "cap_per_kuantitas": 80000,
+    "struktur": "Biaya Promo XTRA 4,5% + tambahan 2% = total 6,5%",
+    "formula": "(harga_asli_produk - diskon_produk - voucher_ditanggung_penjual) * 6.5%, maks Rp80.000/kuantitas",
+    "ketentuan": "Program opsional berbasis undangan/kriteria (biasanya periode campaign besar, mis. Big Idul Fitri Sale 2026). Dikenakan untuk SEMUA pesanan terselesaikan, pakai voucher Promo XTRA+ maupun tidak. Tidak dikenakan jika pesanan dibatalkan. Non-Star <50 pesanan atau <6 bulan tetap dikenakan Biaya Admin Non-Star + biaya layanan ini. Beberapa periode ada masa bebas biaya di awal (mis. 7 hari pertama batch Idul Fitri 2026).",
+    "benefit": "Voucher lebih besar, eksposur pencarian lebih tinggi, voucher ShopeeVIP +3%, voucher Beli 2 Gratis 1. Klaim potensi kenaikan penjualan s.d. 20% vs Promo XTRA.",
+    "source": "https://seller.shopee.co.id/edu/article/27682 (Program Opsional Promo XTRA+)"
+  },
+
+  "other_fees": {
+    "biaya_proses_pesanan": {
+      "amount": 1250,
+      "unit": "per transaksi terselesaikan",
+      "effective": "2025-07-20",
+      "exemption": "Gratis untuk 50 pesanan pertama penjual Non-Star. Jika pengembalian sebagian, biaya hanya untuk produk yang tidak dikembalikan.",
+      "includes_ppn": true
+    },
+    "biaya_pembayaran_mall": {
+      "rate_percent": 1.8,
+      "cap_per_kuantitas": 50000,
+      "applies_to": "Shopee Mall saja, sama rata semua kategori",
+      "formula": "(harga_asli - diskon_voucher_penjual) * 1.8%, maks Rp50.000/kuantitas",
+      "includes_ppn": true
+    },
+    "pre_order_surcharge": {
+      "rate_percent": 3.0,
+      "unit": "per kuantitas produk",
+      "effective": "2026-01-01",
+      "exemption": "Beberapa kategori dikecualikan, mis. barang custom & kerajinan tangan. Batasan jumlah produk pre-order dihapus."
+    },
+    "spaylater_xtra_0persen": {
+      "tenor_3_bulan_percent": 2.5,
+      "tenor_6_bulan_percent": 4.0,
+      "applies": "Program opsional, dikenakan ke penjual peserta"
+    },
+    "biaya_pemeliharaan_akun": {
+      "amount": 15000,
+      "unit": "per bulan",
+      "condition": "Toko tidak aktif 1 tahun yang masih memiliki saldo"
+    },
+    "pph23": {
+      "note": "Toko berbentuk PT menyetor PPh 23 = 2% dari nilai biaya sebelum PPN. Tidak berlaku untuk toko individu. Shopee punya SKB PPh No. KET-00012/PPUT-CT/KPP.3010/2025 berlaku 3 Feb 2025 - 31 Des 2025."
+    },
+    "penalty_transaksi_mencurigakan": {
+      "note": "Indikasi gestun/penipuan via cicilan tanpa kartu atau SPayLater dapat dikenakan biaya transaksi kartu kredit dan penyesuaian saldo hingga 15% dari nilai transaksi."
+    }
+  },
+
+  "definisi_seller": {
+    "non_star": "Penjual reguler. Biaya admin berlaku setelah >50 pesanan terselesaikan ATAU 180 hari sejak upload produk pertama (untuk toko dibuka mulai 3 Nov 2025). Berlaku juga lebih awal untuk Non-Star yang ikut Promo XTRA / Shopee Live XTRA / Shopee Video XTRA.",
+    "star_starplus": "Program apresiasi penjual aktif berperforma baik. Persentase admin sama dengan Non-Star.",
+    "shopee_mall": "Toko brand/distributor resmi. Tarif admin lebih tinggi + Biaya Pembayaran 1,8%."
+  }
+}

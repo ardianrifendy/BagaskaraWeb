@@ -89,6 +89,16 @@ export default async function Home({ searchParams }: PageProps) {
           
           <div className="flex items-center gap-2.5">
             <Link
+              href="/kalkulator"
+              className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 flex items-center justify-center text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer"
+              title="Kalkulator Potongan Shopee"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <rect x="4" y="4" width="16" height="16" rx="2" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M9 9h.01M15 9h.01M9 13h.01M15 13h.01M9 17h6" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </Link>
+            <Link
               href="/cek-resi"
               className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 flex items-center justify-center text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer"
               title="Lacak Pengiriman (Cek Resi)"
