@@ -44,22 +44,23 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
 
   const sendWhatsApp = (targetNum: string) => {
     const textBreakdown = result.items
-      .map(item => `- ${item.label}: ${formatIDR(item.amount)}${item.capped ? ' (maks)' : ''}`)
+      .map(item => `▪️ *${item.label}:* ${formatIDR(item.amount)}${item.capped ? ' _(maks)_' : ''}`)
       .join('\n');
     
-    const textToCopy = `=== RINCIAN POTONGAN SHOPEE ===
-Produk: ${productName || 'Produk Tanpa Nama'}
-Mode: ${mode === 'reverse' ? 'Cari Harga Jual' : 'Cek Profit'}
-Harga Jual: ${formatIDR(mainPrice)}
-Diskon Seller: ${formatIDR(result.grossPrice - result.netPrice)}
---------------------------------
-Rincian Biaya:
+    const textToCopy = `📱 *RINCIAN POTONGAN SHOPEE* 📱
+-----------------------------------------------
+📦 *Produk:* ${productName || 'Produk Tanpa Nama'}
+⚖️ *Mode:* ${mode === 'reverse' ? '🎯 Cari Harga Jual' : '🔍 Cek Profit'}
+💰 *Harga Jual:* *${formatIDR(mainPrice)}*
+🏷️ *Diskon Seller:* ${formatIDR(result.grossPrice - result.netPrice)}
+-----------------------------------------------
+💸 *RINCIAN BIAYA POTONGAN:*
 ${textBreakdown}
---------------------------------
-Net Diterima Seller: ${formatIDR(result.netReceived)}
-Profit Bersih: ${formatIDR(result.profit)} (${result.marginPct}%)
-================================
-Kalkulasi via Bagaskara Cell Shopee Calculator`;
+-----------------------------------------------
+📥 *Net Diterima Seller:* *${formatIDR(result.netReceived)}*
+📈 *Profit Bersih:* *${formatIDR(result.profit)}* (${result.marginPct}%)
+===============================
+🚀 _Kalkulasi via Bagaskara Cell Shopee Calculator_`;
 
     const cleanNum = formatWhatsAppNumber(targetNum);
     const waUrl = `https://wa.me/${cleanNum}?text=${encodeURIComponent(textToCopy)}`;
@@ -89,21 +90,23 @@ Kalkulasi via Bagaskara Cell Shopee Calculator`;
 
   const handleCopy = () => {
     const textBreakdown = result.items
-      .map(item => `- ${item.label}: ${formatIDR(item.amount)}${item.capped ? ' (maks)' : ''}`)
+      .map(item => `▪️ *${item.label}:* ${formatIDR(item.amount)}${item.capped ? ' _(maks)_' : ''}`)
       .join('\n');
     
-    const textToCopy = `=== RINCIAN POTONGAN SHOPEE ===
-Mode: ${mode === 'reverse' ? 'Cari Harga Jual' : 'Cek Profit'}
-Harga Jual: ${formatIDR(mainPrice)}
-Diskon Seller: ${formatIDR(result.grossPrice - result.netPrice)}
---------------------------------
-Rincian Biaya:
+    const textToCopy = `📱 *RINCIAN POTONGAN SHOPEE* 📱
+-----------------------------------------------
+📦 *Produk:* ${productName || 'Produk Tanpa Nama'}
+⚖️ *Mode:* ${mode === 'reverse' ? '🎯 Cari Harga Jual' : '🔍 Cek Profit'}
+💰 *Harga Jual:* *${formatIDR(mainPrice)}*
+🏷️ *Diskon Seller:* ${formatIDR(result.grossPrice - result.netPrice)}
+-----------------------------------------------
+💸 *RINCIAN BIAYA POTONGAN:*
 ${textBreakdown}
---------------------------------
-Net Diterima Seller: ${formatIDR(result.netReceived)}
-Profit Bersih: ${formatIDR(result.profit)} (${result.marginPct}%)
-================================
-Kalkulasi via Bagaskara Cell Shopee Calculator`;
+-----------------------------------------------
+📥 *Net Diterima Seller:* *${formatIDR(result.netReceived)}*
+📈 *Profit/Margin:* *${formatIDR(result.profit)}* (${result.marginPct}%)
+===============================
+🚀 _Kalkulasi via Bagaskara Cell Shopee Calculator_`;
 
     navigator.clipboard.writeText(textToCopy);
     setCopied(true);
