@@ -1,36 +1,59 @@
-# 📱 Bagaskara Cell Catalog
+# 📱 Bagaskara Cell — Web Portal & Retail Catalog
 
-Katalog produk smartphone & tablet mobile-first untuk toko retail **Bagaskara Cell Gresik**. Memudahkan pelanggan menyaring produk berdasarkan budget, melihat spesifikasi lengkap, memilih warna & kapasitas secara interaktif, dan menghubungi owner langsung via WhatsApp dengan pesan otomatis (*pre-filled*).
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![SQLite](https://img.shields.io/badge/SQLite-Split_DB-003B57?style=for-the-badge&logo=sqlite)](https://www.sqlite.org/)
+[![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=for-the-badge&logo=vercel)](https://bagaskaracell.net)
+
+Katalog produk smartphone & tablet mobile-first untuk toko retail **Bagaskara Cell Gresik**. Selain sebagai katalog, web ini dilengkapi dengan tools internal bisnis seperti **Kalkulator Profit Shopee**, **SMS Gateway (Litensi API)**, **Cek Resi Multi-Kurir**, dan **Visual Stock Manager Dashboard**.
+
+Bukan e-commerce — tidak ada checkout/pembayaran. Customer memfilter stok berdasarkan **budget**, melihat spesifikasi, lalu menghubungi owner via **tombol WhatsApp pre-filled**.
 
 ---
 
-## ✨ Fitur Utama
+## ✨ Fitur Premium
 
-- **🚀 Mobile-First Design & Rich Aesthetics:** Desain premium, dinamis, dan ergonomis untuk pengalaman seluler terbaik.
-- **🌓 Adaptive Theme Mode:** Mendukung Mode Terang & Gelap dengan integrasi latar belakang preview produk yang responsif (`bg-white` di mode terang, `bg-black` di mode gelap).
-- **🔍 Filter & Urutan Pintar:**
-  - Pencarian nama produk & brand secara real-time.
-  - Filter rentang harga (budget picker) interaktif.
-  - Filter kondisi (Baru, Second, Like New) dan Filter Merek (Brand Chips).
-- **🗃️ Split SQLite Databases:** Memisahkan data fisik lokal toko Anda (`database/owner.db`) dengan data PO scraping Erafone (`database/erafone.db`) agar data pribadi aman dari pembersihan/impor scraper.
-- **🖥️ Visual Stock Manager Dashboard (`/stok`):** Halaman input & edit stok visual yang dilindungi PIN toko (`bagaskara`). Memudahkan penambahan HP baru, penambahan varian, dan pembaruan stok (Ready vs Habis) secara instan hanya dengan sekali klik.
-- **🧮 Shopee Fee & Profit Calculator (`/kalkulator-shopee`):** Alat bantu hitung biaya admin, diskon, asuransi penjual (0.5%), dan estimasi profit Shopee secara presisi. Mendukung autocomplete produk dari database `owner.db` (mengisi otomatis nama, kategori, dan modal dasar HPP), simulasi SPayLater, serta perbandingan 4 program Shopee sekaligus (Reguler, Star, Star+, Mall).
-- **💬 Pre-filled WhatsApp Link:** Tombol hubungi WhatsApp secara otomatis mengemas nama produk, warna, kapasitas penyimpanan yang dipilih, dan harga ke dalam format tautan chat.
-- **🔌 Erafone Scraper Integrator:** Memungkinkan pembaruan data katalog pre-order secara instan hasil scrap website Erafone secara langsung.
+### 1. 🚀 Mobile-First Catalog & Rich Aesthetics
+*   Desain premium, dinamis, dan ergonomis untuk pengalaman seluler terbaik (optimal di viewport 375px).
+*   **Adaptive Theme Mode**: Mendukung Mode Terang & Gelap dengan transisi latar belakang preview produk yang responsif.
+*   **Filter & Urutan Pintar**: Pencarian real-time, filter budget picker interaktif, chips filter kondisi (Baru, Second, Like New) dan merek.
+
+### 2. 🧮 Shopee Fee & Profit Calculator (`/kalkulator-shopee`)
+*   **Perhitungan Presisi Tinggi**: Mendukung simulasi komisi admin reguler, Mall, potongan Gratis Ongkir XTRA (GOX) terbaru (efektif Mei 2026), asuransi penjual (0.5%), dan biaya proses pesanan.
+*   **Simulasi Program Lengkap**: Bandingkan potongan antara program Non-Star, Star, Star+, dan Shopee Mall sekaligus.
+*   **Affiliate / AMS Commission**: Input persentase komisi affiliate/influencer kustom untuk rincian profit yang lebih akurat.
+*   **Dynamic Group Labeling**: Setiap kategori produk secara otomatis dipetakan ke **Grup Shopee A s.d. H** resmi untuk mempermudah pencocokan tarif dengan pengumuman Shopee.
+*   **Kirim WA & Simpan Nomor**: Mengirim rincian kalkulasi ke WhatsApp pribadi menggunakan nomor yang tersimpan di `localStorage` (`shopee_calc_user_phone`). Format pesan didesain premium dengan pemisah garis, emoji terstruktur, tebal/miring bergaya WhatsApp.
+
+### 3. 💬 SMS Gateway Integration (`/sms`)
+*   Integrasi API Gateway Litensi untuk layanan aktivasi nomor SMS otomatis.
+*   Mendukung pengecekan saldo, pembelian nomor, dan pembacaan kode verifikasi (OTP) secara real-time.
+*   Dilindungi dengan sistem login token internal.
+
+### 4. 📦 Cek Resi Multi-Kurir (`/cek-resi`)
+*   Pelacakan status paket pengiriman secara real-time untuk berbagai ekspedisi populer (JNE, J&T, SiCepat, Wahana, Tiki, POS, dll).
+
+### 5. 🖥️ Visual Stock Manager Dashboard (`/stok`)
+*   Dashboard visual terlindungi PIN (`bagaskara`) untuk penambahan produk baru, edit varian, dan pembaruan status stok (**Ready** vs **Habis**) instan.
+
+### 6. 🗃️ Split SQLite Databases Security
+*   Memisahkan data fisik lokal toko Anda (`database/owner.db`) dengan data hasil scraping Erafone (`database/erafone.db`) agar data rahasia/HPP internal aman dari pembersihan/impor scraper.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Core Framework:** [Next.js 16 (App Router)](https://nextjs.org/) + TypeScript
-- **Styling:** Tailwind CSS + Vanilla CSS (Aesthetics & Dark Mode support)
-- **Database Client:** `@libsql/client` (SQLite Serverless / Local Client)
-- **Scraper:** Python + Playwright / BeautifulSoup (Erafone Scraper)
-- **Developer Tools:** `tsx` untuk eksekusi script TypeScript langsung.
+*   **Core:** [Next.js 16 (App Router)](https://nextjs.org/) & TypeScript
+*   **Styling:** Tailwind CSS & Vanilla CSS
+*   **Database:** `@libsql/client` (SQLite Serverless / Local Client)
+*   **Scraper:** Python 3 + Playwright / BeautifulSoup (Erafone Scraper)
+*   **SMS API:** Litensi API Client
+*   **Deployment:** Vercel
 
 ---
 
-## ⚙️ Cara Menjalankan Project
+## ⚙️ Setup & Cara Menjalankan
 
 ### 1. Instalasi Dependensi
 ```bash
@@ -41,58 +64,52 @@ npm install
 ```bash
 npm run dev
 ```
-Buka [http://localhost:3000](http://localhost:3000) (Lokal) atau [https://bagaskaracell.net](https://bagaskaracell.net) (Produksi) untuk melihat web katalog. Untuk mengelola stok secara visual, buka [http://localhost:3000/stok](http://localhost:3000/stok) atau [https://bagaskaracell.net/stok](https://bagaskaracell.net/stok).
+Buka [http://localhost:3000](http://localhost:3000) di browser Anda.
 
 ### 3. Jalankan Linter & Type Check
 ```bash
-# Linting
+# Linter (ESLint)
 npm run lint
 
-# Type Check
+# Type Check (TypeScript)
 npx tsc --noEmit
 ```
 
-### 4. Build untuk Production
+### 4. Build Produksi
 ```bash
 npm run build
 ```
 
 ---
 
-## 🔄 Cara Pembaruan & Manajemen Stok
+## 🔄 Pembaruan & Impor Data Scraper Erafone
 
-### Metode A: Melalui Dashboard Web Visual (Sangat Direkomendasikan)
-1. Buka [https://bagaskaracell.net/stok](https://bagaskaracell.net/stok) (atau [http://localhost:3000/stok](http://localhost:3000/stok) jika lokal) di browser.
-2. Masukkan PIN keamanan toko: `bagaskara`.
-3. Anda dapat mencari HP, menambah HP baru, menambah varian, dan mengubah status stok menjadi **Ready** atau **Habis** dengan sekali klik.
+1.  Jalankan scraper python di folder `erafone_scraper` untuk menghasilkan berkas CSV baru (format `katalog_*.csv`).
+2.  Pindahkan/pastikan file CSV berada di root proyek atau di dalam folder `erafone_scraper/`.
+3.  Jalankan perintah impor untuk menyelaraskan data dengan database `erafone.db`:
+    ```bash
+    npm run import-csv
+    ```
 
-### Metode B: Melalui Impor CSV Scraper Erafone
-Jika Anda melakukan scraping data baru menggunakan **Erafone Scraper**:
-1. Jalankan scraper dan hasilkan berkas CSV baru di dalam folder `erafone_scraper/`.
-2. Jalankan perintah impor untuk memperbarui database `erafone.db`:
-   ```bash
-   npm run import-csv
-   ```
+---
 
-### Metode C: Melalui Command Line Interaktif (CLI)
-Anda juga bisa memodifikasi status stok via terminal dengan perintah:
-```bash
-npm run update-stock
+## 📁 Struktur Direktori Proyek
+
+```
+app/             # Jalur halaman Next.js (App Router) termasuk /stok, /kalkulator-shopee, /cek-resi, /sms
+components/      # Komponen React (Card, Details, Badge, ProductInput, CategorySheet, dll.)
+config/          # site.ts - Konfigurasi identitas toko, nomor WhatsApp & link media sosial
+database/        # Berkas database SQLite (owner.db, erafone.db)
+docs/            # Dokumentasi roadmap (IMPLEMENTATION.md) dan logs project
+  └── sms/       # File panduan & instruksi integrasi SMS API Gateway
+erafone_scraper/ # Script scraper Python untuk menarik data pre-order Erafone
+types/           # Kontrak data dan Interface TypeScript
+lib/             # Utilitas (Format Rupiah, SQLite Client, Filter Helper, WhatsApp Link builder)
+public/          # Aset statis (Logo, Gambar lokal, Icon)
+scripts/         # Skrip pengembang (seeding, stock CLI manager, importer CSV, split DB)
 ```
 
 ---
 
-## 📁 Struktur Direktori
-
-```
-app/             # Jalur halaman Next.js (App Router) termasuk /stok
-components/      # Komponen React (Card, Details, Badge, ThemeToggle, dll.)
-database/        # Berkas database SQLite (owner.db, erafone.db, panduan update)
-docs/            # Dokumentasi roadmap (IMPLEMENTATION.md) dan log progress
-config/          # site.ts - Konfigurasi identitas toko, nomor WhatsApp & gambar latar
-erafone_scraper/ # Script scraper Python untuk menarik data pre-order Erafone
-types/           # Interface dan Kontrak Data TypeScript
-lib/             # Utilitas (Format Rupiah, SQLite Client, Filter Helper)
-public/          # Aset statis (Logo, Gambar lokal)
-scripts/         # Skrip pengembang (seeding, stock CLI manager, importer CSV)
-```
+## 🔒 Lisensi & Hak Cipta
+Hak Cipta © 2026 Bagaskara Cell. Dikembangkan khusus untuk pengelolaan operasional retail dan tools internal Bagaskara Cell.
