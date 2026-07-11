@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useStoreProfile } from '@/lib/kalkulator/store/localStorage';
-import { StoreProfile, SellerType, PromoProgram } from '@/lib/kalkulator/engine/types';
+import { StoreProfile, SellerType } from '@/lib/kalkulator/engine/types';
 import Link from 'next/link';
 
 export default function PengaturanPage() {

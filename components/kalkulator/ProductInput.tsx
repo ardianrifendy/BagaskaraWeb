@@ -1,14 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { detectCategory } from '@/lib/kalkulator/detect/detect';
 import { CATEGORY_DICTIONARY } from '@/lib/kalkulator/detect/keywords';
-
-interface DbProductSuggestion {
-  id: string;
-  name: string;
-  brand: string;
-  price: number;
-  categoryKey: string;
-}
 
 interface ProductInputProps {
   name: string;
@@ -16,7 +8,6 @@ interface ProductInputProps {
   onNameChange: (name: string) => void;
   onCategoryChange: (key: string) => void;
   onOpenSelector: () => void;
-  onSelectProductSuggestion?: (name: string, categoryKey: string, price: number) => void;
 }
 
 export const ProductInputComponent: React.FC<ProductInputProps> = ({
@@ -24,29 +15,8 @@ export const ProductInputComponent: React.FC<ProductInputProps> = ({
   categoryKey,
   onNameChange,
   onCategoryChange,
-  onOpenSelector,
-  onSelectProductSuggestion
+  onOpenSelector
 }) => {
-  const [dbProducts, setDbProducts] = useState<DbProductSuggestion[]>([]);
-  const [isFocused, setIsFocused] = useState(false);
-
-  // Load store products on mount
-  useEffect(() => {
-    fetch('/api/kalkulator/products')
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setDbProducts(data);
-        }
-      })
-      .catch((err) => console.error('Failed to load catalog products:', err));
-  }, []);
-
-  // Filter suggestions based on typed name
-  const matchedSuggestions = name.trim()
-    ? dbProducts.filter((p) => p.name.toLowerCase().includes(name.toLowerCase()))
-    : [];
-
   // Jalankan deteksi kategori otomatis
   const candidates = name ? detectCategory(name) : [];
   const activeCategory = CATEGORY_DICTIONARY.find((c) => c.key === categoryKey);
@@ -59,40 +29,9 @@ export const ProductInputComponent: React.FC<ProductInputProps> = ({
           type="text"
           value={name}
           onChange={(e) => onNameChange(e.target.value)}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setTimeout(() => setIsFocused(false), 200)}
           placeholder="cth. casing iphone 15 pro, laptop, tws..."
           className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-neutral-200 bg-neutral-50 text-neutral-850 placeholder-neutral-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none transition-all duration-200 font-extrabold"
         />
-
-        {/* Floating Autocomplete suggestions from catalog */}
-        {isFocused && matchedSuggestions.length > 0 && (
-          <div className="absolute top-[100%] left-0 right-0 mt-1.5 bg-white border border-neutral-200 rounded-2xl shadow-xl z-50 max-h-48 overflow-y-auto divide-y divide-neutral-100">
-            {matchedSuggestions.slice(0, 5).map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                onMouseDown={() => {
-                  if (onSelectProductSuggestion) {
-                    onSelectProductSuggestion(p.name, p.categoryKey, p.price);
-                  } else {
-                    onNameChange(p.name);
-                    onCategoryChange(p.categoryKey);
-                  }
-                }}
-                className="w-full text-left px-4 py-3 hover:bg-neutral-50 flex items-center justify-between transition-colors cursor-pointer"
-              >
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-xs font-black text-neutral-855 leading-tight">{p.name}</span>
-                  <span className="text-[9px] font-extrabold text-neutral-400">Modal Toko: Rp {p.price.toLocaleString('id-ID')}</span>
-                </div>
-                <span className="text-[8px] bg-orange-100 text-orange-600 font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider select-none">
-                  Stok Toko
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Tampilan Deteksi Kategori */}

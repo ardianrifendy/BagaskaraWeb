@@ -1,5 +1,5 @@
 import feesData from '../shopee_fees_2026.json';
-import { SellerType, ProductSize } from '../engine/types';
+import { ProductSize } from '../engine/types';
 
 // Ekstrak struktur dari JSON
 const adminFeesRegular = feesData.admin_fees_regular;

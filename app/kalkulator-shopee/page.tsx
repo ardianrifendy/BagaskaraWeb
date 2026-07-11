@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useStoreProfile, useActiveProduct } from '@/lib/kalkulator/store/localStorage';
 import { calculateFees } from '@/lib/kalkulator/engine/calc';
 import { findMinimumPrice } from '@/lib/kalkulator/engine/reverse';
-import { formatIDR } from '@/lib/kalkulator/format';
 import { ProductInputComponent } from '@/components/kalkulator/ProductInput';
 import { CategorySheet } from '@/components/kalkulator/CategorySheet';
 import { ProgramToggles } from '@/components/kalkulator/ProgramToggles';
@@ -161,10 +160,6 @@ export default function CalculatorPage() {
             onNameChange={(name) => setProduct({ ...product, name })}
             onCategoryChange={(key) => setProduct({ ...product, categoryKey: key })}
             onOpenSelector={() => setIsCategorySheetOpen(true)}
-            onSelectProductSuggestion={(name, categoryKey, price) => {
-              setProduct({ ...product, name, categoryKey });
-              setCost(price);
-            }}
           />
 
           {/* Financial Inputs */}
@@ -277,6 +272,29 @@ export default function CalculatorPage() {
                         </button>
                       </div>
                     )}
+                  </div>
+
+                  {/* Komisi Affiliate / AMS */}
+                  <div className="flex flex-col gap-1.5 col-span-2">
+                    <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Komisi Affiliate / AMS (%)</label>
+                    <div className="relative rounded-xl shadow-sm">
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        value={profile.affiliateCommissionPct || 0}
+                        onChange={(e) => {
+                          const val = Math.max(0, Math.min(100, parseFloat(e.target.value) || 0));
+                          setProfile({ ...profile, affiliateCommissionPct: val });
+                        }}
+                        className="w-full bg-neutral-50 border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl pl-3.5 pr-8 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-500/10 focus:border-orange-500 transition-all h-[40px]"
+                        placeholder="0"
+                      />
+                      <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
+                        <span className="text-xs font-extrabold text-neutral-400">%</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}

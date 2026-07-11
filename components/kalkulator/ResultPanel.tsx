@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CalcResult } from '@/lib/kalkulator/engine/types';
 import { formatIDR } from '@/lib/kalkulator/format';
 
@@ -7,16 +7,81 @@ interface ResultPanelProps {
   suggestedPrice?: number;
   rawPrice?: number;
   mode: 'calculate' | 'reverse';
+  productName?: string;
 }
+
+const formatWhatsAppNumber = (num: string): string => {
+  let cleaned = num.replace(/\D/g, ''); // hapus karakter non-digit
+  if (cleaned.startsWith('0')) {
+    cleaned = '62' + cleaned.substring(1);
+  } else if (cleaned.startsWith('8')) {
+    cleaned = '62' + cleaned;
+  }
+  return cleaned;
+};
 
 export const ResultPanel: React.FC<ResultPanelProps> = ({
   result,
   suggestedPrice,
   rawPrice,
-  mode
+  mode,
+  productName
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showPhoneInput, setShowPhoneInput] = useState(false);
+  const [phoneNo, setPhoneNo] = useState('');
+  const [inputPhone, setInputPhone] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedPhone = window.localStorage.getItem('shopee_calc_user_phone') || '';
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPhoneNo(savedPhone);
+      setInputPhone(savedPhone);
+    }
+  }, []);
+
+  const sendWhatsApp = (targetNum: string) => {
+    const textBreakdown = result.items
+      .map(item => `- ${item.label}: ${formatIDR(item.amount)}${item.capped ? ' (maks)' : ''}`)
+      .join('\n');
+    
+    const textToCopy = `=== RINCIAN POTONGAN SHOPEE ===
+Produk: ${productName || 'Produk Tanpa Nama'}
+Mode: ${mode === 'reverse' ? 'Cari Harga Jual' : 'Cek Profit'}
+Harga Jual: ${formatIDR(mainPrice)}
+Diskon Seller: ${formatIDR(result.grossPrice - result.netPrice)}
+--------------------------------
+Rincian Biaya:
+${textBreakdown}
+--------------------------------
+Net Diterima Seller: ${formatIDR(result.netReceived)}
+Profit Bersih: ${formatIDR(result.profit)} (${result.marginPct}%)
+================================
+Kalkulasi via Bagaskara Cell Shopee Calculator`;
+
+    const cleanNum = formatWhatsAppNumber(targetNum);
+    const waUrl = `https://wa.me/${cleanNum}?text=${encodeURIComponent(textToCopy)}`;
+    window.open(waUrl, '_blank');
+  };
+
+  const handleWhatsAppClick = () => {
+    if (phoneNo) {
+      sendWhatsApp(phoneNo);
+    } else {
+      setShowPhoneInput(!showPhoneInput);
+    }
+  };
+
+  const submitWhatsApp = () => {
+    if (!inputPhone.trim()) return;
+    const cleanNum = formatWhatsAppNumber(inputPhone);
+    setPhoneNo(cleanNum);
+    window.localStorage.setItem('shopee_calc_user_phone', cleanNum);
+    setShowPhoneInput(false);
+    sendWhatsApp(cleanNum);
+  };
 
   // Ambil data breakdown
   const mainPrice = mode === 'reverse' ? (suggestedPrice || 0) : result.grossPrice;
@@ -74,6 +139,20 @@ Kalkulasi via Bagaskara Cell Shopee Calculator`;
         </div>
       </div>
 
+      {/* Premium Explanation Box */}
+      <div className="mx-5 mb-5 p-3.5 bg-orange-50/45 dark:bg-orange-950/10 border border-orange-100/70 dark:border-orange-900/20 rounded-2xl text-[11px] leading-relaxed text-neutral-600 dark:text-neutral-350">
+        💡 <strong className="text-neutral-800 dark:text-neutral-200">Kesimpulan Toko:</strong>{' '}
+        {mode === 'reverse' ? (
+          <>
+            Untuk mendapat untung bersih <span className="font-extrabold text-orange-600">{formatIDR(result.profit)}</span>, harga jual pasnya adalah <span className="font-semibold">{formatIDR(rawPrice || mainPrice)}</span>{rawPrice && rawPrice !== mainPrice ? <>, dibulatkan menjadi <span className="font-extrabold text-orange-600">{formatIDR(mainPrice)}</span> agar lebih menarik bagi pembeli (angka cantik)</> : ''}. Total potongan biaya/iklan Shopee adalah <span className="font-extrabold text-rose-600">{formatIDR(result.totalFees)}</span>.
+          </>
+        ) : (
+          <>
+            Jika Anda menjual seharga <span className="font-extrabold text-orange-600">{formatIDR(mainPrice)}</span>, uang bersih yang akan masuk ke saldo toko Anda adalah <span className="font-extrabold text-emerald-600">{formatIDR(result.netReceived)}</span> setelah dikurangi potongan Shopee &amp; iklan sebesar <span className="font-extrabold text-rose-600">{formatIDR(result.totalFees)}</span>.
+          </>
+        )}
+      </div>
+
       {/* Accordion Rincian Waterfall */}
       <div className="border-t border-neutral-200 bg-neutral-50/20">
         <button
@@ -123,10 +202,56 @@ Kalkulasi via Bagaskara Cell Shopee Calculator`;
             <button
               type="button"
               onClick={handleCopy}
-              className="mt-3 w-full py-2 bg-neutral-50 border border-neutral-200 hover:border-neutral-300 hover:bg-neutral-100/80 rounded-xl text-xs font-extrabold text-neutral-600 hover:text-orange-600 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm select-none"
+              className="mt-3 w-full py-2 bg-neutral-50 border border-neutral-200 hover:border-neutral-355 hover:bg-neutral-100/80 rounded-xl text-xs font-extrabold text-neutral-600 hover:text-orange-600 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm select-none"
             >
               {copied ? '✓ Rincian Berhasil Disalin!' : '📋 Salin Rincian Teks'}
             </button>
+
+            {/* WhatsApp Send Button */}
+            <div className="flex flex-col gap-1 mt-2">
+              <div className="flex gap-1.5">
+                <button
+                  type="button"
+                  onClick={handleWhatsAppClick}
+                  className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm select-none"
+                >
+                  💬 {phoneNo ? `Kirim ke WA Saya (${phoneNo})` : 'Kirim Catatan ke WA'}
+                </button>
+                {phoneNo && (
+                  <button
+                    type="button"
+                    onClick={() => setShowPhoneInput(!showPhoneInput)}
+                    className="px-3 bg-neutral-100 border border-neutral-200 hover:bg-neutral-200 text-neutral-600 rounded-xl text-xs font-bold flex items-center justify-center transition-all cursor-pointer select-none"
+                    title="Ubah Nomor WhatsApp"
+                  >
+                    ✏️
+                  </button>
+                )}
+              </div>
+
+              {showPhoneInput && (
+                <div className="mt-2.5 p-3 bg-emerald-50/50 dark:bg-emerald-950/10 border border-emerald-100/70 dark:border-emerald-900/20 rounded-xl flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <span className="text-[10px] font-black text-emerald-800 dark:text-emerald-350 uppercase tracking-wide">Masukkan Nomor WhatsApp Anda:</span>
+                  <div className="flex gap-2">
+                    <input
+                      type="tel"
+                      value={inputPhone}
+                      onChange={(e) => setInputPhone(e.target.value)}
+                      placeholder="Contoh: 08123456789"
+                      className="flex-1 bg-white dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 rounded-lg px-2.5 py-1.5 text-xs font-bold text-neutral-800 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={submitWhatsApp}
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+                    >
+                      Simpan
+                    </button>
+                  </div>
+                  <span className="text-[9px] text-neutral-450 dark:text-zinc-550 font-bold">*Nomor disimpan di browser untuk kalkulasi berikutnya.</span>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

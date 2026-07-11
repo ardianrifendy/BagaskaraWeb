@@ -199,7 +199,14 @@ export const CATEGORY_DICTIONARY: CategoryEntry[] = [
     label: 'FMCG - Kesehatan, Obat & Suplemen',
     adminPct: { regular: 9.00, mall: 7.20 },
     goxPct: { biasa: 6.0, khusus: 7.5 },
-    keywords: ['obat', 'vitamin', 'suplemen', 'masker medis', 'paracetamol', 'minyak telon', 'alat kesehatan', 'tensimeter']
+    keywords: ['obat', 'vitamin', 'suplemen', 'masker medis', 'paracetamol', 'alat kesehatan', 'tensimeter']
+  },
+  {
+    key: 'fmcg.kesehatan_bayi',
+    label: 'FMCG - Kesehatan & Perawatan Bayi (Minyak Telon, Lotion, dll)',
+    adminPct: { regular: 8.25, mall: 7.20 },
+    goxPct: { biasa: 5.5, khusus: 7.0 },
+    keywords: ['minyak telon', 'minyak kayu putih', 'bedak bayi', 'baby lotion', 'baby cream', 'shampoo bayi', 'sabun bayi']
   },
   {
     key: 'fmcg.ibu_bayi',
