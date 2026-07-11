@@ -4,9 +4,10 @@ import { StoreProfile, PromoProgram } from '@/lib/kalkulator/engine/types';
 interface ProgramTogglesProps {
   profile: StoreProfile;
   onChange: (updated: StoreProfile) => void;
+  onCompareClick: () => void;
 }
 
-export const ProgramToggles: React.FC<ProgramTogglesProps> = ({ profile, onChange }) => {
+export const ProgramToggles: React.FC<ProgramTogglesProps> = ({ profile, onChange, onCompareClick }) => {
   const handleGoxChange = () => {
     onChange({ ...profile, joinedGOX: !profile.joinedGOX });
   };
@@ -98,6 +99,18 @@ export const ProgramToggles: React.FC<ProgramTogglesProps> = ({ profile, onChang
             );
           })}
         </div>
+      </div>
+
+      {/* Bandingkan Program Action */}
+      <div className="flex flex-col gap-2 pt-3.5 border-t border-neutral-100 dark:border-zinc-800">
+        <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider select-none">Analisis Perbandingan</span>
+        <button
+          type="button"
+          onClick={onCompareClick}
+          className="w-full py-3 bg-neutral-900 hover:bg-neutral-850 dark:bg-zinc-800 dark:hover:bg-zinc-700/80 text-white font-black text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer uppercase tracking-wider"
+        >
+          📊 Bandingkan 4 Program Shopee
+        </button>
       </div>
     </div>
   );

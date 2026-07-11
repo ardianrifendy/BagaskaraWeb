@@ -93,13 +93,6 @@ export default function CalculatorPage() {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => setIsComparisonOpen(true)}
-              className="text-xs font-black px-3.5 py-2.5 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 hover:text-orange-600 transition-all flex items-center gap-1.5 shadow-sm shadow-neutral-100 cursor-pointer"
-            >
-              📊 <span className="hidden sm:inline">Bandingkan</span>
-            </button>
-            <button
-              type="button"
               onClick={() => setIsSettingsOpen(true)}
               className="p-2.5 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 hover:text-orange-600 transition-all shadow-sm shadow-neutral-100 flex items-center justify-center cursor-pointer"
               title="Pengaturan Profil Toko"
@@ -285,7 +278,7 @@ export default function CalculatorPage() {
           </div>
 
           {/* Program Toggles */}
-          <ProgramToggles profile={profile} onChange={setProfile} />
+          <ProgramToggles profile={profile} onChange={setProfile} onCompareClick={() => setIsComparisonOpen(true)} />
         </div>
 
         {/* Right Column (Sticky Result Panel) */}
@@ -432,9 +425,9 @@ export default function CalculatorPage() {
             description: "Ketik nama HP atau aksesoris. Autocomplete akan menyarankan produk dari stok toko terdaftar beserta modal dasarnya (HPP), atau mendeteksi kategori yang sesuai secara otomatis."
           },
           {
-            icon: "⚙️",
-            title: "Sesuaikan Fitur & Asuransi",
-            description: "Buka 'Opsi Lanjutan' dan aktifkan program seperti Gratis Ongkir XTRA, potongan SPayLater, program asuransi penjual (0.5%), dan biaya kemasan untuk hasil kalkulasi yang sangat akurat."
+            icon: "📊",
+            title: "Bandingkan & Sesuaikan",
+            description: "Aktifkan Gratis Ongkir XTRA, asuransi (0.5%), dan SPayLater. Klik tombol 'Bandingkan 4 Program' di panel bawah untuk melihat perbandingan margin keuntungan Anda."
           }
         ]}
       />
