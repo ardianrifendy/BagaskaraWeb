@@ -87,16 +87,9 @@ export default function CalculatorPage() {
   return (
     <main className="min-h-screen bg-neutral-50 pb-24 text-neutral-850 font-sans">
       {/* Header Bagaskara Cell Style */}
-      <header className="bg-white/85 backdrop-blur-md border-b border-neutral-100 sticky top-0 z-40 px-4 py-2.5 transition-colors duration-200">
+      <header className="bg-white/85 dark:bg-zinc-900/85 backdrop-blur-md border-b border-neutral-100 dark:border-zinc-800 sticky top-0 z-40 px-4 py-2.5 transition-colors duration-200">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center">
-              <img src="/images/logo-light.png" alt="Bagaskara Cell" className="h-9 w-auto object-contain select-none" />
-            </Link>
-            <span className="text-[8px] bg-orange-600 text-white border border-orange-500 px-1.5 py-0.5 rounded-md font-black select-none uppercase tracking-widest shadow-sm shadow-orange-200">
-              Kalkulator
-            </span>
-          </div>
+          <Logo />
           <div className="flex items-center gap-2">
             <button
               type="button"
