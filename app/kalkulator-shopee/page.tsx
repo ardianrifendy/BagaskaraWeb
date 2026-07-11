@@ -92,9 +92,10 @@ export default function CalculatorPage() {
           <div className="flex items-center gap-2">
             <Link
               href="/"
-              className="text-xs font-black px-3.5 py-2.5 rounded-xl border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-neutral-50 dark:hover:bg-zinc-750 text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 transition-all flex items-center gap-1.5 shadow-sm shadow-neutral-100 dark:shadow-none cursor-pointer"
+              className="p-2.5 rounded-xl border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-neutral-50 dark:hover:bg-zinc-750 text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 transition-all flex items-center justify-center shadow-sm shadow-neutral-100 dark:shadow-none cursor-pointer"
+              title="Beranda"
             >
-              🏠 Beranda
+              🏠
             </Link>
             <button
               type="button"
@@ -174,7 +175,7 @@ export default function CalculatorPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <MoneyInput label="Diskon ditanggung seller" value={sellerDiscount} onChange={setSellerDiscount} />
+              <MoneyInput label="Diskon seller" value={sellerDiscount} onChange={setSellerDiscount} />
               <div className="flex flex-col gap-1 w-full">
                 <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Jumlah (QTY)</label>
                 <div className="flex items-center justify-between rounded-xl border border-neutral-200 px-3 py-2 bg-neutral-50 h-[46px]">
