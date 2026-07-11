@@ -3,6 +3,7 @@
 
 import React, { useEffect, useState } from "react";
 import { siteConfig } from "../config/site";
+import Link from "next/link";
 
 export default function Logo() {
   const [logoError, setLogoError] = useState(false);
@@ -31,25 +32,25 @@ export default function Logo() {
 
   if (logoError) {
     return (
-      <div className="flex items-center gap-2">
+      <Link href="https://bagaskaracell.net" className="flex items-center gap-2 select-none cursor-pointer">
         <span className="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center text-white font-black text-lg shadow-sm shadow-orange-200">
           B
         </span>
         <span className="font-extrabold text-base tracking-tight text-neutral-900 dark:text-zinc-100">
           {siteConfig.name}
         </span>
-      </div>
+      </Link>
     );
   }
 
   return (
-    <div className="flex items-center h-12 select-none cursor-pointer">
+    <Link href="https://bagaskaracell.net" className="flex items-center h-12 select-none cursor-pointer">
       <img
         src={logoSrc}
         alt={siteConfig.name}
         className="h-9 md:h-11 w-auto object-contain"
         onError={() => setLogoError(true)}
       />
-    </div>
+    </Link>
   );
 }
