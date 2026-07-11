@@ -7,6 +7,7 @@ import CekResiResult from "./CekResiResult";
 import { isSupportedCourier, getCourierLabel } from "@/lib/couriers";
 import type { CekResiApiResponse, CourierCode, TrackingResult } from "@/types/tracking";
 import { siteConfig } from "@/config/site";
+import TutorialModal from "@/components/TutorialModal";
 
 interface TrackingRow {
   id: string;
@@ -396,6 +397,29 @@ export default function CekResiForm() {
           </div>
         </div>
       )}
+      {/* Welcome Tutorial Modal */}
+      <TutorialModal
+        storageKey="bagaskara-tutorial-resi"
+        badge="Tutorial Lacak Paket"
+        title="Cara Lacak Pengiriman Anda"
+        steps={[
+          {
+            icon: "📦",
+            title: "Pilih Ekspedisi / Kurir",
+            description: "Klik dropdown kurir untuk memilih ekspedisi pengiriman paket Anda. Kami mendukung lebih dari 20 kurir populer termasuk J&T, Shopee Express, Sicepat, dan JNE."
+          },
+          {
+            icon: "🔢",
+            title: "Masukkan Nomor Resi",
+            description: "Salin dan tempel nomor resi (AWB) yang diberikan oleh admin Bagaskara Cell ke dalam kolom input resi pengiriman."
+          },
+          {
+            icon: "⚡",
+            title: "Lacak Banyak Resi Sekaligus",
+            description: "Klik 'Tambah Resi Lain' jika Anda ingin melacak beberapa paket sekaligus secara bersamaan dan real-time dalam satu halaman."
+          }
+        ]}
+      />
     </div>
   );
 }

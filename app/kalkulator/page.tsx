@@ -16,6 +16,7 @@ import { ComparisonModal } from '@/components/kalkulator/ComparisonModal';
 import Link from 'next/link';
 import Logo from '@/components/Logo';
 import { siteConfig } from '@/config/site';
+import TutorialModal from '@/components/TutorialModal';
 
 export default function CalculatorPage() {
   const [profile, setProfile] = useStoreProfile();
@@ -419,6 +420,30 @@ export default function CalculatorPage() {
         product={product}
         profile={profile}
         activePrice={activePriceForComparison}
+      />
+
+      {/* Welcome Tutorial Modal */}
+      <TutorialModal
+        storageKey="bagaskara-tutorial-kalkulator"
+        badge="Tutorial Kalkulator"
+        title="Cara Pakai Kalkulator Shopee"
+        steps={[
+          {
+            icon: "⚖️",
+            title: "Pilih Mode Perhitungan",
+            description: "Gunakan tombol di atas untuk beralih mode. Mode 'Cari Harga Jual' mencari harga optimum untuk target profit tertentu. Mode 'Cek Profit' menghitung laba bersih dari harga jual Anda."
+          },
+          {
+            icon: "🔍",
+            title: "Ketik Nama Barang",
+            description: "Ketik nama HP atau aksesoris. Autocomplete akan menyarankan produk dari stok toko terdaftar beserta modal dasarnya (HPP), atau mendeteksi kategori yang sesuai secara otomatis."
+          },
+          {
+            icon: "⚙️",
+            title: "Sesuaikan Fitur & Asuransi",
+            description: "Buka 'Opsi Lanjutan' dan aktifkan program seperti Gratis Ongkir XTRA, potongan SPayLater, program asuransi penjual (0.5%), dan biaya kemasan untuk hasil kalkulasi yang sangat akurat."
+          }
+        ]}
       />
     </main>
   );
