@@ -15,6 +15,7 @@ import {
   parseServicesJson,
   parseOperatorsJson,
   parseActiveActivationsJson,
+  parsePricesJson,
 } from "@/lib/smsProto";
 import type {
   Activation,
@@ -115,6 +116,9 @@ export default function SmsDashboardPage() {
   const [fixedPrice, setFixedPrice] = useState<boolean>(false);
   const [phoneException, setPhoneException] = useState<string>("");
 
+  const [priceOptions, setPriceOptions] = useState<{ price: number; stock: number }[]>([]);
+  const [loadingPrices, setLoadingPrices] = useState(false);
+
   const [activations, setActivations] = useState<Activation[]>([]);
   const [logs, setLogs] = useState<SmsLogEntry[]>([]);
   const [logsOpen, setLogsOpen] = useState<boolean>(true);
@@ -207,6 +211,18 @@ export default function SmsDashboardPage() {
     });
   }, [callSms, apiKey]);
 
+  const refreshPrices = useCallback(async () => {
+    if (!apiKey.trim() || !selectedService || !selectedCountry) return;
+    setLoadingPrices(true);
+    const res = await callSms("getPrices", { service: selectedService, country: selectedCountry });
+    if (res.ok) {
+      setPriceOptions(parsePricesJson(res.raw, selectedService, selectedCountry));
+    } else {
+      setPriceOptions([]);
+    }
+    setLoadingPrices(false);
+  }, [callSms, selectedService, selectedCountry, apiKey]);
+
   // ---------- Load API Key from localStorage on Mount ----------
   useEffect(() => {
     const savedKey = window.localStorage.getItem("sms_litensi_api_key") || "";
@@ -225,6 +241,7 @@ export default function SmsDashboardPage() {
       void refreshCatalog();
       void refreshOperators(selectedCountry);
       void refreshActivations();
+      void refreshPrices();
     } else {
       // Clear data if api key is empty
       setBalance(null);
@@ -232,9 +249,18 @@ export default function SmsDashboardPage() {
       setServices([]);
       setOperators([]);
       setActivations([]);
+      setPriceOptions([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiKey]);
+
+  // Re-fetch prices when country or service changes
+  useEffect(() => {
+    if (apiKey.trim()) {
+      void refreshPrices();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCountry, selectedService]);
 
   // Re-fetch operators when country changes
   useEffect(() => {
@@ -516,17 +542,38 @@ export default function SmsDashboardPage() {
               </select>
             </label>
 
-            <label className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1">
               <span className="text-[10px] font-extrabold text-neutral-500 dark:text-zinc-400 uppercase tracking-wider">Harga Maks. (Rp)</span>
-              <input
-                type="number"
-                value={maxPrice}
-                onChange={e => setMaxPrice(e.target.value)}
-                placeholder="mis. 5000"
-                min={0}
-                className="rounded-xl border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm text-neutral-800 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-orange-500/40"
-              />
-            </label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={maxPrice}
+                  onChange={e => setMaxPrice(e.target.value)}
+                  placeholder={loadingPrices ? "Loading harga..." : "mis. 5000"}
+                  min={0}
+                  className="flex-1 rounded-xl border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm text-neutral-800 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-orange-500/40"
+                />
+                {priceOptions.length > 0 && (
+                  <select
+                    onChange={e => {
+                      const val = e.target.value;
+                      if (val) {
+                        setMaxPrice(val);
+                      }
+                    }}
+                    value={priceOptions.some(p => String(p.price) === maxPrice) ? maxPrice : ""}
+                    className="rounded-xl border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm text-neutral-800 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-orange-500/40"
+                  >
+                    <option value="">-- Pilih Harga --</option>
+                    {priceOptions.map(p => (
+                      <option key={p.price} value={p.price}>
+                        Rp {p.price} (Stok: {p.stock.toLocaleString()})
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            </div>
 
             <label className="flex flex-col gap-1">
               <span className="text-[10px] font-extrabold text-neutral-500 dark:text-zinc-400 uppercase tracking-wider">Pengecualian Prefix</span>

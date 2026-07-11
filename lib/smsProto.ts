@@ -92,6 +92,25 @@ export function parseCountriesJson(raw: string): CountryRow[] {
 export function parseServicesJson(raw: string): ServiceRow[] {
   const data = safeParseJson(raw);
   const result: ServiceRow[] = [];
+  if (!data) return result;
+
+  // Handle { "status": "success", "services": [...] }
+  if (typeof data === "object" && !Array.isArray(data)) {
+    const rec = data as Record<string, unknown>;
+    if (Array.isArray(rec.services)) {
+      for (const item of rec.services) {
+        if (item && typeof item === "object") {
+          const sRec = item as Record<string, unknown>;
+          const code = String(sRec.code ?? sRec.service ?? "");
+          const name = String(sRec.name ?? sRec.eng ?? sRec.rus ?? code);
+          if (code) result.push({ code, name });
+        }
+      }
+      return result;
+    }
+  }
+
+  // Handle Array of services
   if (Array.isArray(data)) {
     for (const item of data) {
       if (item && typeof item === "object") {
@@ -103,10 +122,14 @@ export function parseServicesJson(raw: string): ServiceRow[] {
     }
     return result;
   }
-  if (data && typeof data === "object") {
+
+  // Fallback map format
+  if (typeof data === "object") {
     for (const [key, value] of Object.entries(data)) {
-      if (typeof value === "string") result.push({ code: key, name: value });
-      else if (value && typeof value === "object") {
+      if (key === "status" || key === "services") continue;
+      if (typeof value === "string") {
+        result.push({ code: key, name: value });
+      } else if (value && typeof value === "object") {
         const rec = value as Record<string, unknown>;
         const name = String(rec.name ?? rec.eng ?? rec.rus ?? key);
         result.push({ code: key, name });
@@ -120,9 +143,43 @@ export function parseOperatorsJson(raw: string): OperatorRow[] {
   const data = safeParseJson(raw);
   const result: OperatorRow[] = [];
   const pushOp = (code: string, name?: string) => {
-    if (!code) return;
+    if (!code || code === "status" || code === "countryOperators") return;
     result.push({ code, name: name || code });
   };
+
+  if (!data) {
+    result.unshift({ code: "any", name: "Any (semua operator)" });
+    return result;
+  }
+
+  // Handle { "status": "success", "countryOperators": { "6": ["indosat", "telkomsel"] } }
+  if (typeof data === "object" && !Array.isArray(data)) {
+    const rec = data as Record<string, unknown>;
+    if (rec.countryOperators && typeof rec.countryOperators === "object") {
+      const target = rec.countryOperators as Record<string, unknown>;
+      for (const [key, value] of Object.entries(target)) {
+        if (Array.isArray(value)) {
+          for (const v of value) if (typeof v === "string") pushOp(v);
+        } else if (typeof value === "string") {
+          pushOp(key, value);
+        } else if (value && typeof value === "object") {
+          const subRec = value as Record<string, unknown>;
+          const ops = subRec.operators;
+          if (Array.isArray(ops)) {
+            for (const v of ops) if (typeof v === "string") pushOp(v);
+          } else {
+            pushOp(key, subRec.name ? String(subRec.name) : undefined);
+          }
+        }
+      }
+      if (!result.some(o => o.code.toLowerCase() === "any")) {
+        result.unshift({ code: "any", name: "Any (semua operator)" });
+      }
+      return result;
+    }
+  }
+
+  // Handle Array of operators
   if (Array.isArray(data)) {
     for (const item of data) {
       if (typeof item === "string") pushOp(item);
@@ -131,10 +188,14 @@ export function parseOperatorsJson(raw: string): OperatorRow[] {
         pushOp(String(rec.code ?? rec.id ?? ""), rec.name ? String(rec.name) : undefined);
       }
     }
+    if (!result.some(o => o.code.toLowerCase() === "any")) {
+      result.unshift({ code: "any", name: "Any (semua operator)" });
+    }
     return result;
   }
-  if (data && typeof data === "object") {
-    // Struktur umum: { "6": { "operators": ["any", "telkomsel"] } } atau { "any": "Any" }
+
+  // Generic Map format
+  if (typeof data === "object") {
     for (const [key, value] of Object.entries(data)) {
       if (typeof value === "string") pushOp(key, value);
       else if (Array.isArray(value)) {
@@ -150,11 +211,42 @@ export function parseOperatorsJson(raw: string): OperatorRow[] {
       }
     }
   }
-  // Pastikan "any" selalu ada di depan
+
   if (!result.some(o => o.code.toLowerCase() === "any")) {
     result.unshift({ code: "any", name: "Any (semua operator)" });
   }
   return result;
+}
+
+export function parsePricesJson(raw: string, serviceCode: string, countryId: string): { price: number; stock: number }[] {
+  const data = safeParseJson(raw);
+  const result: { price: number; stock: number }[] = [];
+  if (data && typeof data === "object") {
+    const rec = data as Record<string, unknown>;
+    const nestedData = rec.data ?? data;
+    if (nestedData && typeof nestedData === "object") {
+      const servicesMap = nestedData as Record<string, unknown>;
+      const countryMap = servicesMap[serviceCode];
+      if (countryMap && typeof countryMap === "object") {
+        const countries = countryMap as Record<string, unknown>;
+        const priceMapObj = countries[countryId];
+        if (priceMapObj && typeof priceMapObj === "object") {
+          const priceRec = priceMapObj as Record<string, unknown>;
+          const map = priceRec.map;
+          if (map && typeof map === "object") {
+            for (const [priceStr, stockVal] of Object.entries(map)) {
+              const price = parseFloat(priceStr);
+              const stock = Number(stockVal);
+              if (Number.isFinite(price) && Number.isFinite(stock)) {
+                result.push({ price, stock });
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return result.sort((a, b) => a.price - b.price);
 }
 
 // ----- getActiveActivations (JSON) -----
