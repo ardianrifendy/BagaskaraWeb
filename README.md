@@ -14,7 +14,7 @@ Katalog produk smartphone & tablet mobile-first untuk toko retail **Bagaskara Ce
   - Filter kondisi (Baru, Second, Like New) dan Filter Merek (Brand Chips).
 - **🗃️ Split SQLite Databases:** Memisahkan data fisik lokal toko Anda (`database/owner.db`) dengan data PO scraping Erafone (`database/erafone.db`) agar data pribadi aman dari pembersihan/impor scraper.
 - **🖥️ Visual Stock Manager Dashboard (`/stok`):** Halaman input & edit stok visual yang dilindungi PIN toko (`bagaskara`). Memudahkan penambahan HP baru, penambahan varian, dan pembaruan stok (Ready vs Habis) secara instan hanya dengan sekali klik.
-- **🧮 Shopee Fee & Profit Calculator (`/kalkulator`):** Alat bantu hitung biaya admin, diskon, asuransi penjual (0.5%), dan estimasi profit Shopee secara presisi. Mendukung autocomplete produk dari database `owner.db` (mengisi otomatis nama, kategori, dan modal dasar HPP), simulasi SPayLater, serta perbandingan 4 program Shopee sekaligus (Reguler, Star, Star+, Mall).
+- **🧮 Shopee Fee & Profit Calculator (`/kalkulator-shopee`):** Alat bantu hitung biaya admin, diskon, asuransi penjual (0.5%), dan estimasi profit Shopee secara presisi. Mendukung autocomplete produk dari database `owner.db` (mengisi otomatis nama, kategori, dan modal dasar HPP), simulasi SPayLater, serta perbandingan 4 program Shopee sekaligus (Reguler, Star, Star+, Mall).
 - **💬 Pre-filled WhatsApp Link:** Tombol hubungi WhatsApp secara otomatis mengemas nama produk, warna, kapasitas penyimpanan yang dipilih, dan harga ke dalam format tautan chat.
 - **🔌 Erafone Scraper Integrator:** Memungkinkan pembaruan data katalog pre-order secara instan hasil scrap website Erafone secara langsung.
 

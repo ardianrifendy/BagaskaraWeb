@@ -29,7 +29,7 @@ export default function PengaturanPage() {
     return (
       <main className="min-h-screen bg-neutral-50 pb-20 text-neutral-850 font-sans">
         <header className="bg-white border-b border-neutral-100 sticky top-0 z-40 px-4 py-3.5 flex items-center gap-3 shadow-sm">
-          <Link href="/kalkulator" className="text-neutral-500 hover:text-orange-600 text-lg font-bold">
+          <Link href="/kalkulator-shopee" className="text-neutral-500 hover:text-orange-600 text-lg font-bold">
             ←
           </Link>
           <div>
@@ -57,7 +57,7 @@ export default function PengaturanPage() {
             </span>
           </div>
           <Link
-            href="/kalkulator"
+            href="/kalkulator-shopee"
             className="text-xs font-black px-3.5 py-2.5 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 hover:text-orange-600 transition-all flex items-center gap-1.5 shadow-sm shadow-neutral-100 cursor-pointer"
           >
             ← Kembali
@@ -129,24 +129,34 @@ export default function PengaturanPage() {
             <span className="text-[10px] text-neutral-400 font-extrabold select-none">Biaya tetap per transaksi, default Rp 1.250.</span>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-2.5">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Packing (Rp/pesanan)</label>
+              <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Packing (Rp)</label>
               <input
                 type="number"
                 value={profile.packingCost}
                 onChange={(e) => handleInputChange('packingCost', parseInt(e.target.value, 10) || 0)}
-                className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-neutral-200 bg-neutral-50 text-neutral-800 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 font-extrabold transition-all duration-200"
+                className="w-full px-2.5 py-2.5 text-xs rounded-xl border border-neutral-200 bg-neutral-50 text-neutral-800 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 font-extrabold transition-all duration-200"
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Biaya Iklan Shopee (%)</label>
+              <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Iklan (%)</label>
               <input
                 type="number"
                 step="0.1"
                 value={profile.adCostPct}
                 onChange={(e) => handleInputChange('adCostPct', parseFloat(e.target.value) || 0)}
-                className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-neutral-200 bg-neutral-50 text-neutral-800 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 font-extrabold transition-all duration-200"
+                className="w-full px-2.5 py-2.5 text-xs rounded-xl border border-neutral-200 bg-neutral-50 text-neutral-800 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 font-extrabold transition-all duration-200"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider" title="Komisi Affiliate Marketing Solution (AMS)">Affiliate (%)</label>
+              <input
+                type="number"
+                step="0.1"
+                value={profile.affiliateCommissionPct || 0}
+                onChange={(e) => handleInputChange('affiliateCommissionPct', parseFloat(e.target.value) || 0)}
+                className="w-full px-2.5 py-2.5 text-xs rounded-xl border border-neutral-200 bg-neutral-50 text-neutral-800 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 font-extrabold transition-all duration-200"
               />
             </div>
           </div>

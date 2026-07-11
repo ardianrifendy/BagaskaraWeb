@@ -144,24 +144,34 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-2.5">
               <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] font-extrabold text-neutral-450 uppercase tracking-wider">Packing (Rp/pesanan)</label>
+                <label className="text-[9px] font-extrabold text-neutral-450 uppercase tracking-wider">Packing (Rp)</label>
                 <input
                   type="number"
                   value={localProfile.packingCost}
                   onChange={(e) => handleInputChange('packingCost', Math.max(0, parseInt(e.target.value, 10) || 0))}
-                  className="w-full px-3 py-2 text-xs rounded-xl border border-neutral-200 bg-neutral-50 text-neutral-800 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 font-bold transition-all"
+                  className="w-full px-2.5 py-2 text-xs rounded-xl border border-neutral-200 bg-neutral-50 text-neutral-800 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 font-bold transition-all"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] font-extrabold text-neutral-450 uppercase tracking-wider">Iklan Shopee (%)</label>
+                <label className="text-[9px] font-extrabold text-neutral-450 uppercase tracking-wider">Iklan (%)</label>
                 <input
                   type="number"
                   step="0.1"
                   value={localProfile.adCostPct}
                   onChange={(e) => handleInputChange('adCostPct', Math.max(0, parseFloat(e.target.value) || 0))}
-                  className="w-full px-3 py-2 text-xs rounded-xl border border-neutral-200 bg-neutral-50 text-neutral-800 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 font-bold transition-all"
+                  className="w-full px-2.5 py-2 text-xs rounded-xl border border-neutral-200 bg-neutral-50 text-neutral-800 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 font-bold transition-all"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[9px] font-extrabold text-neutral-450 uppercase tracking-wider" title="Komisi Affiliate Marketing Solution (AMS)">Affiliate (%)</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={localProfile.affiliateCommissionPct || 0}
+                  onChange={(e) => handleInputChange('affiliateCommissionPct', Math.max(0, parseFloat(e.target.value) || 0))}
+                  className="w-full px-2.5 py-2 text-xs rounded-xl border border-neutral-200 bg-neutral-50 text-neutral-800 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 font-bold transition-all"
                 />
               </div>
             </div>

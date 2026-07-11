@@ -71,7 +71,7 @@ export default function BandingkanPage() {
             </span>
           </div>
           <Link
-            href="/kalkulator"
+            href="/kalkulator-shopee"
             className="text-xs font-black px-3.5 py-2.5 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 hover:text-orange-600 transition-all flex items-center gap-1.5 shadow-sm shadow-neutral-100 cursor-pointer"
           >
             ← Kembali

@@ -16,6 +16,7 @@ const DEFAULT_PROFILE: StoreProfile = {
   orderProcessingFee: 1250,
   packingCost: 0,
   adCostPct: 0,
+  affiliateCommissionPct: 0,
 };
 
 const DEFAULT_PRODUCT: ProductInput = {

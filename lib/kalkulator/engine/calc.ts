@@ -96,6 +96,19 @@ export function calculateFees(input: ProductInput, profile: StoreProfile, rawPri
     });
   }
 
+  // 7.5. Komisi Affiliate / AMS (jika diaktifkan > 0)
+  if (profile.affiliateCommissionPct && profile.affiliateCommissionPct > 0) {
+    const affiliateFee = Math.round(netPrice * (profile.affiliateCommissionPct / 100));
+    items.push({
+      key: 'affiliate',
+      label: `Komisi Affiliate/AMS (${profile.affiliateCommissionPct}%)`,
+      ratePct: profile.affiliateCommissionPct,
+      amount: affiliateFee,
+      capped: false,
+      effectivePct: profile.affiliateCommissionPct
+    });
+  }
+
   // 8. Biaya Proses Pesanan (Flat per pesanan, skip jika isNewStore)
   if (!profile.isNewStore) {
     items.push({

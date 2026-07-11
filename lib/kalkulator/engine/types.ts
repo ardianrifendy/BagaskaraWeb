@@ -15,6 +15,7 @@ export interface StoreProfile {
   orderProcessingFee: number;
   packingCost: number;
   adCostPct: number;
+  affiliateCommissionPct?: number;
 }
 
 export interface ProductInput {

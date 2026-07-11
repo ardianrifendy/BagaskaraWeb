@@ -89,7 +89,7 @@ export default async function Home({ searchParams }: PageProps) {
           
           <div className="flex items-center gap-2.5">
             <Link
-              href="/kalkulator"
+              href="/kalkulator-shopee"
               className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 flex items-center justify-center text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer"
               title="Kalkulator Potongan Shopee"
             >

@@ -55,7 +55,14 @@ export const CATEGORY_DICTIONARY: CategoryEntry[] = [
     label: 'Elektronik - Aksesoris HP (casing, charger, dll)',
     adminPct: { regular: 10.0, mall: 10.2 },
     goxPct: { biasa: 5.5, khusus: 7.0 },
-    keywords: ['casing', 'case', 'softcase', 'hardcase', 'charger', 'kabel data', 'tempered glass', 'anti gores', 'tongsis', 'holder hp', 'skin hp', 'popsocket', 'tripod hp', 'powerbank', 'power bank']
+    keywords: ['casing', 'case', 'softcase', 'hardcase', 'charger', 'kabel data', 'tempered glass', 'anti gores', 'tongsis', 'holder hp', 'skin hp', 'popsocket', 'tripod hp']
+  },
+  {
+    key: 'elektronik.powerbank',
+    label: 'Elektronik - Powerbank',
+    adminPct: { regular: 9.50, mall: 7.70 },
+    goxPct: { biasa: 5.5, khusus: 7.0 },
+    keywords: ['powerbank', 'power bank', 'portable charger']
   },
   {
     key: 'elektronik.aksesoris_hp_modem',
