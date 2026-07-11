@@ -5,7 +5,6 @@ import type { SmsProxyResponse } from "@/types/sms";
 export const dynamic = "force-dynamic";
 
 const UPSTREAM_URL = "https://litensi.id/api/sms/handler_api.php";
-const DEFAULT_API_KEY = "FDsgdf9EKGJ3TqfuN6WAODoavHLf4lvz";
 const REQUEST_TIMEOUT_MS = 12_000;
 
 // Rate limit ringan (in-memory, per instance) — longgar karena polling 5 detik + auto-refresh 15 detik.
@@ -70,12 +69,16 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Resolve API key: client override -> env -> hardcoded default.
+  // Resolve API key: client override -> env
   const clientKey = searchParams.get("api_key")?.trim();
-  const apiKey =
-    (clientKey && clientKey.length > 0 ? clientKey : undefined) ??
-    process.env.SMS_ACTIVATION_API_KEY ??
-    DEFAULT_API_KEY;
+  const apiKey = (clientKey && clientKey.length > 0 ? clientKey : undefined) ?? process.env.SMS_ACTIVATION_API_KEY;
+
+  if (!apiKey) {
+    return jsonResponse(
+      { ok: false, action, error: "API Key litensi.id belum dimasukkan/dikonfigurasi.", raw: "" },
+      400
+    );
+  }
 
   // Build upstream URL.
   const upstream = new URL(UPSTREAM_URL);

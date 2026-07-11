@@ -170,25 +170,29 @@ export default function SmsDashboardPage() {
 
   // ---------- Refresh balance ----------
   const refreshBalance = useCallback(async () => {
+    if (!apiKey.trim()) return;
     setRefreshingBalance(true);
     const res = await callSms("getBalance");
     if (res.ok) setBalance(parseGetBalance(res.raw));
     setRefreshingBalance(false);
-  }, [callSms]);
+  }, [callSms, apiKey]);
 
   // ---------- Refresh countries/services ----------
   const refreshCatalog = useCallback(async () => {
+    if (!apiKey.trim()) return;
     const [c, s] = await Promise.all([callSms("getCountries"), callSms("getServicesList", { country: selectedCountry })]);
     if (c.ok) setCountries(parseCountriesJson(c.raw));
     if (s.ok) setServices(parseServicesJson(s.raw));
-  }, [callSms, selectedCountry]);
+  }, [callSms, selectedCountry, apiKey]);
 
   const refreshOperators = useCallback(async (countryId: string) => {
+    if (!apiKey.trim()) return;
     const res = await callSms("getOperators", { country: countryId });
     if (res.ok) setOperators(parseOperatorsJson(res.raw));
-  }, [callSms]);
+  }, [callSms, apiKey]);
 
   const refreshActivations = useCallback(async () => {
+    if (!apiKey.trim()) return;
     const res = await callSms("getActiveActivations");
     if (!res.ok) return;
     const upstream = parseActiveActivationsJson(res.raw);
@@ -201,27 +205,50 @@ export default function SmsDashboardPage() {
       }
       return Array.from(byId.values()).sort((a, b) => b.createdAt - a.createdAt);
     });
-  }, [callSms]);
+  }, [callSms, apiKey]);
 
-  // ---------- Initial load ----------
+  // ---------- Load API Key from localStorage on Mount ----------
   useEffect(() => {
-    void refreshBalance();
-    void refreshCatalog();
-    void refreshOperators(selectedCountry);
-    void refreshActivations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const savedKey = window.localStorage.getItem("sms_litensi_api_key") || "";
+    setApiKey(savedKey);
   }, []);
+
+  const handleApiKeyChange = (val: string) => {
+    setApiKey(val);
+    window.localStorage.setItem("sms_litensi_api_key", val.trim());
+  };
+
+  // ---------- Re-fetch everything when apiKey changes ----------
+  useEffect(() => {
+    if (apiKey.trim()) {
+      void refreshBalance();
+      void refreshCatalog();
+      void refreshOperators(selectedCountry);
+      void refreshActivations();
+    } else {
+      // Clear data if api key is empty
+      setBalance(null);
+      setCountries([]);
+      setServices([]);
+      setOperators([]);
+      setActivations([]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apiKey]);
 
   // Re-fetch operators when country changes
   useEffect(() => {
-    void refreshOperators(selectedCountry);
-  }, [selectedCountry, refreshOperators]);
+    if (apiKey.trim()) {
+      void refreshOperators(selectedCountry);
+    }
+  }, [selectedCountry, apiKey, refreshOperators]);
 
   // Auto-refresh activations
   useEffect(() => {
+    if (!apiKey.trim()) return;
     const id = setInterval(() => void refreshActivations(), REFRESH_ACTIVATIONS_MS);
     return () => clearInterval(id);
-  }, [refreshActivations]);
+  }, [refreshActivations, apiKey]);
 
   // Elapsed timer tick
   useEffect(() => {
@@ -231,6 +258,7 @@ export default function SmsDashboardPage() {
 
   // Polling getStatus every 5s for waiting/waiting_retry activations (limit 4 concurrent)
   useEffect(() => {
+    if (!apiKey.trim()) return;
     let cancelled = false;
     const tick = async () => {
       const list = activationsRef.current.filter(a =>
@@ -258,7 +286,7 @@ export default function SmsDashboardPage() {
     };
     const id = setInterval(() => void tick(), POLL_INTERVAL_MS);
     return () => { cancelled = true; clearInterval(id); };
-  }, [callSms]);
+  }, [callSms, apiKey]);
 
   // Auto-scroll log
   useEffect(() => {
@@ -269,7 +297,7 @@ export default function SmsDashboardPage() {
 
   // ---------- Order action ----------
   const handleOrder = useCallback(async () => {
-    if (!selectedService || !selectedCountry) return;
+    if (!apiKey.trim() || !selectedService || !selectedCountry) return;
     setOrderLoading(true);
     const res = await callSms("getNumber", {
       service: selectedService,
@@ -301,10 +329,11 @@ export default function SmsDashboardPage() {
     };
     setActivations(prev => [newAct, ...prev.filter(a => a.id !== newAct.id)]);
     void refreshBalance();
-  }, [callSms, selectedService, selectedCountry, selectedOperator, maxPrice, fixedPrice, phoneException, services, refreshBalance]);
+  }, [callSms, selectedService, selectedCountry, selectedOperator, maxPrice, fixedPrice, phoneException, services, refreshBalance, apiKey]);
 
   // ---------- setStatus actions ----------
   const handleSetStatus = useCallback(async (activationId: string, status: 3 | 6 | 8) => {
+    if (!apiKey.trim()) return;
     setStatusLoading(prev => ({ ...prev, [`${activationId}:${status}`]: true }));
     const res = await callSms("setStatus", { id: activationId, status: String(status) });
     setStatusLoading(prev => {
@@ -325,7 +354,7 @@ export default function SmsDashboardPage() {
       setActivations(prev => prev.map(a => a.id === activationId ? { ...a, status: "waiting_retry", smsCode: undefined } : a));
     }
     void refreshBalance();
-  }, [callSms, refreshBalance]);
+  }, [callSms, refreshBalance, apiKey]);
 
   // ---------- Clipboard ----------
   const copyText = useCallback(async (text: string, key: string) => {
@@ -372,6 +401,14 @@ export default function SmsDashboardPage() {
           </p>
         </div>
 
+        {/* Warning Banner if API Key is missing */}
+        {!apiKey.trim() && (
+          <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-amber-800 dark:text-amber-300 px-4 py-3 rounded-2xl text-xs md:text-sm font-extrabold flex items-center gap-2 shadow-sm">
+            <span>⚠️</span>
+            <span>API Key Litensi belum diatur. Silakan masukkan API Key Anda pada kolom di bawah untuk mengaktifkan dashboard ini.</span>
+          </div>
+        )}
+
         {/* Balance card */}
         <section className="rounded-3xl border border-neutral-100 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-5 md:p-6 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -389,14 +426,14 @@ export default function SmsDashboardPage() {
               <input
                 type="password"
                 value={apiKey}
-                onChange={e => setApiKey(e.target.value)}
-                placeholder="Pakai API key default server"
+                onChange={e => handleApiKeyChange(e.target.value)}
+                placeholder="Masukkan API Key Litensi Anda..."
                 className="w-full md:w-72 rounded-xl border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm text-neutral-800 dark:text-zinc-100 placeholder:text-neutral-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500/40"
               />
               <button
                 type="button"
                 onClick={refreshBalance}
-                disabled={refreshingBalance}
+                disabled={refreshingBalance || !apiKey.trim()}
                 className="rounded-xl bg-orange-600 hover:bg-orange-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-bold px-4 py-2 transition-colors"
               >
                 {refreshingBalance ? "Memuat…" : "Refresh Saldo"}
@@ -520,7 +557,7 @@ export default function SmsDashboardPage() {
             <button
               type="button"
               onClick={handleOrder}
-              disabled={orderLoading}
+              disabled={orderLoading || !apiKey.trim()}
               className="w-full md:w-auto rounded-xl bg-orange-600 hover:bg-orange-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-bold px-5 py-2.5 transition-colors"
             >
               {orderLoading ? "Memesan…" : "Pesan Nomor"}
