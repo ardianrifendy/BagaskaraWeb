@@ -1,5 +1,6 @@
 import feesData from '../shopee_fees_2026.json';
 import { ProductSize } from '../engine/types';
+import { CATEGORY_DICTIONARY } from '../detect/keywords';
 
 // Ekstrak struktur dari JSON
 const adminFeesRegular = feesData.admin_fees_regular;
@@ -24,6 +25,13 @@ function isMatch(jsonItem: string, subKey: string): boolean {
 export function getAdminFeeRate(categoryKey: string, isMall: boolean): number {
   if (!categoryKey) return 0;
 
+  // 1. Prioritaskan lookup dari CATEGORY_DICTIONARY agar sinkron dengan yang tampil di UI
+  const dictionaryEntry = CATEGORY_DICTIONARY.find(item => item.key === categoryKey);
+  if (dictionaryEntry) {
+    return isMall ? dictionaryEntry.adminPct.mall : dictionaryEntry.adminPct.regular;
+  }
+
+  // 2. Fallback ke pencarian JSON jika key tidak terdaftar di dictionary
   const [group, keywordStr] = categoryKey.split('.');
   const feeGroup = isMall ? adminFeesMall : adminFeesRegular;
 
@@ -49,6 +57,13 @@ export function getAdminFeeRate(categoryKey: string, isMall: boolean): number {
 export function getGoxRate(categoryKey: string, size: ProductSize): number {
   if (!categoryKey) return 0;
 
+  // 1. Prioritaskan lookup dari CATEGORY_DICTIONARY
+  const dictionaryEntry = CATEGORY_DICTIONARY.find(item => item.key === categoryKey);
+  if (dictionaryEntry) {
+    return size === 'biasa' ? dictionaryEntry.goxPct.biasa : dictionaryEntry.goxPct.khusus;
+  }
+
+  // 2. Fallback ke pencarian JSON
   const [group, keywordStr] = categoryKey.split('.');
   const groupData = (goxRates as unknown as Record<string, Record<string, string[]>>)[group];
 
