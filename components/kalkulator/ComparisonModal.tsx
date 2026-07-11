@@ -69,9 +69,9 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
       <div className="absolute inset-0" onClick={onClose} />
-      <div className="relative w-full max-w-2xl bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col max-h-[90vh] sm:max-h-[85vh] transition-all duration-300 border border-neutral-100 overflow-hidden text-neutral-850 font-sans">
+      <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl flex flex-col max-h-[90vh] transition-all duration-300 border border-neutral-100 overflow-hidden text-neutral-850 font-sans">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-150 bg-neutral-50/50">
           <div>
