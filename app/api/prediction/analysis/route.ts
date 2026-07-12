@@ -23,17 +23,13 @@ const getFallbackNarrative = (snapshot: AssetSnapshot): string => {
   return `Berdasarkan analisis statistik atas data historis 60 hari terakhir, ${snapshot.name} untuk horizon 7 hari ke depan menunjukkan probabilitas skenario ${bias}. Indikator RSI(14) tercatat pada nilai ${snapshot.indicators.rsi14} didukung oleh pergerakan histogram MACD ${snapshot.indicators.macd.state} sebesar ${snapshot.indicators.macd.histogram}. Analisis teknikal ini merefleksikan tren historis semata dan pergerakan dapat berubah tergantung kondisi volatilitas pasar. Anda disarankan untuk selalu melakukan riset mandiri secara mendalam (DYOR) sebelum mengambil keputusan finansial karena data ini tidak mengandung saran investasi.`;
 };
 
-async function generateNarrativeFromGemini(snapshot: AssetSnapshot): Promise<string> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    throw new Error("API_KEY_MISSING");
-  }
+// Fungsi pemanggil API Gemini dengan model kustom dan handling error
+async function fetchGeminiWithModel(modelName: string, userMessage: string, apiKey: string): Promise<string> {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
-  const userMessage = buildUserMessage(snapshot);
-  // Endpoint Gemini 2.5 Pro (sangat andal dan cerdas)
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${apiKey}`;
-
-  const fetchGemini = async () => {
+  try {
     const res = await fetch(url, {
       method: "POST",
       headers: {
@@ -59,30 +55,72 @@ async function generateNarrativeFromGemini(snapshot: AssetSnapshot): Promise<str
         generationConfig: {
           maxOutputTokens: 700
         }
-      })
+      }),
+      signal: controller.signal
     });
 
     if (!res.ok) {
       const errText = await res.text();
-      throw new Error(`Gemini API returned status ${res.status}: ${errText}`);
+      throw new Error(`Gemini API (${modelName}) returned status ${res.status}: ${errText}`);
     }
 
     const data = await res.json();
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) {
-      throw new Error("Empty candidate response from Gemini");
+      throw new Error(`Empty response candidates for ${modelName}`);
     }
     return text as string;
-  };
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
 
-  let text = await fetchGemini();
+async function generateNarrativeFromGemini(snapshot: AssetSnapshot): Promise<string> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("API_KEY_MISSING");
+  }
 
+  const userMessage = buildUserMessage(snapshot);
+  let text = "";
+  let success = false;
+
+  // Daftar model yang akan dicoba berurutan (dari yang tercerdas ke yang paling luas akses gratisnya)
+  const modelsToTry = ["gemini-2.5-pro", "gemini-1.5-pro", "gemini-1.5-flash"];
+
+  for (const model of modelsToTry) {
+    try {
+      console.log(`Attempting to generate narrative using model: ${model}`);
+      text = await fetchGeminiWithModel(model, userMessage, apiKey);
+      success = true;
+      console.log(`Successfully generated narrative using model: ${model}`);
+      break; // Berhenti jika salah satu sukses
+    } catch (err) {
+      console.warn(`Model ${model} failed:`, (err as Error).message || String(err));
+      // Lanjut mencoba model berikutnya di list
+    }
+  }
+
+  // Jika semua model API gagal, gunakan fallback narasi statis netral agar user tidak melihat kotak kosong
+  if (!success || !text) {
+    console.error("All Gemini models failed. Yielding fallback static narrative.");
+    return getFallbackNarrative(snapshot);
+  }
+
+  // Post-check kata terlarang (pasti, dijamin, sinyal beli/jual)
   if (FORBIDDEN_WORDS_REGEX.test(text)) {
     console.warn("Gemini response contained forbidden words. Attempting regeneration once...");
-    text = await fetchGemini();
-    
+    try {
+      // Coba regenerasi sekali lagi menggunakan model yang sukses tadi
+      const successfulModel = text ? "gemini-1.5-flash" : "gemini-2.5-pro"; 
+      text = await fetchGeminiWithModel(successfulModel, userMessage, apiKey);
+    } catch (err) {
+      console.error("Regeneration failed:", err);
+    }
+
+    // Jika setelah regenerasi masih mengandung kata terlarang, paksa gunakan fallback statis netral demi kepatuhan legal
     if (FORBIDDEN_WORDS_REGEX.test(text)) {
-      console.error("Gemini response still contained forbidden words after regeneration. Using fallback static narrative.");
+      console.error("Gemini response still contained forbidden words after regeneration. Forcing fallback static narrative.");
       return getFallbackNarrative(snapshot);
     }
   }
@@ -196,7 +234,7 @@ export async function GET(request: NextRequest) {
       narrative,
       generatedAt: new Date().toISOString()
     });
-  } catch (err: unknown) {
+  } catch (err: any) {
     console.error(`Analysis GET endpoint error for ${assetId}:`, (err as Error).message || String(err));
     return NextResponse.json(
       { 
