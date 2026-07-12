@@ -1,4 +1,4 @@
-﻿export type AssetId = "bitcoin" | "ethereum" | "solana" | "binancecoin" | "usd-idr";
+﻿export type AssetId = "bitcoin" | "ethereum" | "solana" | "binancecoin" | "usd-idr" | "bbca" | "bbri" | "tlkm" | "asii" | "adro";
 
 export interface Indicators {
   rsi14: number;                 // 0–100

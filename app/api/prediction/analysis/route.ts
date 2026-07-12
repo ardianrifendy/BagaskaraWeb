@@ -3,6 +3,7 @@ import { unstable_cache } from "next/cache";
 import { fetchCoinGeckoMarkets, fetchCoinGeckoChart } from "@/lib/prediction/providers/coingecko";
 import { fetchUSDIDRForex } from "@/lib/prediction/providers/forex";
 import { fetchFearGreedIndex } from "@/lib/prediction/providers/feargreed";
+import { fetchYahooStock, YAHOO_TICKERS } from "@/lib/prediction/providers/yahoo";
 import { calculateIndicators } from "@/lib/prediction/indicators";
 import { calculateScenarioProbabilities } from "@/lib/prediction/score";
 import { SYSTEM_PROMPT, buildUserMessage } from "@/lib/prediction/prompt";
@@ -10,10 +11,8 @@ import { AssetSnapshot, AssetId } from "@/lib/prediction/types";
 
 export const dynamic = "force-dynamic";
 
-// Regex untuk mendeteksi kata-kata terlarang (pasti, dijamin, sinyal beli, sinyal jual)
 const FORBIDDEN_WORDS_REGEX = /(pasti|dijamin|sinyal\s+beli|sinyal\s+jual)/i;
 
-// Fallback teks statis netral jika AI melanggar aturan kata terlarang berulang kali atau jika API gagal
 const getFallbackNarrative = (snapshot: AssetSnapshot): string => {
   const bias = snapshot.scenario.up > snapshot.scenario.down 
     ? "bias naik (bullish)" 
@@ -24,52 +23,66 @@ const getFallbackNarrative = (snapshot: AssetSnapshot): string => {
   return `Berdasarkan analisis statistik atas data historis 60 hari terakhir, ${snapshot.name} untuk horizon 7 hari ke depan menunjukkan probabilitas skenario ${bias}. Indikator RSI(14) tercatat pada nilai ${snapshot.indicators.rsi14} didukung oleh pergerakan histogram MACD ${snapshot.indicators.macd.state} sebesar ${snapshot.indicators.macd.histogram}. Analisis teknikal ini merefleksikan tren historis semata dan pergerakan dapat berubah tergantung kondisi volatilitas pasar. Anda disarankan untuk selalu melakukan riset mandiri secara mendalam (DYOR) sebelum mengambil keputusan finansial karena data ini tidak mengandung saran investasi.`;
 };
 
-// Fungsi internal pembuat narasi AI (tanpa cache, untuk dipanggil di dalam cache wrapper)
-async function generateNarrativeFromClaude(snapshot: AssetSnapshot): Promise<string> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+async function generateNarrativeFromGemini(snapshot: AssetSnapshot): Promise<string> {
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     throw new Error("API_KEY_MISSING");
   }
 
   const userMessage = buildUserMessage(snapshot);
+  // Endpoint Gemini 2.5 Pro (sangat andal dan cerdas)
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${apiKey}`;
 
-  const fetchClaude = async () => {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
+  const fetchGemini = async () => {
+    const res = await fetch(url, {
       method: "POST",
       headers: {
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
         "content-type": "application/json"
       },
       body: JSON.stringify({
-        model: "claude-3-5-sonnet-20241022",
-        max_tokens: 700,
-        system: SYSTEM_PROMPT,
-        messages: [{ role: "user", content: userMessage }]
+        contents: [
+          {
+            parts: [
+              {
+                text: userMessage
+              }
+            ]
+          }
+        ],
+        systemInstruction: {
+          parts: [
+            {
+              text: SYSTEM_PROMPT
+            }
+          ]
+        },
+        generationConfig: {
+          maxOutputTokens: 700
+        }
       })
     });
 
     if (!res.ok) {
       const errText = await res.text();
-      throw new Error(`Claude API returned status ${res.status}: ${errText}`);
+      throw new Error(`Gemini API returned status ${res.status}: ${errText}`);
     }
 
     const data = await res.json();
-    return data.content[0].text as string;
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) {
+      throw new Error("Empty candidate response from Gemini");
+    }
+    return text as string;
   };
 
-  // Generate pertama
-  let text = await fetchClaude();
+  let text = await fetchGemini();
 
-  // Post-check kata terlarang
   if (FORBIDDEN_WORDS_REGEX.test(text)) {
-    console.warn("AI response contained forbidden words. Attempting regeneration once...");
-    // Retry sekali
-    text = await fetchClaude();
+    console.warn("Gemini response contained forbidden words. Attempting regeneration once...");
+    text = await fetchGemini();
     
-    // Jika masih melanggar, fallback ke teks statis netral yang aman
     if (FORBIDDEN_WORDS_REGEX.test(text)) {
-      console.error("AI response still contained forbidden words after regeneration. Using fallback static narrative.");
+      console.error("Gemini response still contained forbidden words after regeneration. Using fallback static narrative.");
       return getFallbackNarrative(snapshot);
     }
   }
@@ -77,7 +90,6 @@ async function generateNarrativeFromClaude(snapshot: AssetSnapshot): Promise<str
   return text;
 }
 
-// Helper untuk fetch snapshot aset berdasarkan ID secara langsung di server
 async function getAssetSnapshotDirect(id: AssetId): Promise<AssetSnapshot> {
   const updatedAt = new Date().toISOString();
   if (id === "usd-idr") {
@@ -96,13 +108,30 @@ async function getAssetSnapshotDirect(id: AssetId): Promise<AssetSnapshot> {
       scenario,
       updatedAt
     };
+  } else if (YAHOO_TICKERS[id] !== undefined) {
+    const ticker = YAHOO_TICKERS[id];
+    const stockData = await fetchYahooStock(ticker);
+    const indicators = calculateIndicators(stockData.prices60d, [], undefined);
+    const scenario = calculateScenarioProbabilities(indicators, stockData.change7dPct, false);
+    return {
+      id,
+      name: id === "bbca" ? "Bank Central Asia" : id === "bbri" ? "Bank Rakyat Indonesia" : id === "tlkm" ? "Telkom Indonesia" : id === "asii" ? "Astra International" : "Adaro Energy",
+      symbol: id.toUpperCase(),
+      priceIdr: stockData.price,
+      change24hPct: stockData.change24hPct,
+      change7dPct: stockData.change7dPct,
+      spark30d: stockData.spark30d,
+      indicators,
+      scenario,
+      updatedAt
+    };
   } else {
     const cgMarkets = await fetchCoinGeckoMarkets();
     const marketInfo = cgMarkets.find(m => m.id === id);
     if (!marketInfo) throw new Error("Asset market data missing from provider");
     const chartData = await fetchCoinGeckoChart(id);
-    const prices = chartData.prices.map(p => p[1]);
-    const volumes = chartData.total_volumes ? chartData.total_volumes.map(v => v[1]) : [];
+    const prices = chartData.prices.map(p => p[1]).slice(-60);
+    const volumes = chartData.total_volumes ? chartData.total_volumes.map(v => v[1]).slice(-60) : [];
     let fearGreed = 50;
     try {
       fearGreed = await fetchFearGreedIndex();
@@ -124,21 +153,19 @@ async function getAssetSnapshotDirect(id: AssetId): Promise<AssetSnapshot> {
   }
 }
 
-// Wrapper cache: 6 jam revalidate
 const getCachedAnalysis = unstable_cache(
   async (snapshot: AssetSnapshot) => {
-    return await generateNarrativeFromClaude(snapshot);
+    return await generateNarrativeFromGemini(snapshot);
   },
-  ["prediction-analysis-narrative"],
-  { revalidate: 21600 } // 6 jam revalidate
+  ["prediction-analysis-narrative-gemini"],
+  { revalidate: 21600 }
 );
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const assetId = searchParams.get("asset") as AssetId;
 
-  // Validasi Parameter
-  const validAssets: AssetId[] = ["bitcoin", "ethereum", "solana", "binancecoin", "usd-idr"];
+  const validAssets: AssetId[] = ["bitcoin", "ethereum", "solana", "binancecoin", "usd-idr", "bbca", "bbri", "tlkm", "asii", "adro"];
   if (!assetId || !validAssets.includes(assetId)) {
     return NextResponse.json(
       { ok: false, error: "INVALID_ASSET", message: "ID aset tidak valid" },
@@ -146,8 +173,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Cek apakah API key dikonfigurasi
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey || apiKey.trim() === "") {
     return NextResponse.json({
       ok: false,
@@ -157,14 +183,11 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // 1. Ambil data pasar terkini (secara direct di server)
     const snapshot = await getAssetSnapshotDirect(assetId);
     if (snapshot.unavailable) {
       throw new Error("Asset snapshot is marked unavailable from provider");
     }
 
-    // 2. Generate narasi AI (lewat cache revalidate 6 jam)
-    // Gunakan hash dari data snapshot (terutama harga dan probabilitas) agar cache ter-invalidate jika data pasar berubah drastis
     const narrative = await getCachedAnalysis(snapshot);
 
     return NextResponse.json({

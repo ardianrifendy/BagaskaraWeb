@@ -7,13 +7,14 @@ import PredictionClient from "./PredictionClient";
 import { fetchCoinGeckoMarkets, fetchCoinGeckoChart } from "@/lib/prediction/providers/coingecko";
 import { fetchUSDIDRForex } from "@/lib/prediction/providers/forex";
 import { fetchFearGreedIndex } from "@/lib/prediction/providers/feargreed";
+import { fetchYahooStock, YAHOO_TICKERS } from "@/lib/prediction/providers/yahoo";
 import { calculateIndicators } from "@/lib/prediction/indicators";
 import { calculateScenarioProbabilities } from "@/lib/prediction/score";
 import { AssetSnapshot, AssetId } from "@/lib/prediction/types";
 
 const PAGE_TITLE = "Prediksi Pasar — Bagaskara Cell";
 const PAGE_DESC =
-  "Analisis probabilistik pergerakan Bitcoin, Ethereum, dan kurs Rupiah berbasis indikator statistik (RSI, MACD, Moving Average) — gratis, diperbarui berkala.";
+  "Analisis probabilistik pergerakan Bitcoin, Ethereum, Saham IDX, dan kurs Rupiah berbasis indikator statistik (RSI, MACD, Moving Average) — gratis, diperbarui berkala.";
 
 export const metadata: Metadata = {
   title: PAGE_TITLE,
@@ -39,7 +40,20 @@ async function getInitialMarketData(): Promise<AssetSnapshot[]> {
   const cgMarketsPromise = fetchCoinGeckoMarkets().catch(() => null);
   const forexPromise = fetchUSDIDRForex().catch(() => null);
 
-  const [cgMarkets, forexData] = await Promise.all([cgMarketsPromise, forexPromise]);
+  const stockPromises = Object.entries(YAHOO_TICKERS).map(async ([id, ticker]) => {
+    try {
+      const data = await fetchYahooStock(ticker);
+      return { id: id as AssetId, data };
+    } catch {
+      return { id: id as AssetId, data: null };
+    }
+  });
+
+  const [cgMarkets, forexData, ...stockResults] = await Promise.all([
+    cgMarketsPromise,
+    forexPromise,
+    ...stockPromises
+  ]);
 
   const cryptoList: { id: AssetId; name: string; symbol: string }[] = [
     { id: "bitcoin", name: "Bitcoin", symbol: "BTC" },
@@ -54,8 +68,8 @@ async function getInitialMarketData(): Promise<AssetSnapshot[]> {
       if (!marketInfo) throw new Error("Missing market info");
 
       const chartData = await fetchCoinGeckoChart(c.id);
-      const prices = chartData.prices.map(p => p[1]);
-      const volumes = chartData.total_volumes ? chartData.total_volumes.map(v => v[1]) : [];
+      const prices = chartData.prices.map(p => p[1]).slice(-60);
+      const volumes = chartData.total_volumes ? chartData.total_volumes.map(v => v[1]).slice(-60) : [];
 
       const indicators = calculateIndicators(prices, volumes, fearGreed);
       const scenario = calculateScenarioProbabilities(
@@ -93,6 +107,83 @@ async function getInitialMarketData(): Promise<AssetSnapshot[]> {
           macd: { line: 0, signal: 0, histogram: 0, state: "bearish" },
           volumeChangePct: 0,
           fearGreed,
+          priceVsSma20Pct: 0
+        },
+        scenario: { up: 33, sideways: 34, down: 33, horizonDays: 7, drivers: [] },
+        updatedAt,
+        unavailable: true
+      });
+    }
+  }
+
+  // Proses Saham IDX
+  const stockList: { id: AssetId; name: string; symbol: string }[] = [
+    { id: "bbca", name: "Bank Central Asia", symbol: "BBCA" },
+    { id: "bbri", name: "Bank Rakyat Indonesia", symbol: "BBRI" },
+    { id: "tlkm", name: "Telkom Indonesia", symbol: "TLKM" },
+    { id: "asii", name: "Astra International", symbol: "ASII" },
+    { id: "adro", name: "Adaro Energy", symbol: "ADRO" }
+  ];
+
+  for (const s of stockList) {
+    const stockRes = stockResults.find(r => r.id === s.id);
+    const stockData = stockRes?.data;
+
+    if (stockData) {
+      try {
+        const indicators = calculateIndicators(stockData.prices60d, [], undefined);
+        const scenario = calculateScenarioProbabilities(indicators, stockData.change7dPct, false);
+
+        assets.push({
+          id: s.id,
+          name: s.name,
+          symbol: s.symbol,
+          priceIdr: stockData.price,
+          change24hPct: stockData.change24hPct,
+          change7dPct: stockData.change7dPct,
+          spark30d: stockData.spark30d,
+          indicators,
+          scenario,
+          updatedAt
+        });
+      } catch (err) {
+        console.error(`Pre-render: Failed processing stock ${s.id}:`, err);
+        assets.push({
+          id: s.id,
+          name: s.name,
+          symbol: s.symbol,
+          change24hPct: 0,
+          change7dPct: 0,
+          spark30d: [],
+          indicators: {
+            rsi14: 50,
+            sma20: 0,
+            sma50: 0,
+            maCross: "none",
+            macd: { line: 0, signal: 0, histogram: 0, state: "bearish" },
+            volumeChangePct: 0,
+            priceVsSma20Pct: 0
+          },
+          scenario: { up: 33, sideways: 34, down: 33, horizonDays: 7, drivers: [] },
+          updatedAt,
+          unavailable: true
+        });
+      }
+    } else {
+      assets.push({
+        id: s.id,
+        name: s.name,
+        symbol: s.symbol,
+        change24hPct: 0,
+        change7dPct: 0,
+        spark30d: [],
+        indicators: {
+          rsi14: 50,
+          sma20: 0,
+          sma50: 0,
+          maCross: "none",
+          macd: { line: 0, signal: 0, histogram: 0, state: "bearish" },
+          volumeChangePct: 0,
           priceVsSma20Pct: 0
         },
         scenario: { up: 33, sideways: 34, down: 33, horizonDays: 7, drivers: [] },
@@ -220,7 +311,7 @@ export default async function PredictionPage() {
             Prediksi Pasar
           </h1>
           <p className="text-xs md:text-sm font-semibold text-neutral-400 dark:text-zinc-450 max-w-xl mx-auto leading-relaxed">
-            Analisis probabilistik pergerakan kripto dan kurs Rupiah berbasis indikator statistik — lengkap dengan persentase skenario dan landasan alasannya.
+            Analisis probabilistik pergerakan kripto, saham IDX, dan kurs Rupiah berbasis indikator statistik — lengkap dengan persentase skenario dan landasan alasannya.
           </p>
         </div>
 
