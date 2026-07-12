@@ -234,7 +234,7 @@ export async function GET(request: NextRequest) {
       narrative,
       generatedAt: new Date().toISOString()
     });
-  } catch (err: any) {
+  } catch (err) {
     console.error(`Analysis GET endpoint error for ${assetId}:`, (err as Error).message || String(err));
     return NextResponse.json(
       { 
