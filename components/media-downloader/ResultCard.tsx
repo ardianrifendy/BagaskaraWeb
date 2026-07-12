@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import type { MediaKind, MediaResult, MediaVariant } from "@/lib/media-downloader/types";
 
 interface ResultCardProps {
@@ -56,6 +59,17 @@ function KindIcon({ kind }: { kind: MediaKind }) {
 
 export default function ResultCard({ result }: ResultCardProps) {
   const { platform, title, author, thumbnail, durationSec, variants } = result;
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+
+  async function handleCopy(url: string, index: number) {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    } catch {
+      // Abaikan jika gagal menyalin
+    }
+  }
 
   return (
     <div className="rounded-3xl border border-neutral-100 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-5 md:p-6 shadow-sm backdrop-blur-md animate-in fade-in duration-200">
@@ -113,36 +127,68 @@ export default function ResultCard({ result }: ResultCardProps) {
 
         {variants.map((variant: MediaVariant, idx: number) => {
           const size = variant.sizeBytes ? formatSize(variant.sizeBytes) : "";
+          const isCopied = copiedIndex === idx;
+
           return (
-            <a
-              key={`${variant.url}-${idx}`}
-              href={variant.url}
-              download
-              target="_blank"
-              rel="noopener nofollow"
-              className="group flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-neutral-900 dark:bg-orange-600 hover:bg-neutral-800 dark:hover:bg-orange-700 text-white transition duration-200 cursor-pointer shadow-md shadow-neutral-900/10 dark:shadow-orange-650/10"
-            >
-              <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/10">
-                <KindIcon kind={variant.kind} />
-              </span>
-              <span className="min-w-0 flex-1 flex flex-col text-left">
-                <span className="text-xs md:text-sm font-black leading-tight truncate">
-                  {variant.label}
+            <div key={`${variant.url}-${idx}`} className="flex gap-2">
+              {/* Tombol Utama Download */}
+              <a
+                href={variant.url}
+                download
+                target="_blank"
+                rel="noopener nofollow"
+                className="group flex items-center gap-3 flex-grow px-4 py-3 rounded-xl bg-neutral-900 dark:bg-orange-600 hover:bg-neutral-800 dark:hover:bg-orange-700 text-white transition duration-200 cursor-pointer shadow-md shadow-neutral-900/10 dark:shadow-orange-650/10 min-w-0"
+              >
+                <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 flex-shrink-0">
+                  <KindIcon kind={variant.kind} />
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-white/70">
-                  {variant.ext}{size ? ` · ${size}` : ""}
+                <span className="min-w-0 flex-1 flex flex-col text-left">
+                  <span className="text-xs md:text-sm font-black leading-tight truncate">
+                    {variant.label}
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-white/70">
+                    {variant.ext}{size ? ` · ${size}` : ""}
+                  </span>
                 </span>
-              </span>
-              <svg className="w-5 h-5 flex-shrink-0 opacity-80 group-hover:translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
-              </svg>
-            </a>
+                <svg className="w-5 h-5 flex-shrink-0 opacity-80 group-hover:translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                </svg>
+              </a>
+
+              {/* Tombol Salin Link */}
+              <button
+                type="button"
+                onClick={() => handleCopy(variant.url, idx)}
+                className={`w-12 h-12 rounded-xl border flex items-center justify-center transition-all cursor-pointer flex-shrink-0 shadow-sm ${
+                  isCopied
+                    ? "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-450"
+                    : "bg-neutral-50 dark:bg-zinc-800/50 border-neutral-200 dark:border-zinc-700 text-neutral-500 dark:text-zinc-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-neutral-100 dark:hover:bg-zinc-800"
+                }`}
+                title={isCopied ? "Link tersalin!" : "Salin link unduhan"}
+              >
+                {isCopied ? (
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                )}
+              </button>
+            </div>
           );
         })}
 
         {variants.length === 0 && (
           <p className="text-xs font-medium text-neutral-400 dark:text-zinc-500 text-center py-4">
             Tidak ada media yang dapat diunduh dari link ini.
+          </p>
+        )}
+
+        {variants.length > 0 && (
+          <p className="text-[10px] md:text-xs font-semibold text-neutral-400 dark:text-zinc-500 text-center mt-4 leading-relaxed">
+            Tips: Jika unduhan tidak mulai otomatis saat tombol diklik, silakan salin link unduh menggunakan tombol ikon di sebelah kanan, lalu tempel (paste) di tab baru browser Anda.
           </p>
         )}
       </div>

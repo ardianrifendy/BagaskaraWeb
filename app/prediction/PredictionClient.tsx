@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { AssetSnapshot, AssetId } from "@/lib/prediction/types";
 import DisclaimerBanner from "@/components/prediction/DisclaimerBanner";
 import AssetCard from "@/components/prediction/AssetCard";
@@ -20,11 +20,26 @@ interface AssetInfo {
   label: string;
 }
 
+interface SearchResult {
+  id: string;
+  symbol: string;
+  name: string;
+  type: "crypto" | "stock";
+}
+
 export default function PredictionClient({ initialAssets }: PredictionClientProps) {
   const [activeKategori, setActiveKategori] = useState<KategoriAset>("crypto");
   const [activeTab, setActiveTab] = useState<AssetId>("bitcoin");
-  const [assets] = useState<AssetSnapshot[]>(initialAssets);
+  const [assets, setAssets] = useState<AssetSnapshot[]>(initialAssets);
   
+  // Search state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [dynamicLoading, setDynamicLoading] = useState(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
   // AI analysis state per asset
   const [analysisCache, setAnalysisCache] = useState<{
     [key in AssetId]?: {
@@ -37,40 +52,111 @@ export default function PredictionClient({ initialAssets }: PredictionClientProp
 
   const activeAsset = assets.find(a => a.id === activeTab) || assets[0];
 
-  // Aset berdasarkan kategori
-  const cryptoAssets: AssetInfo[] = [
-    { id: "bitcoin", label: "BTC (Bitcoin)" },
-    { id: "ethereum", label: "ETH (Ethereum)" },
-    { id: "solana", label: "SOL (Solana)" },
-    { id: "binancecoin", label: "BNB (Binance Coin)" }
-  ];
-
-  const stockAssets: AssetInfo[] = [
-    { id: "bbca", label: "BBCA (BCA)" },
-    { id: "bbri", label: "BBRI (BRI)" },
-    { id: "tlkm", label: "TLKM (Telkom)" },
-    { id: "asii", label: "ASII (Astra)" },
-    { id: "adro", label: "ADRO (Adaro)" }
-  ];
-
-  const forexAssets: AssetInfo[] = [
-    { id: "usd-idr", label: "USD / IDR" }
-  ];
-
+  // Tambahkan aset yang dicari secara dinamis ke tab yang bersangkutan
   const getAssetsByKategori = (kat: KategoriAset): AssetInfo[] => {
-    if (kat === "stock") return stockAssets;
-    if (kat === "forex") return forexAssets;
-    return cryptoAssets;
+    const matchingAssets = assets.filter((a) => {
+      const id = a.id.toLowerCase();
+      if (kat === "forex") return id === "usd-idr";
+      if (kat === "stock") return id.endsWith(".jk");
+      return id !== "usd-idr" && !id.endsWith(".jk");
+    });
+
+    return matchingAssets.map((a) => ({
+      id: a.id,
+      label: `${a.symbol.toUpperCase()} (${a.name})`
+    }));
   };
 
   const activeAsetOptions = getAssetsByKategori(activeKategori);
 
-  // Otomatis pindah tab aset saat kategori berubah agar selalu valid
   const handleKategoriChange = (kat: KategoriAset) => {
     setActiveKategori(kat);
     const options = getAssetsByKategori(kat);
     if (options.length > 0) {
       setActiveTab(options[0].id);
+    }
+  };
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Handle input text change and clean state if query too short
+  const handleSearchChange = (val: string) => {
+    setSearchQuery(val);
+    if (!val || val.trim().length < 2) {
+      setSearchResults([]);
+      setIsDropdownOpen(false);
+    }
+  };
+
+  // Debounce search query fetch
+  useEffect(() => {
+    if (!searchQuery || searchQuery.trim().length < 2) {
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setSearchLoading(true);
+      try {
+        const res = await fetch(`/api/prediction/search?q=${encodeURIComponent(searchQuery)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setSearchResults(data.results || []);
+          setIsDropdownOpen((data.results || []).length > 0);
+        }
+      } catch (err) {
+        console.error("Failed to search assets:", err);
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Handle memilih aset dari hasil pencarian autocomplete
+  const handleSelectResult = async (result: SearchResult) => {
+    const targetId = result.id as AssetId;
+    setIsDropdownOpen(false);
+    setSearchQuery("");
+
+    // A. Jika aset sudah ada di state client, tinggal aktifkan tab-nya
+    const existing = assets.find((a) => a.id.toLowerCase() === targetId.toLowerCase());
+    if (existing) {
+      setActiveKategori(result.type === "stock" ? "stock" : "crypto");
+      setActiveTab(existing.id);
+      return;
+    }
+
+    // B. Jika belum ada di state client, fetch data snapshot lengkap secara dinamis
+    setDynamicLoading(true);
+    try {
+      const res = await fetch(`/api/prediction/market?asset=${targetId}`);
+      if (!res.ok) throw new Error("Fetch failed");
+      
+      const data = await res.json();
+      if (data.ok && data.assets && data.assets.length > 0) {
+        const newAsset: AssetSnapshot = data.assets[0];
+        
+        // Tambahkan ke state assets lokal agar ter-render di tab
+        setAssets((prev) => [...prev, newAsset]);
+        // Set kategori & tab aktif ke koin/saham baru ini
+        setActiveKategori(result.type === "stock" ? "stock" : "crypto");
+        setActiveTab(newAsset.id);
+      }
+    } catch (err) {
+      console.error("Failed to load searched asset:", err);
+      alert(`Gagal memuat data prediksi untuk ${result.symbol}. Silakan coba lagi.`);
+    } finally {
+      setDynamicLoading(false);
     }
   };
 
@@ -149,7 +235,7 @@ export default function PredictionClient({ initialAssets }: PredictionClientProp
   };
 
   const getKategoriClass = (kat: KategoriAset) => {
-    return `px-5 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all duration-200 cursor-pointer select-none ${
+    return `px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all duration-200 cursor-pointer select-none ${
       activeKategori === kat
         ? "bg-neutral-800 dark:bg-zinc-100 text-white dark:text-neutral-900 shadow-sm"
         : "bg-neutral-100 hover:bg-neutral-200 text-neutral-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-300"
@@ -157,7 +243,7 @@ export default function PredictionClient({ initialAssets }: PredictionClientProp
   };
 
   const getAriaTabClass = (id: AssetId) => {
-    return `px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl cursor-pointer transition-all duration-200 shrink-0 select-none ${
+    return `px-3.5 py-2 text-xs font-bold uppercase tracking-wider rounded-xl cursor-pointer transition-all duration-200 shrink-0 select-none ${
       activeTab === id
         ? "bg-orange-600 text-white shadow-sm shadow-orange-100"
         : "bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-600 dark:bg-zinc-900 dark:border-zinc-800 dark:hover:bg-zinc-800 dark:text-zinc-300"
@@ -170,7 +256,52 @@ export default function PredictionClient({ initialAssets }: PredictionClientProp
       {/* 1. Disclaimer Banner */}
       <DisclaimerBanner />
 
-      {/* 2. Kategori Aset Switcher (Kripto, Saham, Valuta) */}
+      {/* 2. Kolom Pencarian Autocomplete Dinamis (Saham IDX & Kripto) */}
+      <div className="flex flex-col gap-1 w-full max-w-md select-none">
+        <label className="text-[10px] font-extrabold text-neutral-400 dark:text-zinc-550 uppercase tracking-wider select-none mb-1">Cari Instrumen Pasar</label>
+        <div ref={searchContainerRef} className="relative w-full">
+          <div className="relative">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              onFocus={() => setIsDropdownOpen(searchResults.length > 0)}
+              placeholder="Cari Saham IDX (e.g. BBRI, GOTO) atau Kripto (e.g. ADA, XRP)..."
+              className="w-full text-xs font-black px-4 py-3 bg-white dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-800 rounded-2xl shadow-sm focus:outline-none focus:border-orange-500 transition-colors"
+            />
+            {searchLoading && (
+              <div className="absolute right-4 top-3 h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+            )}
+          </div>
+
+          {/* Autocomplete Dropdown List melayang */}
+          {isDropdownOpen && searchResults.length > 0 && (
+            <div className="absolute z-50 left-0 right-0 mt-1.5 bg-white dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-800 rounded-2xl shadow-lg max-h-64 overflow-y-auto divide-y divide-neutral-100 dark:divide-zinc-850">
+              {searchResults.map((r) => (
+                <button
+                  key={r.id}
+                  onClick={() => handleSelectResult(r)}
+                  className="w-full text-left px-4 py-3 hover:bg-neutral-50 dark:hover:bg-zinc-800/50 flex items-center justify-between cursor-pointer transition-colors"
+                >
+                  <div>
+                    <span className="text-xs font-black text-neutral-805 dark:text-zinc-150 block">{r.symbol}</span>
+                    <span className="text-[10px] text-neutral-450 dark:text-zinc-550 font-bold block">{r.name}</span>
+                  </div>
+                  <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md ${
+                    r.type === "stock"
+                      ? "bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-450"
+                      : "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-450"
+                  }`}>
+                    {r.type === "stock" ? "Saham" : "Kripto"}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 3. Kategori Aset Switcher (Kripto, Saham, Valuta) */}
       <div className="flex gap-2.5 pb-1 border-b border-neutral-150/40 dark:border-zinc-850 overflow-x-auto scrollbar-none select-none">
         <button onClick={() => handleKategoriChange("crypto")} className={getKategoriClass("crypto")}>
           🪙 Kripto
@@ -183,17 +314,23 @@ export default function PredictionClient({ initialAssets }: PredictionClientProp
         </button>
       </div>
 
-      {/* 3. Sub-Aset Tabs berdasarkan Kategori Aktif */}
+      {/* 4. Sub-Aset Tabs berdasarkan Kategori Aktif */}
       <div className="flex gap-2 overflow-x-auto scrollbar-none pb-2 select-none">
-        {activeAsetOptions.map((a) => (
-          <button key={a.id} onClick={() => setActiveTab(a.id)} className={getAriaTabClass(a.id)}>
-            {a.label}
-          </button>
-        ))}
+        {dynamicLoading ? (
+          <div className="h-9 px-4 flex items-center justify-center text-xs font-bold text-neutral-400 dark:text-zinc-550 animate-pulse">
+            Memuat data baru...
+          </div>
+        ) : (
+          activeAsetOptions.map((a) => (
+            <button key={a.id} onClick={() => setActiveTab(a.id)} className={getAriaTabClass(a.id)}>
+              {a.label}
+            </button>
+          ))
+        )}
       </div>
 
-      {/* 4. Main Asset Analytics Dashboard Grid */}
-      {activeAsset && (
+      {/* 5. Main Asset Analytics Dashboard Grid */}
+      {activeAsset && !dynamicLoading && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
           
           {/* Left Side: Summary Card, Scenario Bar, and AI Narrative */}
@@ -238,7 +375,7 @@ export default function PredictionClient({ initialAssets }: PredictionClientProp
 
               <IndicatorTable
                 indicators={activeAsset.indicators}
-                isCrypto={activeAsset.id !== "usd-idr" && activeKategori !== "stock"}
+                isCrypto={activeAsset.id !== "usd-idr" && !activeAsset.id.toLowerCase().endsWith(".jk")}
               />
             </div>
           ) : (
@@ -250,7 +387,7 @@ export default function PredictionClient({ initialAssets }: PredictionClientProp
         </div>
       )}
 
-      {/* 5. Methodology Accordion / Section */}
+      {/* 6. Methodology Accordion / Section */}
       <section className="bg-white dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-800 rounded-3xl p-5 md:p-6 shadow-sm space-y-4">
         <h3 className="text-sm font-black uppercase tracking-wider text-neutral-805 dark:text-zinc-200 border-b border-neutral-100 dark:border-zinc-850 pb-2.5">
           ℹ️ Metodologi Analisis Probabilitas
@@ -276,7 +413,7 @@ export default function PredictionClient({ initialAssets }: PredictionClientProp
               <strong>Indeks Fear & Greed (Kripto):</strong> Mengukur psikologi pasar secara contrarian. Ketakutan ekstrem (Extreme Fear &lt;25) dipandang sebagai peluang rebound naik, sedangkan euforia ekstrem (Extreme Greed &gt;75) diwaspadai sebagai potensi koreksi. (Indikator ini tidak dihitung pada instrumen Saham IDX & Valuta).
             </li>
           </ul>
-          <p className="pt-1.5 text-neutral-500 dark:text-zinc-450">
+          <p className="pt-1.5 text-neutral-555 dark:text-zinc-550">
             Seluruh data harga historis diperbarui secara berkala dari sumber publik (CoinGecko, Frankfurter, & Yahoo Finance) dengan mekanisme caching Next.js server-side untuk memastikan kinerja halaman yang cepat tanpa membebani rate limit provider data pasar.
           </p>
         </div>

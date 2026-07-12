@@ -7,6 +7,12 @@
   prices60d: number[];
 }
 
+export interface YahooSearchResult {
+  symbol: string;
+  name: string;
+  type: string;
+}
+
 export const YAHOO_TICKERS: Record<string, string> = {
   bbca: "BBCA.JK",
   bbri: "BBRI.JK",
@@ -37,7 +43,6 @@ export async function fetchYahooStock(ticker: string): Promise<YahooStockData> {
     }
 
     const prices = result.indicators.quote[0].close;
-    // Saring data null/undefined dari Yahoo Finance
     const validPrices: number[] = prices.filter((p: number | null) => p !== null && p !== undefined);
 
     if (validPrices.length < 15) {
@@ -47,7 +52,6 @@ export async function fetchYahooStock(ticker: string): Promise<YahooStockData> {
     const finalPrices = validPrices.slice(-60);
     const len = finalPrices.length;
 
-    // Ambal regularMarketPrice dari metadata atau dari data penutupan terakhir
     const price = result.meta.regularMarketPrice || finalPrices[len - 1];
 
     let change24hPct = 0;
@@ -73,6 +77,47 @@ export async function fetchYahooStock(ticker: string): Promise<YahooStockData> {
   } catch (err: unknown) {
     console.error(`fetchYahooStock for ${ticker} error:`, (err as Error).message || String(err));
     throw err;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+export async function searchYahooStock(query: string): Promise<YahooSearchResult[]> {
+  if (!query || query.trim().length < 2) return [];
+  
+  const url = `https://query2.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(query)}&newsCount=0`;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    const res = await fetch(url, {
+      signal: controller.signal,
+      next: { revalidate: 3600 }
+    });
+
+    if (!res.ok) {
+      throw new Error(`Yahoo Search API returned status ${res.status}`);
+    }
+
+    const data = await res.json();
+    const quotes = data.quotes || [];
+
+    const results: YahooSearchResult[] = quotes
+      .filter((q: { symbol: string; quoteType?: string; longname?: string; shortname?: string; }) => {
+        const symbol = (q.symbol || "").toUpperCase();
+        const type = (q.quoteType || "").toUpperCase();
+        return symbol.endsWith(".JK") && (type === "EQUITY" || type === "EQUITY_STOK");
+      })
+      .map((q: { symbol: string; quoteType?: string; longname?: string; shortname?: string; }) => ({
+        symbol: q.symbol,
+        name: q.longname || q.shortname || q.symbol,
+        type: "stock"
+      }));
+
+    return results.slice(0, 8);
+  } catch (err: unknown) {
+    console.error(`searchYahooStock for "${query}" error:`, (err as Error).message || String(err));
+    return [];
   } finally {
     clearTimeout(timeoutId);
   }
