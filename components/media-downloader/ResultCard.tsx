@@ -9,6 +9,10 @@ const PLATFORM_LABEL: Record<MediaResult["platform"], string> = {
   instagram: "Instagram",
   facebook: "Facebook",
   youtube: "YouTube",
+  pinterest: "Pinterest",
+  soundcloud: "SoundCloud",
+  twitter: "Twitter / X",
+  reddit: "Reddit",
 };
 
 function formatDuration(seconds: number): string {

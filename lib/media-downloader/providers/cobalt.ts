@@ -69,7 +69,16 @@ async function fetchCobalt(url: string): Promise<CobaltResponse> {
 
 export const cobaltProvider: MediaProvider = {
   supports(platform: Platform): boolean {
-    return platform === "instagram" || platform === "facebook" || platform === "tiktok" || platform === "youtube";
+    return (
+      platform === "instagram" ||
+      platform === "facebook" ||
+      platform === "tiktok" ||
+      platform === "youtube" ||
+      platform === "pinterest" ||
+      platform === "soundcloud" ||
+      platform === "twitter" ||
+      platform === "reddit"
+    );
   },
 
   async resolve(url: string, platform: Platform): Promise<MediaResult> {

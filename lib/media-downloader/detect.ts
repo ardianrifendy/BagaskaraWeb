@@ -9,6 +9,10 @@ const PLATFORM_HOSTS: Record<Platform, string[]> = {
   instagram: ["instagram.com", "www.instagram.com"],
   facebook: ["facebook.com", "www.facebook.com", "m.facebook.com", "fb.watch"],
   youtube: ["youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be", "music.youtube.com"],
+  pinterest: ["pinterest.com", "www.pinterest.com", "pin.it"],
+  soundcloud: ["soundcloud.com", "m.soundcloud.com"],
+  twitter: ["twitter.com", "www.twitter.com", "x.com", "www.x.com"],
+  reddit: ["reddit.com", "www.reddit.com", "old.reddit.com"],
 };
 
 // Hostname yang mengarah ke jaringan internal / loopback — selalu tolak (anti-SSRF).

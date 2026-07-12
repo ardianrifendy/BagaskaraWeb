@@ -8,7 +8,7 @@ import HowToSection from "@/components/media-downloader/HowToSection";
 
 const PAGE_TITLE = "Media Downloader — Bagaskara Cell";
 const PAGE_DESC =
-  "Unduh video YouTube, video TikTok tanpa watermark, Reels Instagram, dan video Facebook secara gratis di Bagaskara Cell. Cepat, mudah, tanpa aplikasi.";
+  "Unduh video YouTube, video TikTok tanpa watermark, Reels Instagram, video Facebook, Twitter/X, SoundCloud, dan Pinterest secara gratis di Bagaskara Cell. Cepat, mudah, tanpa aplikasi.";
 
 export const metadata: Metadata = {
   title: PAGE_TITLE,
@@ -85,7 +85,7 @@ export default function MediaDownloaderPage() {
             Media Downloader
           </h1>
           <p className="text-xs md:text-sm font-medium text-neutral-400 dark:text-zinc-450 max-w-sm mx-auto leading-relaxed">
-            Unduh video dan foto dari YouTube, TikTok, Instagram, dan Facebook secara gratis, cepat, dan tanpa aplikasi tambahan.
+            Unduh video, audio, dan foto dari YouTube, TikTok, Instagram, Facebook, Twitter/X, SoundCloud, dan Pinterest secara gratis, cepat, dan tanpa aplikasi tambahan.
           </p>
         </div>
 
