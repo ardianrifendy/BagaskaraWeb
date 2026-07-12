@@ -13,9 +13,10 @@ const REQUEST_TIMEOUT_MS = 15_000;
 
 // Daftar server Cobalt komunitas yang aktif dan tidak memblokir download YouTube.
 const COBALT_MIRRORS = [
-  "https://cobalt.kwi.cat",       // Prioritas 1: Ramah YouTube & sangat cepat
-  "https://cobalt.q1w2.dev",      // Prioritas 2: Alternatif aktif
-  "https://cobalt.moe",           // Prioritas 3: Alternatif aktif
+  "https://co.otomir23.me",       // Prioritas 1: Terbukti aktif & ramah YouTube
+  "https://cobalt.kwi.cat",       // Prioritas 2: Alternatif aktif
+  "https://cobalt.q1w2.dev",      // Prioritas 3: Alternatif aktif
+  "https://cobalt.moe",           // Prioritas 4: Alternatif aktif
   "https://api.cobalt.tools",     // Prioritas terakhir: Instance resmi (sering membatasi YouTube)
 ];
 
