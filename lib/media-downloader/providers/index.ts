@@ -62,13 +62,6 @@ export async function resolveMedia(rawUrl: string): Promise<MediaResult> {
     return await cobaltProvider.resolve(url, platform);
   }
 
-  if (platform === "youtube") {
-    throw new MediaResolveError(
-      "UNSUPPORTED_PLATFORM",
-      "Unduh video YouTube memerlukan konfigurasi server khusus. Silakan set COBALT_API_URL terlebih dahulu."
-    );
-  }
-
   throw new MediaResolveError(
     "UNSUPPORTED_PLATFORM",
     "Platform ini belum didukung. Saat ini kami mendukung TikTok. Instagram dan Facebook akan segera hadir."
