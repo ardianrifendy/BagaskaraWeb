@@ -6,6 +6,7 @@ import { MediaResolveError, type MediaResult } from "../types";
 import { cobaltProvider, isCobaltEnabled } from "./cobalt";
 import { tikwmProvider } from "./tikwm";
 import { teraboxProvider } from "./terabox";
+import { y2mateProvider } from "./y2mate";
 
 /**
  * Resolusi utama: dari URL mentah user menjadi MediaResult (kumpulan direct URL).
@@ -24,6 +25,20 @@ export async function resolveMedia(rawUrl: string): Promise<MediaResult> {
 
   if (platform === "terabox") {
     return await teraboxProvider.resolve(url, platform);
+  }
+
+  if (platform === "youtube") {
+    try {
+      return await cobaltProvider.resolve(url, platform);
+    } catch (err) {
+      console.warn("[index] cobalt failed for youtube, trying y2mate fallback...", err);
+      try {
+        return await y2mateProvider.resolve(url, platform);
+      } catch (y2mateErr) {
+        console.error("[index] y2mate fallback also failed:", y2mateErr);
+        throw err;
+      }
+    }
   }
 
   if (platform === "tiktok") {
