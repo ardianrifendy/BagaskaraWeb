@@ -5,6 +5,7 @@ import { normalizeUrl } from "../detect";
 import { MediaResolveError, type MediaResult } from "../types";
 import { cobaltProvider, isCobaltEnabled } from "./cobalt";
 import { tikwmProvider } from "./tikwm";
+import { teraboxProvider } from "./terabox";
 
 /**
  * Resolusi utama: dari URL mentah user menjadi MediaResult (kumpulan direct URL).
@@ -20,6 +21,10 @@ export async function resolveMedia(rawUrl: string): Promise<MediaResult> {
   }
 
   const { url, platform } = normalized;
+
+  if (platform === "terabox") {
+    return await teraboxProvider.resolve(url, platform);
+  }
 
   if (platform === "tiktok") {
     try {

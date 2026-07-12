@@ -2,7 +2,7 @@ const STEPS = [
   {
     num: 1,
     title: "Salin link",
-    desc: "Buka aplikasi YouTube, TikTok, Instagram, Facebook, Twitter, SoundCloud, atau Pinterest, lalu salin tautan video, audio, atau foto yang ingin Anda unduh.",
+    desc: "Buka aplikasi YouTube, TikTok, Instagram, Facebook, Twitter, SoundCloud, Pinterest, atau TeraBox, lalu salin tautan file atau media yang ingin Anda unduh.",
   },
   {
     num: 2,

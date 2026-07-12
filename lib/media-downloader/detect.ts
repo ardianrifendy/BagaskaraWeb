@@ -13,6 +13,22 @@ const PLATFORM_HOSTS: Record<Platform, string[]> = {
   soundcloud: ["soundcloud.com", "m.soundcloud.com"],
   twitter: ["twitter.com", "www.twitter.com", "x.com", "www.x.com"],
   reddit: ["reddit.com", "www.reddit.com", "old.reddit.com"],
+  terabox: [
+    "terabox.com",
+    "www.terabox.com",
+    "nephobox.com",
+    "www.nephobox.com",
+    "mirrobox.com",
+    "www.mirrobox.com",
+    "momobox.com",
+    "www.momobox.com",
+    "tibabox.com",
+    "www.tibabox.com",
+    "teraboxapp.com",
+    "www.teraboxapp.com",
+    "terabox.app",
+    "www.terabox.app"
+  ],
 };
 
 // Hostname yang mengarah ke jaringan internal / loopback — selalu tolak (anti-SSRF).

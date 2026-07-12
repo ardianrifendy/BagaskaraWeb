@@ -13,6 +13,7 @@ const PLATFORM_LABEL: Record<MediaResult["platform"], string> = {
   soundcloud: "SoundCloud",
   twitter: "Twitter / X",
   reddit: "Reddit",
+  terabox: "TeraBox (Eksperimen)",
 };
 
 function formatDuration(seconds: number): string {

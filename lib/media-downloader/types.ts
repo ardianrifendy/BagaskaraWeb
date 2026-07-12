@@ -1,7 +1,7 @@
 // Kontrak tipe untuk fitur /media-downloader.
 // Dipakai bersama oleh provider, route handler, dan komponen UI.
 
-export type Platform = "tiktok" | "instagram" | "facebook" | "youtube" | "pinterest" | "soundcloud" | "twitter" | "reddit";
+export type Platform = "tiktok" | "instagram" | "facebook" | "youtube" | "pinterest" | "soundcloud" | "twitter" | "reddit" | "terabox";
 
 export type MediaKind = "video" | "audio" | "image";
 

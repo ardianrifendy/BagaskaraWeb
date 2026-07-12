@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Logo from "@/components/Logo";
@@ -8,7 +8,7 @@ import HowToSection from "@/components/media-downloader/HowToSection";
 
 const PAGE_TITLE = "Media Downloader — Bagaskara Cell";
 const PAGE_DESC =
-  "Unduh video YouTube, video TikTok tanpa watermark, Reels Instagram, video Facebook, Twitter/X, SoundCloud, dan Pinterest secara gratis di Bagaskara Cell. Cepat, mudah, tanpa aplikasi.";
+  "Unduh video YouTube, video TikTok tanpa watermark, Reels Instagram, video Facebook, Twitter/X, SoundCloud, Pinterest, dan TeraBox secara gratis di Bagaskara Cell. Cepat, mudah, tanpa aplikasi.";
 
 export const metadata: Metadata = {
   title: PAGE_TITLE,
@@ -61,6 +61,15 @@ export default function MediaDownloaderPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
               </svg>
             </Link>
+            <Link
+              href="/prediction"
+              className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 flex items-center justify-center text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer"
+              title="Prediksi Pasar"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M7 12l3-3 3 3 4-4M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            </Link>
           </div>
         </div>
       </header>
@@ -84,8 +93,8 @@ export default function MediaDownloaderPage() {
           <h1 className="text-2xl md:text-3xl font-black text-neutral-800 dark:text-zinc-100 tracking-tight">
             Media Downloader
           </h1>
-          <p className="text-xs md:text-sm font-medium text-neutral-400 dark:text-zinc-450 max-w-sm mx-auto leading-relaxed">
-            Unduh video, audio, dan foto dari YouTube, TikTok, Instagram, Facebook, Twitter/X, SoundCloud, dan Pinterest secara gratis, cepat, dan tanpa aplikasi tambahan.
+          <p className="text-xs md:text-sm font-medium text-neutral-400 dark:text-zinc-455 max-w-sm mx-auto leading-relaxed">
+            Unduh video, audio, dan foto dari YouTube, TikTok, Instagram, Facebook, Twitter/X, SoundCloud, Pinterest, dan TeraBox secara gratis, cepat, dan tanpa aplikasi tambahan.
           </p>
         </div>
 
