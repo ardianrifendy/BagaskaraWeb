@@ -1,87 +1,65 @@
-# CLAUDE.md — Bagaskara Cell Catalog
+﻿# CLAUDE.md — bagaskaracell.net
 
-Konteks project untuk Claude Code. Baca file ini sebelum mengerjakan task apapun.
+Konteks proyek untuk Claude Code. Baca file ini sebelum mengerjakan task apa pun.
 
-## Tentang Project
+## Tentang Proyek
 
-Website **katalog HP mobile-first** untuk Bagaskara Cell (toko HP di Gresik, jualan offline + Shopee/Tokopedia/TikTok Shop).
+- **Situs:** bagaskaracell.net — katalog HP Bagaskara Cell (toko HP di Cerme, Gresik, Jawa Timur) + kumpulan tool gratis untuk pengunjung.
+- **Tool yang sudah live:** `/kalkulator-shopee`, `/cek-resi` (BinderByte), `/media-downloader` (TikTok/IG/FB downloader).
+- **Fitur yang sedang dibangun:** `/prediction` — dashboard analisis probabilistik pasar. Lihat `implementation.md` (spesifikasi) dan `agents.md` (pembagian multi-agent).
 
-**Tujuan bisnis:** customer self-service cari HP sesuai budget → lihat spek sendiri → klik tombol WhatsApp yang sudah pre-filled. Owner berhenti bikin list stok manual di chat.
+## Stack
 
-**PENTING — batasan scope:**
-- Ini **BUKAN e-commerce**. Tidak ada cart, checkout, pembayaran, atau akun user.
-- Konversi = klik tombol WhatsApp. Semua fitur diukur dari situ.
-- Jangan menambah fitur di luar fase yang sedang dikerjakan (lihat `IMPLEMENTATION.md`).
-
-## Tech Stack
-
-- **Next.js 14+ App Router** — bukan Pages Router
-- **TypeScript strict** — semua file `.tsx`/`.ts`, hindari `any`
-- **Tailwind CSS** — utility class, jangan bikin file CSS terpisah kecuali terpaksa
-- **Data Fase 1:** `data/products.json` — jangan setup database sebelum Fase 2
-- **Deploy:** Vercel
-
-## Perintah
-
-```bash
-npm run dev          # dev server
-npm run build        # production build — WAJIB lolos sebelum selesai task
-npm run lint         # eslint
-npx tsc --noEmit     # type check
-```
+- Next.js (App Router) + TypeScript + Tailwind CSS
+- Deploy: Vercel serverless — perhatikan limit: response body function ±4.5MB, timeout pendek, tidak ada state persisten antar-invocation.
+- Tanpa library UI eksternal; komponen manual dengan Tailwind. Chart pakai SVG manual.
 
 ## Konvensi Kode
 
-- Komponen: `components/` — PascalCase, satu komponen per file
-- Server Components by default; `"use client"` hanya jika butuh interaktivitas (filter, swatch, compare bar)
-- State filter/search/sort disimpan di **URL query params** (pakai `useSearchParams` / `router.push`), bukan hanya state lokal — semua tampilan harus shareable via link
-- Semua gambar produk lewat **`next/image`** — tanpa pengecualian
-- Format harga: Rupiah dengan pemisah titik → `Rp 1.999.000` (bikin util `formatRupiah()`)
-- Tipe data produk ada di `types/product.ts` — harga & stok hidup di level **varian**, bukan produk
-- Link WA: `https://wa.me/{nomor}?text={encodeURIComponent(pesan)}` — pesan selalu menyertakan nama produk + varian + harga
-- Bahasa UI: **Bahasa Indonesia** casual-sopan (target: customer retail Gresik)
+- TypeScript strict; hindari `any`; tipe fitur di `lib/<fitur>/types.ts`.
+- Server component default; `"use client"` hanya jika perlu state/efek.
+- API route: `app/api/<fitur>/<aksi>/route.ts`; respons JSON `{ ok: boolean, ... }`; error punya `error` (kode) + `message` (Bahasa Indonesia).
+- Fetch eksternal: selalu timeout (AbortController) + try/catch; gunakan caching Next (`next: { revalidate }` / `unstable_cache`) — JANGAN hit API eksternal per pengunjung.
+- Jangan tambah dependency tanpa alasan kuat; env baru wajib masuk `.env.example`; jangan commit secret.
 
-## Prinsip UI/UX (Jangan Dilanggar)
+## Gaya Bahasa & Copy Situs (WAJIB)
 
-1. **Mobile-first.** Cek semua layout di viewport 375px dulu, baru desktop.
-2. **Tidak ada popup/wizard yang menghalangi katalog.** Budget picker = section di landing, bukan gate.
-3. Filter = chip horizontal scrollable; filter lanjutan = bottom sheet. **Bukan sidebar.**
-4. Desain clean: putih dominan + satu warna aksen. Foto produk adalah bintang; jangan bikin UI ramai.
-5. Empty state wajib punya fallback (produk range terdekat + tombol WA), jangan hanya "tidak ada produk".
-6. Filter merk/RAM di-generate dari data — jangan hardcode daftar merk.
+- **Bahasa Indonesia baku tapi hangat**, sapaan **"Anda"** (bukan "kamu"/"lo").
+- Pola `<title>`: `"<Nama Fitur> — Bagaskara Cell"`; `og:locale` `id_ID`.
+- Pola hero tool page: H1 pendek (2–3 kata) + subtitle 1 kalimat berorientasi manfaat. Contoh eksisting: "Lacak Pengiriman" / "Pantau status dan riwayat pengiriman pesanan handphone Anda dari Bagaskara Cell secara real-time."
+- Tool page punya link **"Kembali ke Katalog"** ke `/`.
+- Emoji hemat dan fungsional (⚙️ 📦 🏷️ 📈 📉).
+- Nada brand: *aman, transparan, terpercaya, bergaransi, gratis, cepat*.
+- Format Indonesia: `Intl.NumberFormat("id-ID")`, Rupiah tanpa desimal, zona waktu `Asia/Jakarta` dengan label "WIB".
+- Footer standar: alamat toko (Perumahan Bhummi Cermai Apsari, Cerme, Gresik), WA CS 1 & CS 2, link Shopee & Instagram, copyright.
 
-## Yang TIDAK Boleh Dilakukan
+## Aturan Khusus /prediction
 
-- ❌ Menambah dependency berat tanpa alasan kuat (UI library besar, state management library) — Tailwind + React hooks cukup
-- ❌ Setup database/auth/admin panel saat masih Fase 1
-- ❌ Hardcode nomor WA / nama toko di banyak tempat — pusatkan di `config/site.ts`
-- ❌ Menghapus atau mengubah struktur `products.json` tanpa update `types/product.ts`
-- ❌ Commit `node_modules`, `.env`, atau file build
+- Scope v1: BTC, ETH, SOL, BNB (CoinGecko, vs IDR) + USD/IDR (Frankfurter) + Fear & Greed (alternative.me). Semua tanpa API key, wajib di-cache (harga 10 mnt, F&G 1 jam).
+- **Angka probabilitas HANYA dihasilkan `lib/prediction/score.ts`** (Probability Engine deterministik). LLM dilarang membuat/mengubah angka — hanya menarasikan.
+- Narasi AI: Claude API `claude-sonnet-4-6`, persona ekonom-statistikawan (prompt di `lib/prediction/prompt.ts`), cache 6 jam per aset. `ANTHROPIC_API_KEY` kosong → fitur narasi mati dengan anggun, sisanya tetap jalan.
+- **Kata terlarang di seluruh copy & output AI:** pasti, dijamin, sinyal beli, sinyal jual. Ada post-check regex di route analysis.
+- Disclaimer DYOR wajib tampil mencolok: analisis statistik-edukatif, bukan saran keuangan/investasi.
+- Ceiling probabilitas ±63–70% adalah fitur, bukan bug — jangan dinaikkan melebihi ~75%.
+- Provider gagal → partial success per aset (`unavailable: true`), bukan halaman error.
 
-## Struktur Project
+## Aturan Khusus /media-downloader (sudah live)
 
-```
-app/
-├── page.tsx                  # Landing: hero → budget picker → katalog
-├── produk/[slug]/page.tsx    # Detail produk
-└── compare/page.tsx          # Fase 3
-components/
-├── ProductCard.tsx
-├── BudgetPicker.tsx
-├── FilterChips.tsx
-├── SpecHighlights.tsx
-└── WhatsAppButton.tsx
-data/products.json             # sumber data Fase 1
-types/product.ts
-lib/                           # formatRupiah, buildWaLink, filterProducts
-config/site.ts                 # nomor WA, nama toko, alamat, link Maps
+- Platform: TikTok (tikwm), IG/FB hanya jika `COBALT_API_URL` diset. **JANGAN dukung YouTube** — keputusan final.
+- Server hanya resolve direct URL; tidak proxy/stream file. Rate limit 10 req/mnt/IP. Whitelist hostname anti-SSRF. Disclaimer hak cipta wajib.
+
+## Perintah Umum
+
+```bash
+npm run dev      # dev server
+npm run lint     # lint
+npm run build    # build produksi (wajib lolos sebelum commit fitur)
 ```
 
-## Alur Kerja Task
+## Definition of Done Umum
 
-1. Baca `IMPLEMENTATION.md` → pastikan task masuk fase yang benar
-2. **Ikuti Pipeline Pengerjaan (`IMPLEMENTATION.md` §5) secara berurutan** — jangan mengerjakan Step N sebelum exit criteria Step N-1 terpenuhi. Contoh: jangan bikin komponen sebelum `types/product.ts` dan util di `lib/` selesai.
-3. Kerjakan → jalankan `npm run build` + `npx tsc --noEmit` sampai bersih
-4. Test manual di viewport mobile (375px), lalu cek 768px & 1280px (tabel responsive di `IMPLEMENTATION.md` §6)
-5. 1 step = minimal 1 commit dengan pesan jelas (`feat: step-3 product card component`)
-6. Task selesai jika memenuhi exit criteria step tersebut + Definition of Done di `IMPLEMENTATION.md` §9
+1. `npm run lint` + `npm run build` bersih; unit test fitur lolos.
+2. Copy UI 100% Bahasa Indonesia sesuai "Gaya Bahasa".
+3. Mobile-first: layak di layar 360px.
+4. Tidak ada secret ter-hardcode; env terdaftar di `.env.example`.
+5. Route baru masuk sitemap dan navbar tools.

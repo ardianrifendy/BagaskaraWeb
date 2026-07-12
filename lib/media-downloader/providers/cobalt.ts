@@ -1,5 +1,5 @@
 // Provider fallback multi-platform via Cobalt (self-host / instance) — v10 API.
-// Hanya AKTIF bila COBALT_API_URL diset. Hanya me-resolve direct URL media.
+// Menggunakan sistem fallback otomatis ke beberapa mirror komunitas agar download YouTube lancar.
 
 import {
   MediaResolveError,
@@ -10,6 +10,14 @@ import {
 } from "../types";
 
 const REQUEST_TIMEOUT_MS = 15_000;
+
+// Daftar server Cobalt komunitas yang aktif dan tidak memblokir download YouTube.
+const COBALT_MIRRORS = [
+  "https://cobalt.kwi.cat",       // Prioritas 1: Ramah YouTube & sangat cepat
+  "https://cobalt.q1w2.dev",      // Prioritas 2: Alternatif aktif
+  "https://cobalt.moe",           // Prioritas 3: Alternatif aktif
+  "https://api.cobalt.tools",     // Prioritas terakhir: Instance resmi (sering membatasi YouTube)
+];
 
 interface CobaltPickerItem {
   type?: string;
@@ -23,9 +31,8 @@ interface CobaltResponse {
   filename?: string;
   picker?: CobaltPickerItem[];
   audio?: string;
+  text?: string; // Menyimpan pesan error jika status: "error"
 }
-
-const DEFAULT_COBALT_URL = "https://api.cobalt.tools";
 
 /** Selalu true karena menggunakan instance default jika env kosong. */
 export function isCobaltEnabled(): boolean {
@@ -40,15 +47,19 @@ function extFromFilename(filename: string | undefined, fallback: string): string
   return filename.slice(dot + 1).toLowerCase();
 }
 
-async function fetchCobalt(url: string): Promise<CobaltResponse> {
-  const apiUrl = (process.env.COBALT_API_URL || DEFAULT_COBALT_URL).trim();
+// Lakukan fetch ke satu instance Cobalt spesifik.
+// Melempar error jika HTTP gagal atau status respons adalah "error" (mis. diblokir/rate-limit).
+async function fetchCobaltInstance(apiUrl: string, mediaUrl: string): Promise<CobaltResponse> {
   const apiKey = process.env.COBALT_API_KEY;
 
   const headers: Record<string, string> = {
     Accept: "application/json",
     "Content-Type": "application/json",
   };
-  if (apiKey) headers.Authorization = `Api-Key ${apiKey}`;
+  // Kirim API Key hanya jika menembak URL kustom milik sendiri
+  if (apiKey && apiUrl === process.env.COBALT_API_URL) {
+    headers.Authorization = `Api-Key ${apiKey}`;
+  }
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
@@ -57,14 +68,52 @@ async function fetchCobalt(url: string): Promise<CobaltResponse> {
     const response = await fetch(apiUrl, {
       method: "POST",
       headers,
-      body: JSON.stringify({ url }),
+      body: JSON.stringify({ url: mediaUrl }),
       cache: "no-store",
       signal: controller.signal,
     });
-    return (await response.json()) as CobaltResponse;
+
+    if (!response.ok) {
+      throw new Error(`HTTP error ${response.status} from ${apiUrl}`);
+    }
+
+    const payload = (await response.json()) as CobaltResponse;
+    if (!payload || payload.status === "error") {
+      throw new Error(payload?.text || `Cobalt instance ${apiUrl} returned error status`);
+    }
+
+    return payload;
   } finally {
     clearTimeout(timeout);
   }
+}
+
+// Coba fetch ke custom API URL jika diset, jika gagal/kosong coba mirror komunitas secara berurutan.
+async function fetchCobaltWithFallback(mediaUrl: string): Promise<CobaltResponse> {
+  const customUrl = process.env.COBALT_API_URL?.trim();
+
+  if (customUrl) {
+    try {
+      return await fetchCobaltInstance(customUrl, mediaUrl);
+    } catch (err) {
+      console.warn(`[cobalt] custom api failed: ${customUrl}, trying mirrors...`, err);
+    }
+  }
+
+  let lastError: unknown = null;
+  for (const mirror of COBALT_MIRRORS) {
+    try {
+      console.log(`[cobalt] trying mirror: ${mirror}`);
+      const payload = await fetchCobaltInstance(mirror, mediaUrl);
+      console.log(`[cobalt] success using mirror: ${mirror}`);
+      return payload;
+    } catch (err) {
+      console.warn(`[cobalt] mirror failed: ${mirror}, trying next...`, err);
+      lastError = err;
+    }
+  }
+
+  throw lastError || new Error("Semua server Cobalt gagal merespons.");
 }
 
 export const cobaltProvider: MediaProvider = {
@@ -84,22 +133,16 @@ export const cobaltProvider: MediaProvider = {
   async resolve(url: string, platform: Platform): Promise<MediaResult> {
     let payload: CobaltResponse;
     try {
-      payload = await fetchCobalt(url);
-    } catch {
+      payload = await fetchCobaltWithFallback(url);
+    } catch (err) {
+      console.error("[cobalt] resolve error after all fallbacks", err);
       throw new MediaResolveError(
         "PROVIDER_ERROR",
-        "Terjadi kendala saat memproses link. Silakan coba beberapa saat lagi."
+        "Terjadi kendala saat menghubungi server pengunduh. Silakan coba beberapa saat lagi."
       );
     }
 
     try {
-      if (!payload || payload.status === "error" || !payload.status) {
-        throw new MediaResolveError(
-          "PRIVATE_OR_NOT_FOUND",
-          "Konten tidak ditemukan atau bersifat privat. Pastikan akun/video dapat diakses publik."
-        );
-      }
-
       const variants: MediaVariant[] = [];
 
       if (payload.status === "picker") {

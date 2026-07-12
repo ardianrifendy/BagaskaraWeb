@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+﻿import React, { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import CekResiForm from "@/components/cek-resi/CekResiForm";

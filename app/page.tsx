@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+﻿import React, { Suspense } from "react";
 import Link from "next/link";
 import { getFilteredProducts, getFallbackProducts, getProductBySlug, getSearchSuggestions } from "../lib/filterProducts";
 import { getFilterOptions } from "../lib/getFilterOptions";

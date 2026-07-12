@@ -1,4 +1,4 @@
-# 📱 Bagaskara Cell — Web Portal & Retail Catalog
+﻿# 📱 Bagaskara Cell — Web Portal & Retail Catalog
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
@@ -37,7 +37,16 @@ Bukan e-commerce — tidak ada checkout/pembayaran. Customer memfilter stok berd
 ### 5. 🖥️ Visual Stock Manager Dashboard (`/stok`)
 *   Dashboard visual terlindungi PIN (`bagaskara`) untuk penambahan produk baru, edit varian, dan pembaruan status stok (**Ready** vs **Habis**) instan.
 
-### 6. 🗃️ Split SQLite Databases Security
+### 6. 📥 Media Downloader (`/media-downloader`)
+*   Unduh video TikTok tanpa watermark, Reels/Video Instagram, dan video Facebook gratis secara langsung tanpa instalasi aplikasi tambahan.
+*   Resolusi link unduhan direct dengan SSRF-hostname protection dan rate-limiting terstruktur.
+
+### 7. 📈 Prediksi Pasar & Analisis Teknikal (`/prediction`)
+*   **Probability Engine Deterministik**: Pembobotan otomatis indikator teknikal (RSI, MA Cross, MACD, Volume, Fear & Greed) untuk memproyeksikan probabilitas Naik/Sideways/Turun dalam horizon 7 hari ke depan.
+*   **Asisten Narasi AI**: Integrasi Claude API (Sonnet) untuk memberikan narasi logis asisten ekonomi-statistikawan murni berbasis data pasar yang teruji aman (DYOR).
+*   **Incremental Static Regeneration (ISR)**: Pre-render data pasar di tingkat server yang diperbarui tiap 10 menit guna indeksasi Google SEO maksimal.
+
+### 8. 🗃️ Split SQLite Databases Security
 *   Memisahkan data fisik lokal toko Anda (`database/owner.db`) dengan data hasil scraping Erafone (`database/erafone.db`) agar data rahasia/HPP internal aman dari pembersihan/impor scraper.
 
 ---
