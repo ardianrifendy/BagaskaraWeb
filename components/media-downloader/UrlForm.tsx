@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 
@@ -15,7 +15,7 @@ export default function UrlForm({ onSubmit, loading }: UrlFormProps) {
       const text = await navigator.clipboard.readText();
       if (text) setUrl(text.trim());
     } catch {
-      // Akses clipboard ditolak / tidak tersedia — abaikan tanpa error.
+      // Akses clipboard ditolak / tidak tersedia â€” abaikan tanpa error.
     }
   }
 
@@ -31,13 +31,13 @@ export default function UrlForm({ onSubmit, loading }: UrlFormProps) {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] uppercase font-bold text-neutral-400 dark:text-zinc-500 tracking-wider">
-            Link Video / Foto
+            Tempel Link
           </label>
           <div className="relative flex items-center">
             <input
               type="text"
               inputMode="url"
-              placeholder="Tempel link video di sini, contoh: https://vt.tiktok.com/..."
+              placeholder="Tempel link di sini..."
               value={url}
               onChange={(event) => setUrl(event.target.value)}
               disabled={loading}
