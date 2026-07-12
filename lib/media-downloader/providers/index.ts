@@ -36,7 +36,7 @@ export async function resolveMedia(rawUrl: string): Promise<MediaResult> {
         return await y2mateProvider.resolve(url, platform);
       } catch (y2mateErr) {
         console.error("[index] y2mate fallback also failed:", y2mateErr);
-        throw err;
+        throw y2mateErr;
       }
     }
   }
