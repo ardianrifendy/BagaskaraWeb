@@ -1,10 +1,8 @@
-﻿import React from "react";
+import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import { siteConfig } from "@/config/site";
-import MediaDownloaderClient from "./MediaDownloaderClient";
-import HowToSection from "@/components/media-downloader/HowToSection";
 
 const PAGE_TITLE = "Media Downloader — Bagaskara Cell";
 const PAGE_DESC =
@@ -53,15 +51,6 @@ export default function MediaDownloaderPage() {
               </svg>
             </Link>
             <Link
-              href="/media-downloader"
-              className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 flex items-center justify-center text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer"
-              title="Media Downloader"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
-              </svg>
-            </Link>
-            <Link
               href="/prediction"
               className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 flex items-center justify-center text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer"
               title="Prediksi Pasar"
@@ -75,7 +64,7 @@ export default function MediaDownloaderPage() {
       </header>
 
       {/* Main Container */}
-      <main className="flex-grow max-w-lg w-full mx-auto px-4 py-10 md:py-16 flex flex-col">
+      <main className="flex-grow max-w-lg w-full mx-auto px-4 py-10 md:py-16 flex flex-col justify-center">
 
         {/* Title and Intro */}
         <div className="text-center mb-8 space-y-2">
@@ -93,14 +82,30 @@ export default function MediaDownloaderPage() {
           <h1 className="text-2xl md:text-3xl font-black text-neutral-800 dark:text-zinc-100 tracking-tight">
             Media Downloader
           </h1>
-          <p className="text-xs md:text-sm font-medium text-neutral-400 dark:text-zinc-455 max-w-sm mx-auto leading-relaxed">
-            Unduh video, audio, dan foto dari YouTube, TikTok, Instagram, Facebook, Twitter/X, SoundCloud, Pinterest, dan TeraBox secara gratis, cepat, dan tanpa aplikasi tambahan.
-          </p>
         </div>
 
-        <MediaDownloaderClient />
-
-        <HowToSection />
+        {/* Maintenance Card */}
+        <div className="bg-white dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-800 rounded-3xl p-8 shadow-sm flex flex-col items-center text-center space-y-6">
+          <div className="w-16 h-16 rounded-2xl bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center text-orange-500 dark:text-orange-400">
+            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold text-neutral-800 dark:text-zinc-100">
+              Layanan Dinonaktifkan Sementara
+            </h2>
+            <p className="text-sm text-neutral-500 dark:text-zinc-455 leading-relaxed">
+              Fitur Media Downloader saat ini sedang dinonaktifkan untuk peningkatan sistem dan pemeliharaan server. Silakan hubungi kami atau kembali beberapa saat lagi.
+            </p>
+          </div>
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-orange-600 hover:bg-orange-500 active:bg-orange-700 text-white font-bold text-sm shadow-sm transition-all w-full cursor-pointer"
+          >
+            Kembali ke Katalog HP
+          </Link>
+        </div>
 
       </main>
 
