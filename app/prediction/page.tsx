@@ -86,6 +86,7 @@ async function getInitialMarketData(): Promise<AssetSnapshot[]> {
         change24hPct: marketInfo.price_change_percentage_24h_in_currency || 0,
         change7dPct: marketInfo.price_change_percentage_7d_in_currency || 0,
         spark30d: prices.slice(-30),
+        prices60d: prices,
         indicators,
         scenario,
         updatedAt
@@ -99,6 +100,7 @@ async function getInitialMarketData(): Promise<AssetSnapshot[]> {
         change24hPct: 0,
         change7dPct: 0,
         spark30d: [],
+        prices60d: [],
         indicators: {
           rsi14: 50,
           sma20: 0,
@@ -142,6 +144,7 @@ async function getInitialMarketData(): Promise<AssetSnapshot[]> {
           change24hPct: stockData.change24hPct,
           change7dPct: stockData.change7dPct,
           spark30d: stockData.spark30d,
+          prices60d: stockData.prices60d,
           indicators,
           scenario,
           updatedAt
@@ -155,6 +158,7 @@ async function getInitialMarketData(): Promise<AssetSnapshot[]> {
           change24hPct: 0,
           change7dPct: 0,
           spark30d: [],
+          prices60d: [],
           indicators: {
             rsi14: 50,
             sma20: 0,
@@ -177,6 +181,7 @@ async function getInitialMarketData(): Promise<AssetSnapshot[]> {
         change24hPct: 0,
         change7dPct: 0,
         spark30d: [],
+        prices60d: [],
         indicators: {
           rsi14: 50,
           sma20: 0,
@@ -207,6 +212,7 @@ async function getInitialMarketData(): Promise<AssetSnapshot[]> {
       change24hPct: forexData.change24hPct,
       change7dPct: forexData.change7dPct,
       spark30d: forexData.spark30d,
+      prices60d: forexData.prices60d,
       indicators,
       scenario,
       updatedAt
@@ -220,6 +226,7 @@ async function getInitialMarketData(): Promise<AssetSnapshot[]> {
       change24hPct: 0,
       change7dPct: 0,
       spark30d: [],
+      prices60d: [],
       indicators: {
         rsi14: 50,
         sma20: 0,

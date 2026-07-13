@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect, useRef } from "react";
 import { AssetSnapshot, AssetId } from "@/lib/prediction/types";
@@ -368,6 +368,7 @@ export default function PredictionClient({ initialAssets }: PredictionClientProp
             <div className="space-y-5">
               <PriceChart
                 prices={activeAsset.spark30d}
+                prices60d={activeAsset.prices60d}
                 sma20={activeAsset.indicators.sma20}
                 sma50={activeAsset.indicators.sma50}
                 symbol={activeAsset.symbol}

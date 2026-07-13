@@ -1,4 +1,4 @@
-﻿export type AssetId = "bitcoin" | "ethereum" | "solana" | "binancecoin" | "usd-idr" | "bbca" | "bbri" | "tlkm" | "asii" | "adro";
+export type AssetId = "bitcoin" | "ethereum" | "solana" | "binancecoin" | "usd-idr" | "bbca" | "bbri" | "tlkm" | "asii" | "adro";
 
 export interface Indicators {
   rsi14: number;                 // 0–100
@@ -36,6 +36,7 @@ export interface AssetSnapshot {
   change24hPct: number;
   change7dPct: number;
   spark30d: number[];       // harga harian 30 titik untuk chart
+  prices60d?: number[];     // harga harian 60 titik untuk zoom out
   indicators: Indicators;
   scenario: ScenarioProbabilities;
   updatedAt: string;        // ISO
