@@ -10,6 +10,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/predict",
+        destination: "/prediction",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
