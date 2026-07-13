@@ -106,8 +106,7 @@ export default function PriceChart({ prices, prices60d, sma20, sma50, symbol }: 
   const formatYLabel = (val: number) => {
     if (symbol === "USDIDR") return `Rp${val.toLocaleString("id-ID", { maximumFractionDigits: 0 })}`;
     if (val >= 1000000) return `${(val / 1000000).toFixed(1)}jt`;
-    if (val >= 1000) return `${(val / 1000).toFixed(0)}rb`;
-    return val.toFixed(0);
+    return val.toLocaleString("id-ID", { maximumFractionDigits: 0 });
   };
 
   // Generate 4 sumbu horizontal grid lines

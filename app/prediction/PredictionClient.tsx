@@ -52,13 +52,19 @@ export default function PredictionClient({ initialAssets }: PredictionClientProp
 
   const activeAsset = assets.find(a => a.id === activeTab) || assets[0];
 
+  // Helper untuk menentukan apakah suatu aset adalah saham
+  const isStockAsset = (id: string): boolean => {
+    const stockIds = ["bbca", "bbri", "tlkm", "asii", "adro"];
+    return id.endsWith(".jk") || stockIds.includes(id.toLowerCase());
+  };
+
   // Tambahkan aset yang dicari secara dinamis ke tab yang bersangkutan
   const getAssetsByKategori = (kat: KategoriAset): AssetInfo[] => {
     const matchingAssets = assets.filter((a) => {
       const id = a.id.toLowerCase();
       if (kat === "forex") return id === "usd-idr";
-      if (kat === "stock") return id.endsWith(".jk");
-      return id !== "usd-idr" && !id.endsWith(".jk");
+      if (kat === "stock") return isStockAsset(id);
+      return id !== "usd-idr" && !isStockAsset(id);
     });
 
     return matchingAssets.map((a) => ({
@@ -376,7 +382,7 @@ export default function PredictionClient({ initialAssets }: PredictionClientProp
 
               <IndicatorTable
                 indicators={activeAsset.indicators}
-                isCrypto={activeAsset.id !== "usd-idr" && !activeAsset.id.toLowerCase().endsWith(".jk")}
+                isCrypto={activeAsset.id !== "usd-idr" && !isStockAsset(activeAsset.id)}
               />
             </div>
           ) : (
