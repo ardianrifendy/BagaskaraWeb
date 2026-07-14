@@ -11,10 +11,17 @@ export interface FilterOptions {
  */
 export async function getFilterOptions(): Promise<FilterOptions> {
   try {
-    const brandResOwner = await dbOwner.execute("SELECT DISTINCT brand FROM products");
-    const brandResErafone = await dbErafone.execute("SELECT DISTINCT brand FROM products");
-    const conditionResOwner = await dbOwner.execute("SELECT DISTINCT condition FROM products");
-    const conditionResErafone = await dbErafone.execute("SELECT DISTINCT condition FROM products");
+    const [
+      brandResOwner,
+      brandResErafone,
+      conditionResOwner,
+      conditionResErafone
+    ] = await Promise.all([
+      dbOwner.execute("SELECT DISTINCT brand FROM products"),
+      dbErafone.execute("SELECT DISTINCT brand FROM products"),
+      dbOwner.execute("SELECT DISTINCT condition FROM products"),
+      dbErafone.execute("SELECT DISTINCT condition FROM products")
+    ]);
 
     const rawBrands = [
       ...brandResOwner.rows.map((row) => (row as unknown as { brand: string }).brand),

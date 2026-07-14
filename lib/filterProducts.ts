@@ -188,48 +188,55 @@ export async function getFilteredProducts(params: FilterParams): Promise<Product
 
   try {
     const res = await targetDb.execute({ sql: query, args });
-    const products: Product[] = [];
+    if (res.rows.length === 0) return [];
 
-    for (const row of res.rows) {
-      // Fetch all variants for this product
-      const variantRes = await targetDb.execute({
-        sql: "SELECT * FROM variants WHERE productId = ?",
-        args: [row.id as string]
-      });
+    const productIds = res.rows.map((row) => row.id as string);
+    const placeholders = productIds.map(() => "?").join(",");
+    const variantRes = await targetDb.execute({
+      sql: `SELECT * FROM variants WHERE productId IN (${placeholders})`,
+      args: productIds
+    });
 
-      const variants: Variant[] = variantRes.rows.map((row) => {
-        const vRow = row as unknown as DBVariantRow;
-        return {
-          id: vRow.id,
-          productId: vRow.productId,
-          skuInduk: vRow.skuInduk,
-          color: vRow.color,
-          colorHex: vRow.colorHex,
-          storage: vRow.storage,
-          price: Number(vRow.price),
-          strikePrice: vRow.strikePrice ? Number(vRow.strikePrice) : undefined,
-          stock: vRow.stock as "ready" | "habis",
-          images: safeJsonParse<string[]>(vRow.images, [])
-        };
-      });
-
-      products.push({
-        id: row.id as string,
-        brand: row.brand as string,
-        name: row.name as string,
-        condition: row.condition as "baru" | "second" | "like-new",
-        specSummary: row.specSummary as string,
-        specs: safeJsonParse(row.specs as string, []),
-        highlights: safeJsonParse(row.highlights as string, []),
-        warranty: row.warranty ? (row.warranty as string) : undefined,
-        completeness: row.completeness ? (row.completeness as string) : undefined,
-        defects: safeJsonParse<string[]>(row.defects as string, []),
-        createdAt: row.createdAt as string,
-        isScraped: row.isScraped !== undefined ? Number(row.isScraped) : undefined,
-        description: row.description ? (row.description as string) : undefined,
-        variants
-      });
+    const variantsByProductId: Record<string, Variant[]> = {};
+    for (const vRowRaw of variantRes.rows) {
+      const vRow = vRowRaw as unknown as DBVariantRow;
+      const variant: Variant = {
+        id: vRow.id,
+        productId: vRow.productId,
+        skuInduk: vRow.skuInduk,
+        color: vRow.color,
+        colorHex: vRow.colorHex,
+        storage: vRow.storage,
+        price: Number(vRow.price),
+        strikePrice: vRow.strikePrice ? Number(vRow.strikePrice) : undefined,
+        stock: vRow.stock as "ready" | "habis",
+        images: safeJsonParse<string[]>(vRow.images, [])
+      };
+      const pId = variant.productId;
+      if (pId) {
+        if (!variantsByProductId[pId]) {
+          variantsByProductId[pId] = [];
+        }
+        variantsByProductId[pId].push(variant);
+      }
     }
+
+    const products: Product[] = res.rows.map((row) => ({
+      id: row.id as string,
+      brand: row.brand as string,
+      name: row.name as string,
+      condition: row.condition as "baru" | "second" | "like-new",
+      specSummary: row.specSummary as string,
+      specs: safeJsonParse(row.specs as string, []),
+      highlights: safeJsonParse(row.highlights as string, []),
+      warranty: row.warranty ? (row.warranty as string) : undefined,
+      completeness: row.completeness ? (row.completeness as string) : undefined,
+      defects: safeJsonParse<string[]>(row.defects as string, []),
+      createdAt: row.createdAt as string,
+      isScraped: row.isScraped !== undefined ? Number(row.isScraped) : undefined,
+      description: row.description ? (row.description as string) : undefined,
+      variants: variantsByProductId[row.id as string] || []
+    }));
 
     return products;
   } catch (error) {
@@ -330,47 +337,55 @@ export async function getFallbackProducts(budgetStr?: string, book?: string): Pr
 
   try {
     const res = await targetDb.execute({ sql: query, args: [targetPrice] });
-    const products: Product[] = [];
+    if (res.rows.length === 0) return [];
 
-    for (const row of res.rows) {
-      const variantRes = await targetDb.execute({
-        sql: "SELECT * FROM variants WHERE productId = ?",
-        args: [row.id as string]
-      });
+    const productIds = res.rows.map((row) => row.id as string);
+    const placeholders = productIds.map(() => "?").join(",");
+    const variantRes = await targetDb.execute({
+      sql: `SELECT * FROM variants WHERE productId IN (${placeholders})`,
+      args: productIds
+    });
 
-      const variants: Variant[] = variantRes.rows.map((row) => {
-        const vRow = row as unknown as DBVariantRow;
-        return {
-          id: vRow.id,
-          productId: vRow.productId,
-          skuInduk: vRow.skuInduk,
-          color: vRow.color,
-          colorHex: vRow.colorHex,
-          storage: vRow.storage,
-          price: Number(vRow.price),
-          strikePrice: vRow.strikePrice ? Number(vRow.strikePrice) : undefined,
-          stock: vRow.stock as "ready" | "habis",
-          images: safeJsonParse<string[]>(vRow.images, [])
-        };
-      });
-
-      products.push({
-        id: row.id as string,
-        brand: row.brand as string,
-        name: row.name as string,
-        condition: row.condition as "baru" | "second" | "like-new",
-        specSummary: row.specSummary as string,
-        specs: safeJsonParse(row.specs as string, []),
-        highlights: safeJsonParse(row.highlights as string, []),
-        warranty: row.warranty ? (row.warranty as string) : undefined,
-        completeness: row.completeness ? (row.completeness as string) : undefined,
-        defects: safeJsonParse<string[]>(row.defects as string, []),
-        createdAt: row.createdAt as string,
-        isScraped: row.isScraped !== undefined ? Number(row.isScraped) : undefined,
-        description: row.description ? (row.description as string) : undefined,
-        variants
-      });
+    const variantsByProductId: Record<string, Variant[]> = {};
+    for (const vRowRaw of variantRes.rows) {
+      const vRow = vRowRaw as unknown as DBVariantRow;
+      const variant: Variant = {
+        id: vRow.id,
+        productId: vRow.productId,
+        skuInduk: vRow.skuInduk,
+        color: vRow.color,
+        colorHex: vRow.colorHex,
+        storage: vRow.storage,
+        price: Number(vRow.price),
+        strikePrice: vRow.strikePrice ? Number(vRow.strikePrice) : undefined,
+        stock: vRow.stock as "ready" | "habis",
+        images: safeJsonParse<string[]>(vRow.images, [])
+      };
+      const pId = variant.productId;
+      if (pId) {
+        if (!variantsByProductId[pId]) {
+          variantsByProductId[pId] = [];
+        }
+        variantsByProductId[pId].push(variant);
+      }
     }
+
+    const products: Product[] = res.rows.map((row) => ({
+      id: row.id as string,
+      brand: row.brand as string,
+      name: row.name as string,
+      condition: row.condition as "baru" | "second" | "like-new",
+      specSummary: row.specSummary as string,
+      specs: safeJsonParse(row.specs as string, []),
+      highlights: safeJsonParse(row.highlights as string, []),
+      warranty: row.warranty ? (row.warranty as string) : undefined,
+      completeness: row.completeness ? (row.completeness as string) : undefined,
+      defects: safeJsonParse<string[]>(row.defects as string, []),
+      createdAt: row.createdAt as string,
+      isScraped: row.isScraped !== undefined ? Number(row.isScraped) : undefined,
+      description: row.description ? (row.description as string) : undefined,
+      variants: variantsByProductId[row.id as string] || []
+    }));
 
     return products;
   } catch (error) {

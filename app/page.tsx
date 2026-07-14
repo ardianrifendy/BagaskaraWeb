@@ -59,10 +59,14 @@ export default async function Home({ searchParams }: PageProps) {
   const pageParam = resolvedSearchParams.page || "";
   const page = parseInt(pageParam) || 1;
 
-  // Fetch filtered products and dynamic options from SQLite
-  const products = await getFilteredProducts({ budget, brand, condition, status, book, q, sort, category });
-  const { brands: availableBrands, conditions: availableConditions } = await getFilterOptions();
-  const suggestions = await getSearchSuggestions();
+  // Fetch filtered products, dynamic options, search suggestions, and active product in parallel
+  const [products, filterOptions, suggestions, activeProduct] = await Promise.all([
+    getFilteredProducts({ budget, brand, condition, status, book, q, sort, category }),
+    getFilterOptions(),
+    getSearchSuggestions(),
+    produkSlug ? getProductBySlug(produkSlug) : Promise.resolve(null)
+  ]);
+  const { brands: availableBrands, conditions: availableConditions } = filterOptions;
 
   // Pagination Math
   const ITEMS_PER_PAGE = 12;
@@ -75,9 +79,6 @@ export default async function Home({ searchParams }: PageProps) {
   // If no products match, fetch the nearest products in price
   const isCatalogEmpty = products.length === 0;
   const fallbackProducts = isCatalogEmpty ? await getFallbackProducts(budget, book) : [];
-
-  // Fetch active product for modal if selected via query param
-  const activeProduct = produkSlug ? await getProductBySlug(produkSlug) : null;
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-zinc-950 text-neutral-800 dark:text-zinc-100 font-sans flex flex-col pb-16 md:pb-0 transition-colors duration-200">
