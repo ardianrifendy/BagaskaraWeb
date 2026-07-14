@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 const PROTECTED_SMS_PATHS = ["/sms", "/api/sms"];
 // Proteksi rute Stok
 const PROTECTED_STOK_PATHS = ["/stok"];
+// Proteksi rute Jastip Admin
+const PROTECTED_JASTIP_PATHS = ["/jastip/admin", "/api/jastip/admin"];
 
 function isSmsPath(pathname: string): boolean {
   return PROTECTED_SMS_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
@@ -11,6 +13,10 @@ function isSmsPath(pathname: string): boolean {
 
 function isStokPath(pathname: string): boolean {
   return PROTECTED_STOK_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
+}
+
+function isJastipAdminPath(pathname: string): boolean {
+  return PROTECTED_JASTIP_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
 }
 
 export function middleware(request: NextRequest) {
@@ -72,10 +78,56 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  // 3. Tangani proteksi Jastip Admin
+  if (isJastipAdminPath(pathname)) {
+    // Exclude login page dan login API
+    if (
+      pathname === "/jastip/admin" ||
+      pathname === "/api/jastip/admin/login"
+    ) {
+      return NextResponse.next();
+    }
+
+    const password = process.env.JASTIP_ADMIN_PASSWORD;
+    if (!password) {
+      if (pathname.startsWith("/api/")) {
+        return NextResponse.json(
+          { ok: false, error: "Konfigurasi JASTIP_ADMIN_PASSWORD belum diatur di server." },
+          { status: 500 }
+        );
+      }
+      return NextResponse.next();
+    }
+
+    const token = request.cookies.get("jastip_auth_token")?.value;
+    const expectedToken = btoa(password);
+
+    if (token === expectedToken) {
+      return NextResponse.next();
+    }
+
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json(
+        { ok: false, error: "Unauthorized. Silakan login terlebih dahulu." },
+        { status: 401 }
+      );
+    }
+
+    const loginUrl = new URL("/jastip/admin", request.url);
+    loginUrl.searchParams.set("redirect", pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/sms/:path*", "/api/sms/:path*", "/stok/:path*"],
+  matcher: [
+    "/sms/:path*",
+    "/api/sms/:path*",
+    "/stok/:path*",
+    "/jastip/admin/:path*",
+    "/api/jastip/admin/:path*"
+  ],
 };
 

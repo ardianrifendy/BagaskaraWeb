@@ -1,26 +1,23 @@
-import React from "react";
+import React, { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import JastipTrackForm from "@/components/jastip/JastipTrackForm";
 import Logo from "@/components/Logo";
 import { siteConfig } from "@/config/site";
 
-const PAGE_TITLE = "Media Downloader — Bagaskara Cell";
-const PAGE_DESC =
-  "Unduh video YouTube, video TikTok tanpa watermark, Reels Instagram, video Facebook, Twitter/X, SoundCloud, Pinterest, dan TeraBox secara gratis di Bagaskara Cell. Cepat, mudah, tanpa aplikasi.";
-
 export const metadata: Metadata = {
-  title: PAGE_TITLE,
-  description: PAGE_DESC,
+  title: "Jasa Titip (Jastip) — Bagaskara Cell",
+  description: "Lacak status barang belanjaan jastip luar negeri Anda secara real-time di Bagaskara Cell.",
   openGraph: {
-    title: PAGE_TITLE,
-    description: PAGE_DESC,
+    title: "Jasa Titip (Jastip) — Bagaskara Cell",
+    description: "Lacak status barang belanjaan jastip luar negeri Anda secara real-time di Bagaskara Cell.",
     type: "website",
     locale: "id_ID",
     siteName: "Bagaskara Cell",
-  },
+  }
 };
 
-export default function MediaDownloaderPage() {
+export default function JastipLandingPage() {
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-zinc-950 text-neutral-800 dark:text-zinc-100 font-sans flex flex-col transition-colors duration-200">
 
@@ -59,24 +56,15 @@ export default function MediaDownloaderPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M7 12l3-3 3 3 4-4M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
               </svg>
             </Link>
-            <Link
-              href="/jastip"
-              className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 flex items-center justify-center text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer"
-              title="Jasa Titip (Jastip)"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-              </svg>
-            </Link>
           </div>
         </div>
       </header>
 
       {/* Main Container */}
-      <main className="flex-grow max-w-lg w-full mx-auto px-4 py-10 md:py-16 flex flex-col justify-center">
+      <main className="flex-grow max-w-lg w-full mx-auto px-4 py-10 md:py-16 flex flex-col justify-center gap-6">
 
         {/* Title and Intro */}
-        <div className="text-center mb-8 space-y-2">
+        <div className="text-center space-y-2">
           {/* Breadcrumb / Back button */}
           <Link
             href="/"
@@ -89,30 +77,40 @@ export default function MediaDownloaderPage() {
           </Link>
 
           <h1 className="text-2xl md:text-3xl font-black text-neutral-800 dark:text-zinc-100 tracking-tight">
-            Media Downloader
+            Lacak Order Jastip
           </h1>
+          <p className="text-xs md:text-sm font-medium text-neutral-400 dark:text-zinc-450 max-w-sm mx-auto leading-relaxed">
+            Pantau status pembelian dan pengiriman barang jasa titip (jastip) Anda secara real-time.
+          </p>
         </div>
 
-        {/* Maintenance Card */}
-        <div className="bg-white dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-800 rounded-3xl p-8 shadow-sm flex flex-col items-center text-center space-y-6">
-          <div className="w-16 h-16 rounded-2xl bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center text-orange-500 dark:text-orange-400">
-            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
+        {/* Tracking Form */}
+        <Suspense fallback={
+          <div className="rounded-3xl border border-neutral-100 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 shadow-sm animate-pulse space-y-4">
+            <div className="h-10 bg-neutral-200 dark:bg-zinc-800 rounded-xl" />
+            <div className="h-10 bg-neutral-200 dark:bg-zinc-800 rounded-xl" />
           </div>
-          <div className="space-y-2">
-            <h2 className="text-xl font-bold text-neutral-800 dark:text-zinc-100">
-              Layanan Dinonaktifkan Sementara
-            </h2>
-            <p className="text-sm text-neutral-500 dark:text-zinc-455 leading-relaxed">
-              Fitur Media Downloader saat ini sedang dinonaktifkan untuk peningkatan sistem dan pemeliharaan server. Silakan hubungi kami atau kembali beberapa saat lagi.
-            </p>
-          </div>
+        }>
+          <JastipTrackForm />
+        </Suspense>
+
+        {/* Additional Actions */}
+        <div className="grid grid-cols-2 gap-4 mt-2">
           <Link
-            href="/"
-            className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-orange-600 hover:bg-orange-500 active:bg-orange-700 text-white font-bold text-sm shadow-sm transition-all w-full cursor-pointer"
+            href="/jastip/kalkulator"
+            className="flex flex-col items-center justify-center p-4 bg-white dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-800 hover:border-orange-500 dark:hover:border-orange-500 rounded-2xl text-center transition-all group shadow-sm"
           >
-            Kembali ke Katalog HP
+            <span className="text-2xl mb-1 group-hover:scale-110 transition-transform">🧮</span>
+            <span className="text-xs font-bold text-neutral-700 dark:text-zinc-300">Kalkulator Jastip</span>
+            <span className="text-[10px] text-neutral-400 dark:text-zinc-500 mt-0.5">Estimasi biaya titipan</span>
+          </Link>
+          <Link
+            href="/jastip/ketentuan"
+            className="flex flex-col items-center justify-center p-4 bg-white dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-800 hover:border-orange-500 dark:hover:border-orange-500 rounded-2xl text-center transition-all group shadow-sm"
+          >
+            <span className="text-2xl mb-1 group-hover:scale-110 transition-transform">📜</span>
+            <span className="text-xs font-bold text-neutral-700 dark:text-zinc-300">Ketentuan & S&K</span>
+            <span className="text-[10px] text-neutral-400 dark:text-zinc-500 mt-0.5">Aturan belanja & DP</span>
           </Link>
         </div>
 
