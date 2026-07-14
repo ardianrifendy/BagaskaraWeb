@@ -46,14 +46,13 @@ export default function AdminBatchesPage() {
     setFetchingRate(true);
     setError(null);
     try {
-      const res = await fetch(`https://api.frankfurter.app/latest?from=${curr}&to=IDR`);
+      const res = await fetch(`/api/jastip/forex?from=${curr}`);
       if (!res.ok) throw new Error("Gagal mengambil kurs.");
       const data = await res.json();
-      const liveRate = data.rates.IDR;
-      if (liveRate) {
-        setExchangeRate(Math.round(liveRate).toString());
+      if (data.ok && data.rate) {
+        setExchangeRate(Math.round(data.rate).toString());
       } else {
-        setError("Mata uang ini tidak memiliki rate IDR di API Frankfurter.");
+        setError(data.error || "Mata uang ini tidak memiliki rate IDR di API.");
       }
     } catch (err) {
       console.error(err);

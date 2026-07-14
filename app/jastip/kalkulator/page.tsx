@@ -48,12 +48,11 @@ function CalculatorContent() {
     if (!curr) return;
     setFetchingRate(true);
     try {
-      const res = await fetch(`https://api.frankfurter.app/latest?from=${curr}&to=IDR`);
+      const res = await fetch(`/api/jastip/forex?from=${curr}`);
       if (!res.ok) throw new Error("Gagal mengambil kurs.");
       const data = await res.json();
-      const liveRate = data.rates.IDR;
-      if (liveRate) {
-        setExchangeRate(Math.round(liveRate));
+      if (data.ok && data.rate) {
+        setExchangeRate(Math.round(data.rate));
       }
     } catch (err) {
       console.error("Gagal mengambil live rate:", err);

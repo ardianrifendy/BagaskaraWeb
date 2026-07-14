@@ -141,6 +141,25 @@ export default function CalculatorPage() {
         </div>
       </header>
 
+      {/* Title & Intro Section */}
+      <div className="max-w-6xl w-full mx-auto px-4 pt-8 text-center space-y-2">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1 text-xs font-extrabold text-neutral-400 dark:text-zinc-500 hover:text-orange-600 dark:hover:text-orange-400 transition-colors uppercase tracking-wider cursor-pointer mb-2"
+        >
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Kembali ke Katalog
+        </Link>
+        <h1 className="text-2xl md:text-3xl font-black text-neutral-800 dark:text-zinc-100 tracking-tight">
+          Kalkulator Shopee
+        </h1>
+        <p className="text-xs md:text-sm font-medium text-neutral-400 dark:text-zinc-450 max-w-md mx-auto leading-relaxed">
+          Hitung estimasi potongan biaya admin dan profit bersih jualan toko Shopee Anda secara akurat.
+        </p>
+      </div>
+
       {/* Main Container - Responsive Grid */}
       <div className="max-w-6xl mx-auto p-4 grid grid-cols-1 md:grid-cols-12 gap-6">
         {/* Left Column (Inputs & Settings) */}
