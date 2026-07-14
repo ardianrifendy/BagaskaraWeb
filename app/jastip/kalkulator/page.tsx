@@ -42,6 +42,30 @@ function CalculatorContent() {
   const [activeBatch, setActiveBatch] = useState<ActiveBatch | null>(null);
   const [loadingBatch, setLoadingBatch] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [fetchingRate, setFetchingRate] = useState(false);
+
+  const fetchLiveRate = async (curr: string) => {
+    if (!curr) return;
+    setFetchingRate(true);
+    try {
+      const res = await fetch(`https://api.frankfurter.app/latest?from=${curr}&to=IDR`);
+      if (!res.ok) throw new Error("Gagal mengambil kurs.");
+      const data = await res.json();
+      const liveRate = data.rates.IDR;
+      if (liveRate) {
+        setExchangeRate(Math.round(liveRate));
+      }
+    } catch (err) {
+      console.error("Gagal mengambil live rate:", err);
+    } finally {
+      setFetchingRate(false);
+    }
+  };
+
+  const handleCurrencyChange = async (val: string) => {
+    setCurrency(val);
+    await fetchLiveRate(val);
+  };
 
   // Fetch active batch on mount
   useEffect(() => {
@@ -277,9 +301,29 @@ Apakah barang ini bisa dititip? Terima kasih.`;
               </h3>
 
               <div className="grid grid-cols-2 gap-4">
+                <Select
+                  label="Mata Uang Asal"
+                  value={currency}
+                  onChange={handleCurrencyChange}
+                  options={[
+                    { value: "MYR", label: "MYR - Malaysia Ringgit" },
+                    { value: "SGD", label: "SGD - Singapore Dollar" },
+                    { value: "JPY", label: "JPY - Japan Yen" },
+                    { value: "USD", label: "USD - US Dollar" },
+                    { value: "THB", label: "THB - Thailand Baht" },
+                    { value: "EUR", label: "EUR - Europe Euro" },
+                    { value: "CNY", label: "CNY - China Renminbi" },
+                    { value: "GBP", label: "GBP - UK Pound" },
+                    { value: "AUD", label: "AUD - Australia Dollar" },
+                    { value: "HKD", label: "HKD - Hong Kong Dollar" },
+                  ]}
+                  className="w-full"
+                />
+
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] uppercase font-bold text-neutral-500 dark:text-zinc-400 tracking-wider">
-                    Kurs 1 {currency} (Rupiah)
+                  <label className="text-[10px] uppercase font-bold text-neutral-500 dark:text-zinc-400 tracking-wider flex justify-between">
+                    <span>Kurs 1 {currency} (IDR)</span>
+                    {fetchingRate && <span className="text-orange-500 text-[8px] animate-pulse">loading...</span>}
                   </label>
                   <input
                     type="number"
@@ -287,19 +331,6 @@ Apakah barang ini bisa dititip? Terima kasih.`;
                     value={exchangeRate || ""}
                     onChange={(e) => setExchangeRate(Number(e.target.value))}
                     className="px-3 py-2.5 bg-neutral-50 dark:bg-zinc-950 border border-neutral-200 dark:border-zinc-800 focus:outline-none focus:border-orange-500 rounded-xl text-xs md:text-sm font-bold text-neutral-800 dark:text-zinc-150"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] uppercase font-bold text-neutral-500 dark:text-zinc-400 tracking-wider">
-                    Mata Uang Asal
-                  </label>
-                  <input
-                    type="text"
-                    maxLength={5}
-                    value={currency}
-                    onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-                    className="px-3 py-2.5 bg-neutral-50 dark:bg-zinc-950 border border-neutral-200 dark:border-zinc-800 focus:outline-none focus:border-orange-500 rounded-xl text-xs md:text-sm font-bold text-neutral-800 dark:text-zinc-150 text-center"
                   />
                 </div>
               </div>
