@@ -1,131 +1,59 @@
-﻿import { NextRequest, NextResponse } from "next/server";
-import { unstable_cache } from "next/cache";
+import { NextRequest, NextResponse } from "next/server";
 import { fetchCoinGeckoMarkets, fetchCoinGeckoChart } from "@/lib/prediction/providers/coingecko";
 import { fetchUSDIDRForex } from "@/lib/prediction/providers/forex";
 import { fetchFearGreedIndex } from "@/lib/prediction/providers/feargreed";
 import { fetchYahooStock, YAHOO_TICKERS } from "@/lib/prediction/providers/yahoo";
 import { calculateIndicators } from "@/lib/prediction/indicators";
 import { calculateScenarioProbabilities } from "@/lib/prediction/score";
-import { SYSTEM_PROMPT, buildUserMessage } from "@/lib/prediction/prompt";
 import { AssetSnapshot, AssetId } from "@/lib/prediction/types";
 
 export const dynamic = "force-dynamic";
 
-const FORBIDDEN_WORDS_REGEX = /(pasti|dijamin|sinyal\s+beli|sinyal\s+jual)/i;
+// Fungsi generator analisis deterministik 100% lokal berbasis data statistik
+function generateDeterministicAnalysis(snapshot: AssetSnapshot): string {
+  const sc = snapshot.scenario;
+  const ind = snapshot.indicators;
 
-const getFallbackNarrative = (snapshot: AssetSnapshot): string => {
-  const bias = snapshot.scenario.up > snapshot.scenario.down 
-    ? "bias naik (bullish)" 
-    : snapshot.scenario.down > snapshot.scenario.up 
-      ? "bias turun (bearish)" 
-      : "bias sideways (konsolidasi)";
+  // A. Tentukan bias arah dominan
+  let bias = "sideways (konsolidasi)";
+  let biasProb = sc.sideways;
+  let biasDir = "mendatar";
 
-  return `Berdasarkan analisis statistik atas data historis 60 hari terakhir, ${snapshot.name} untuk horizon 7 hari ke depan menunjukkan probabilitas skenario ${bias}. Indikator RSI(14) tercatat pada nilai ${snapshot.indicators.rsi14} didukung oleh pergerakan histogram MACD ${snapshot.indicators.macd.state} sebesar ${snapshot.indicators.macd.histogram}. Analisis teknikal ini merefleksikan tren historis semata dan pergerakan dapat berubah tergantung kondisi volatilitas pasar. Anda disarankan untuk selalu melakukan riset mandiri secara mendalam (DYOR) sebelum mengambil keputusan finansial karena data ini tidak mengandung saran investasi.`;
-};
-
-// Fungsi pemanggil API Gemini dengan model kustom dan handling error
-async function fetchGeminiWithModel(modelName: string, userMessage: string, apiKey: string): Promise<string> {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
-
-  try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json"
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: userMessage
-              }
-            ]
-          }
-        ],
-        systemInstruction: {
-          parts: [
-            {
-              text: SYSTEM_PROMPT
-            }
-          ]
-        },
-        generationConfig: {
-          maxOutputTokens: 700
-        }
-      }),
-      signal: controller.signal
-    });
-
-    if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(`Gemini API (${modelName}) returned status ${res.status}: ${errText}`);
-    }
-
-    const data = await res.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) {
-      throw new Error(`Empty response candidates for ${modelName}`);
-    }
-    return text as string;
-  } finally {
-    clearTimeout(timeoutId);
-  }
-}
-
-async function generateNarrativeFromGemini(snapshot: AssetSnapshot): Promise<string> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    throw new Error("API_KEY_MISSING");
+  if (sc.up > sc.down && sc.up > sc.sideways) {
+    bias = "bullish (tren naik)";
+    biasProb = sc.up;
+    biasDir = "menguat";
+  } else if (sc.down > sc.up && sc.down > sc.sideways) {
+    bias = "bearish (tren turun)";
+    biasProb = sc.down;
+    biasDir = "melemah";
   }
 
-  const userMessage = buildUserMessage(snapshot);
-  let text = "";
-  let success = false;
+  // B. Susun Kesimpulan
+  const kesimpulan = `**Kesimpulan:** Berdasarkan perhitungan statistik Probability Engine atas data historis 60 hari terakhir, ${snapshot.name} (${snapshot.symbol}) untuk horizon 7 hari ke depan menunjukkan probabilitas dominan sebesar ${biasProb}% untuk bergerak dalam skenario ${bias}.`;
 
-  // Daftar model yang akan dicoba berurutan (dari yang tercerdas ke yang paling luas akses gratisnya)
-  const modelsToTry = ["gemini-2.5-pro", "gemini-1.5-pro", "gemini-1.5-flash"];
+  // C. Susun Alasan berbasis indikator terkuat yang memiliki note
+  const validDrivers = sc.drivers
+    .filter(d => d.weight !== 0 && d.note)
+    .sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight)); // prioritaskan bobot terbesar
 
-  for (const model of modelsToTry) {
-    try {
-      console.log(`Attempting to generate narrative using model: ${model}`);
-      text = await fetchGeminiWithModel(model, userMessage, apiKey);
-      success = true;
-      console.log(`Successfully generated narrative using model: ${model}`);
-      break; // Berhenti jika salah satu sukses
-    } catch (err) {
-      console.warn(`Model ${model} failed:`, (err as Error).message || String(err));
-      // Lanjut mencoba model berikutnya di list
-    }
+  const alasanNotes = validDrivers.map(d => d.note).slice(0, 3).join(". ");
+  const alasan = `**Alasan:** Kondisi ini dipengaruhi oleh indikator teknikal utama: ${alasanNotes || "Pergerakan harga saat ini berada di area konsolidasi netral."}.`;
+
+  // D. Susun Risiko Alternatif
+  let risiko = "";
+  if (biasDir === "menguat") {
+    risiko = `**Risiko Alternatif:** Tren penguatan ini dapat dibatalkan jika indikator RSI(14) yang saat ini berada di angka ${ind.rsi14.toFixed(1)} melonjak melewati batas jenuh beli (>70) atau jika harga jatuh di bawah garis support rata-rata bergerak (SMA20).`;
+  } else if (biasDir === "melemah") {
+    risiko = `**Risiko Alternatif:** Tekanan penurunan ini dapat terhambat apabila nilai RSI(14) yang saat ini berada di angka ${ind.rsi14.toFixed(1)} menyentuh area jenuh jual (<30) yang memicu pembalikan arah naik, atau jika terjadi persilangan emas (Golden Cross) pada indikator Moving Average.`;
+  } else {
+    risiko = `**Risiko Alternatif:** Konsolidasi ini dapat segera berakhir dan bertransisi ke arah tren baru apabila indikator volume transaksi meningkat signifikan dan garis MACD keluar dari zona histogram netral.`;
   }
 
-  // Jika semua model API gagal, gunakan fallback narasi statis netral agar user tidak melihat kotak kosong
-  if (!success || !text) {
-    console.error("All Gemini models failed. Yielding fallback static narrative.");
-    return getFallbackNarrative(snapshot);
-  }
+  // E. Catatan Kaki Disclaimer
+  const disclaimer = `*Analisis di atas murni hasil kalkulasi algoritma statistik atas data harga historis dan tidak mengandung saran keuangan atau keputusan investasi.*`;
 
-  // Post-check kata terlarang (pasti, dijamin, sinyal beli/jual)
-  if (FORBIDDEN_WORDS_REGEX.test(text)) {
-    console.warn("Gemini response contained forbidden words. Attempting regeneration once...");
-    try {
-      // Coba regenerasi sekali lagi menggunakan model yang sukses tadi
-      const successfulModel = text ? "gemini-1.5-flash" : "gemini-2.5-pro"; 
-      text = await fetchGeminiWithModel(successfulModel, userMessage, apiKey);
-    } catch (err) {
-      console.error("Regeneration failed:", err);
-    }
-
-    // Jika setelah regenerasi masih mengandung kata terlarang, paksa gunakan fallback statis netral demi kepatuhan legal
-    if (FORBIDDEN_WORDS_REGEX.test(text)) {
-      console.error("Gemini response still contained forbidden words after regeneration. Forcing fallback static narrative.");
-      return getFallbackNarrative(snapshot);
-    }
-  }
-
-  return text;
+  return `${kesimpulan}\n\n${alasan}\n\n${risiko}\n\n${disclaimer}`;
 }
 
 async function getAssetSnapshotDirect(id: AssetId): Promise<AssetSnapshot> {
@@ -191,14 +119,6 @@ async function getAssetSnapshotDirect(id: AssetId): Promise<AssetSnapshot> {
   }
 }
 
-const getCachedAnalysis = unstable_cache(
-  async (snapshot: AssetSnapshot) => {
-    return await generateNarrativeFromGemini(snapshot);
-  },
-  ["prediction-analysis-narrative-gemini"],
-  { revalidate: 21600 }
-);
-
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const assetId = searchParams.get("asset") as AssetId;
@@ -211,22 +131,14 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey.trim() === "") {
-    return NextResponse.json({
-      ok: false,
-      error: "AI_DISABLED",
-      message: "Narasi asisten AI dinonaktifkan karena konfigurasi server belum lengkap."
-    });
-  }
-
   try {
     const snapshot = await getAssetSnapshotDirect(assetId);
     if (snapshot.unavailable) {
       throw new Error("Asset snapshot is marked unavailable from provider");
     }
 
-    const narrative = await getCachedAnalysis(snapshot);
+    // Panggil generator teks lokal 100% deterministik, tanpa memanggil AI/Gemini lagi
+    const narrative = generateDeterministicAnalysis(snapshot);
 
     return NextResponse.json({
       ok: true,
@@ -237,10 +149,10 @@ export async function GET(request: NextRequest) {
   } catch (err) {
     console.error(`Analysis GET endpoint error for ${assetId}:`, (err as Error).message || String(err));
     return NextResponse.json(
-      { 
-        ok: false, 
-        error: "ANALYSIS_FAILED", 
-        message: "Gagal memuat analisis pasar. Silakan coba beberapa saat lagi." 
+      {
+        ok: false,
+        error: "ANALYSIS_FAILED",
+        message: "Gagal memuat analisis pasar. Silakan coba beberapa saat lagi."
       },
       { status: 500 }
     );
