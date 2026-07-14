@@ -1,58 +1,81 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const PROTECTED_PATHS = ["/sms", "/api/sms"];
+// Proteksi rute SMS
+const PROTECTED_SMS_PATHS = ["/sms", "/api/sms"];
+// Proteksi rute Stok
+const PROTECTED_STOK_PATHS = ["/stok"];
 
-function isProtectedPath(pathname: string): boolean {
-  return PROTECTED_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
+function isSmsPath(pathname: string): boolean {
+  return PROTECTED_SMS_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
 }
 
-function isExcluded(pathname: string): boolean {
-  return (
-    pathname === "/sms/login" ||
-    pathname.startsWith("/sms/login/") ||
-    pathname === "/api/sms-auth" ||
-    pathname.startsWith("/api/sms-auth/")
-  );
+function isStokPath(pathname: string): boolean {
+  return PROTECTED_STOK_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
 }
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Hanya proses jika path ada di daftar dilindungi dan bukan halaman login/auth
-  if (!isProtectedPath(pathname) || isExcluded(pathname)) {
-    return NextResponse.next();
+  // 1. Tangani proteksi SMS
+  if (isSmsPath(pathname)) {
+    // Exclude halaman login SMS
+    if (
+      pathname === "/sms/login" ||
+      pathname.startsWith("/sms/login/") ||
+      pathname === "/api/sms-auth" ||
+      pathname.startsWith("/api/sms-auth/")
+    ) {
+      return NextResponse.next();
+    }
+
+    const password = process.env.SMS_DASHBOARD_PASSWORD;
+    if (!password) {
+      return NextResponse.next();
+    }
+
+    const token = request.cookies.get("sms_auth_token")?.value;
+    const expectedToken = btoa(password);
+
+    if (token === expectedToken) {
+      return NextResponse.next();
+    }
+
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json(
+        { ok: false, error: "Unauthorized. Silakan login ke dashboard." },
+        { status: 401 }
+      );
+    }
+
+    const loginUrl = new URL("/sms/login", request.url);
+    loginUrl.searchParams.set("redirect", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
-  const password = process.env.SMS_DASHBOARD_PASSWORD;
+  // 2. Tangani proteksi Stok
+  if (isStokPath(pathname)) {
+    // Exclude halaman login Stok
+    if (pathname === "/stok/login" || pathname.startsWith("/stok/login/")) {
+      return NextResponse.next();
+    }
 
-  // Jika tidak diset di environment, kita asumsikan bypass (contoh untuk local dev)
-  if (!password) {
-    return NextResponse.next();
+    const pin = process.env.STOK_PIN || "bagaskara";
+    const token = request.cookies.get("stok_auth_token")?.value;
+    const expectedToken = btoa(pin);
+
+    if (token === expectedToken) {
+      return NextResponse.next();
+    }
+
+    const loginUrl = new URL("/stok/login", request.url);
+    loginUrl.searchParams.set("redirect", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
-  const token = request.cookies.get("sms_auth_token")?.value;
-  // Gunakan btoa untuk kompatibilitas edge runtime
-  const expectedToken = btoa(password);
-
-  // Jika token valid, lanjutkan request
-  if (token === expectedToken) {
-    return NextResponse.next();
-  }
-
-  // Jika API request, kembalikan 401 JSON
-  if (pathname.startsWith("/api/")) {
-    return NextResponse.json(
-      { ok: false, error: "Unauthorized. Silakan login ke dashboard." },
-      { status: 401 }
-    );
-  }
-
-  // Redirect user ke halaman login
-  const loginUrl = new URL("/sms/login", request.url);
-  loginUrl.searchParams.set("redirect", pathname);
-  return NextResponse.redirect(loginUrl);
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/sms/:path*", "/api/sms/:path*"],
+  matcher: ["/sms/:path*", "/api/sms/:path*", "/stok/:path*"],
 };
+
