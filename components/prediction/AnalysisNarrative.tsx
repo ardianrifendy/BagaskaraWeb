@@ -34,11 +34,11 @@ export default function AnalysisNarrative({
 
   return (
     <div className="bg-white dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-800 rounded-3xl p-5 shadow-sm space-y-3">
-      <div className="flex items-center justify-between border-b border-neutral-100 dark:border-zinc-850 pb-2.5 select-none">
+      <div className="flex items-center justify-between border-b border-neutral-100 dark:border-zinc-855 pb-2.5 select-none">
         <h3 className="text-xs font-black uppercase tracking-wider text-neutral-800 dark:text-zinc-200">
-          Tinjauan & Narasi Analis AI
+          Kesimpulan & Alasan Analis AI
         </h3>
-        <span className="text-[9px] font-extrabold text-neutral-450 uppercase">Ekonom-Statistikawan</span>
+        <span className="text-[9px] font-extrabold text-neutral-450 uppercase">Kesimpulan & Alasan</span>
       </div>
 
       <div className="pt-1">

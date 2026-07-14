@@ -26,7 +26,7 @@ export default function Badge({ type, className = "" }: BadgeProps) {
       break;
     case "ready":
       label = "Ready";
-      styles = "bg-orange-600 text-white border-transparent";
+      styles = "bg-emerald-600 text-white border-transparent";
       break;
     case "habis":
       label = "Habis";

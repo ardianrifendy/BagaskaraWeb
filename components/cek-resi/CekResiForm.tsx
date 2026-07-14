@@ -272,7 +272,7 @@ export default function CekResiForm() {
           <button
             type="submit"
             disabled={status === "loading" && isTrackingModalOpen}
-            className="w-full py-3 bg-neutral-900 dark:bg-orange-600 hover:bg-neutral-800 dark:hover:bg-orange-700 text-white font-black text-xs md:text-sm rounded-xl transition duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md shadow-neutral-900/10 dark:shadow-orange-650/10"
+            className="w-full py-3 bg-orange-600 hover:bg-orange-700 text-white font-black text-xs md:text-sm rounded-xl transition duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md shadow-orange-900/10 dark:shadow-orange-650/10"
           >
             {status === "loading" && isTrackingModalOpen ? (
               <>
