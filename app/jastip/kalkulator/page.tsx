@@ -7,6 +7,7 @@ import Logo from "@/components/Logo";
 import { siteConfig } from "@/config/site";
 import { formatRupiah } from "@/lib/formatRupiah";
 import { calculateItemPrice } from "@/lib/jastip/pricing";
+import Select from "@/components/jastip/Select";
 
 interface ActiveBatch {
   id: number;
@@ -304,19 +305,15 @@ Apakah barang ini bisa dititip? Terima kasih.`;
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] uppercase font-bold text-neutral-500 dark:text-zinc-400 tracking-wider">
-                    Jenis Fee Jastip
-                  </label>
-                  <select
-                    value={feeType}
-                    onChange={(e) => setFeeType(e.target.value as "flat" | "percent")}
-                    className="px-3 py-2.5 bg-neutral-50 dark:bg-zinc-950 border border-neutral-200 dark:border-zinc-800 focus:outline-none focus:border-orange-500 rounded-xl text-xs md:text-sm font-bold text-neutral-800 dark:text-zinc-150"
-                  >
-                    <option value="flat">Flat per Qty (Rp)</option>
-                    <option value="percent">Persentase (%)</option>
-                  </select>
-                </div>
+                <Select
+                  label="Jenis Fee Jastip"
+                  value={feeType}
+                  onChange={(val) => setFeeType(val as "flat" | "percent")}
+                  options={[
+                    { value: "flat", label: "Flat per Qty (Rp)" },
+                    { value: "percent", label: "Persentase (%)" },
+                  ]}
+                />
 
                 <div className="flex flex-col gap-1">
                   <label className="text-[10px] uppercase font-bold text-neutral-500 dark:text-zinc-400 tracking-wider">

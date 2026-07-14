@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import { formatRupiah } from "@/lib/formatRupiah";
+import Select from "@/components/jastip/Select";
 
 interface Batch {
   id: number;
@@ -240,39 +241,29 @@ export default function AdminOrdersPage() {
             />
           </div>
 
-          <div className="w-full md:w-48 flex flex-col gap-1">
-            <label className="text-[9px] font-black uppercase text-neutral-400 dark:text-zinc-500 tracking-wider">
-              Filter Batch
-            </label>
-            <select
-              value={selectedBatch}
-              onChange={(e) => setSelectedBatch(e.target.value)}
-              className="px-3 py-2 bg-neutral-50 dark:bg-zinc-950 border border-neutral-250 dark:border-zinc-800/80 rounded-xl text-xs font-bold w-full"
-            >
-              <option value="">Semua Batch</option>
-              {batches.map((b) => (
-                <option key={b.id} value={b.id.toString()}>
-                  {b.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Select
+            label="Filter Batch"
+            value={selectedBatch}
+            onChange={(val) => setSelectedBatch(val)}
+            options={[
+              { value: "", label: "Semua Batch" },
+              ...batches.map((b) => ({ value: b.id.toString(), label: b.name })),
+            ]}
+            className="w-full md:w-48"
+          />
 
-          <div className="w-full md:w-48 flex flex-col gap-1">
-            <label className="text-[9px] font-black uppercase text-neutral-400 dark:text-zinc-500 tracking-wider">
-              Status Bayar
-            </label>
-            <select
-              value={selectedPaymentStatus}
-              onChange={(e) => setSelectedPaymentStatus(e.target.value)}
-              className="px-3 py-2 bg-neutral-50 dark:bg-zinc-950 border border-neutral-250 dark:border-zinc-800/80 rounded-xl text-xs font-bold w-full"
-            >
-              <option value="">Semua Status</option>
-              <option value="unpaid">Belum Bayar (Unpaid)</option>
-              <option value="dp">DP Masuk (DP)</option>
-              <option value="paid">Lunas (Paid)</option>
-            </select>
-          </div>
+          <Select
+            label="Status Bayar"
+            value={selectedPaymentStatus}
+            onChange={(val) => setSelectedPaymentStatus(val)}
+            options={[
+              { value: "", label: "Semua Status" },
+              { value: "unpaid", label: "Belum Bayar (Unpaid)" },
+              { value: "dp", label: "DP Masuk (DP)" },
+              { value: "paid", label: "Lunas (Paid)" },
+            ]}
+            className="w-full md:w-48"
+          />
         </div>
 
         {error && (
@@ -392,23 +383,13 @@ export default function AdminOrdersPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] uppercase font-bold tracking-wider text-neutral-500">
-                  Pilih Batch Jastip
-                </label>
-                <select
-                  value={batchId}
-                  onChange={(e) => setBatchId(e.target.value)}
-                  required
-                  className="px-3 py-2.5 bg-neutral-50 dark:bg-zinc-950 border border-neutral-200 dark:border-zinc-800 focus:outline-none focus:border-orange-500 rounded-xl text-xs font-bold"
-                >
-                  {batches.map((b) => (
-                    <option key={b.id} value={b.id.toString()}>
-                      {b.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <Select
+                label="Pilih Batch Jastip"
+                value={batchId}
+                onChange={(val) => setBatchId(val)}
+                options={batches.map((b) => ({ value: b.id.toString(), label: b.name }))}
+                className="w-full"
+              />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
@@ -439,20 +420,17 @@ export default function AdminOrdersPage() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] uppercase font-bold tracking-wider text-neutral-500">
-                  Status Pembayaran Awal
-                </label>
-                <select
-                  value={paymentStatus}
-                  onChange={(e) => setPaymentStatus(e.target.value as any)}
-                  className="px-3 py-2.5 bg-neutral-50 dark:bg-zinc-950 border border-neutral-200 dark:border-zinc-800 focus:outline-none focus:border-orange-500 rounded-xl text-xs font-bold"
-                >
-                  <option value="unpaid">Belum Bayar (Unpaid)</option>
-                  <option value="dp">DP Masuk (DP)</option>
-                  <option value="paid">Lunas (Paid)</option>
-                </select>
-              </div>
+              <Select
+                label="Status Pembayaran Awal"
+                value={paymentStatus}
+                onChange={(val) => setPaymentStatus(val as any)}
+                options={[
+                  { value: "unpaid", label: "Belum Bayar (Unpaid)" },
+                  { value: "dp", label: "DP Masuk (DP)" },
+                  { value: "paid", label: "Lunas (Paid)" },
+                ]}
+                className="w-full"
+              />
 
               <div className="flex flex-col gap-1">
                 <label className="text-[10px] uppercase font-bold tracking-wider text-neutral-500">

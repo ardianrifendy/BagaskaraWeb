@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import { formatRupiah } from "@/lib/formatRupiah";
+import Select from "@/components/jastip/Select";
 
 interface Batch {
   id: number;
@@ -361,19 +362,16 @@ export default function AdminBatchesPage() {
                     className="px-3 py-2 bg-neutral-50 dark:bg-zinc-950 border border-neutral-200 dark:border-zinc-800 focus:outline-none focus:border-orange-500 rounded-xl text-xs font-bold"
                   />
                 </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] uppercase font-bold tracking-wider text-neutral-500">
-                    Jenis Fee
-                  </label>
-                  <select
-                    value={feeType}
-                    onChange={(e) => setFeeType(e.target.value as "flat" | "percent")}
-                    className="px-3 py-2 bg-neutral-50 dark:bg-zinc-950 border border-neutral-200 dark:border-zinc-800 focus:outline-none focus:border-orange-500 rounded-xl text-xs font-bold"
-                  >
-                    <option value="flat">Flat (Rp)</option>
-                    <option value="percent">Persen (%)</option>
-                  </select>
-                </div>
+                <Select
+                  label="Jenis Fee"
+                  value={feeType}
+                  onChange={(val) => setFeeType(val as "flat" | "percent")}
+                  options={[
+                    { value: "flat", label: "Flat (Rp)" },
+                    { value: "percent", label: "Persen (%)" },
+                  ]}
+                  className="w-full"
+                />
                 <div className="flex flex-col gap-1">
                   <label className="text-[10px] uppercase font-bold tracking-wider text-neutral-500">
                     Nilai Fee
@@ -415,21 +413,18 @@ export default function AdminBatchesPage() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] uppercase font-bold tracking-wider text-neutral-500">
-                  Status Batch
-                </label>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value as any)}
-                  className="px-3 py-2.5 bg-neutral-50 dark:bg-zinc-950 border border-neutral-200 dark:border-zinc-800 focus:outline-none focus:border-orange-500 rounded-xl text-xs font-bold"
-                >
-                  <option value="open">Open</option>
-                  <option value="closed">Closed</option>
-                  <option value="shipping">Shipping</option>
-                  <option value="done">Done</option>
-                </select>
-              </div>
+              <Select
+                label="Status Batch"
+                value={status}
+                onChange={(val) => setStatus(val as any)}
+                options={[
+                  { value: "open", label: "Open" },
+                  { value: "closed", label: "Closed" },
+                  { value: "shipping", label: "Shipping" },
+                  { value: "done", label: "Done" },
+                ]}
+                className="w-full"
+              />
 
               <button
                 type="submit"

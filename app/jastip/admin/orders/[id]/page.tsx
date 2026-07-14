@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import { formatRupiah } from "@/lib/formatRupiah";
+import Select from "@/components/jastip/Select";
 
 interface Batch {
   id: number;
@@ -523,22 +524,13 @@ function OrderDetailsContent() {
             </h3>
 
             <form onSubmit={handleUpdateOrder} className="space-y-4">
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-neutral-400 uppercase">
-                  Batch Jastip
-                </label>
-                <select
-                  value={batchId}
-                  onChange={(e) => setBatchId(e.target.value)}
-                  className="px-3 py-2 bg-neutral-50 dark:bg-zinc-950 border border-neutral-250 dark:border-zinc-800 rounded-xl text-xs font-bold w-full"
-                >
-                  {batches.map((b) => (
-                    <option key={b.id} value={b.id.toString()}>
-                      {b.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <Select
+                label="Batch Jastip"
+                value={batchId}
+                onChange={(val) => setBatchId(val)}
+                options={batches.map((b) => ({ value: b.id.toString(), label: b.name }))}
+                className="w-full"
+              />
 
               <div className="flex flex-col gap-1">
                 <label className="text-[10px] font-bold text-neutral-400 uppercase">
@@ -566,20 +558,17 @@ function OrderDetailsContent() {
                 />
               </div>
 
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-neutral-400 uppercase">
-                  Status Bayar
-                </label>
-                <select
-                  value={paymentStatus}
-                  onChange={(e) => setPaymentStatus(e.target.value as any)}
-                  className="px-3 py-2 bg-neutral-50 dark:bg-zinc-950 border border-neutral-250 dark:border-zinc-800 rounded-xl text-xs font-bold w-full"
-                >
-                  <option value="unpaid">Belum Bayar (unpaid)</option>
-                  <option value="dp">DP Masuk (dp)</option>
-                  <option value="paid">Lunas (paid)</option>
-                </select>
-              </div>
+              <Select
+                label="Status Bayar"
+                value={paymentStatus}
+                onChange={(val) => setPaymentStatus(val as any)}
+                options={[
+                  { value: "unpaid", label: "Belum Bayar (unpaid)" },
+                  { value: "dp", label: "DP Masuk (dp)" },
+                  { value: "paid", label: "Lunas (paid)" },
+                ]}
+                className="w-full"
+              />
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
@@ -738,18 +727,17 @@ function OrderDetailsContent() {
                       className="px-2.5 py-1.5 bg-white dark:bg-zinc-950 border border-neutral-250 dark:border-zinc-800 rounded-lg text-xs font-bold w-full"
                     />
                   </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-bold text-neutral-500">Tipe</label>
-                    <select
-                      value={payType}
-                      onChange={(e) => setPayType(e.target.value as any)}
-                      className="px-2 py-1.5 bg-white dark:bg-zinc-950 border border-neutral-250 dark:border-zinc-800 rounded-lg text-xs font-bold w-full"
-                    >
-                      <option value="dp">DP (Down Payment)</option>
-                      <option value="pelunasan">Pelunasan (Sisa)</option>
-                      <option value="refund">Refund (Dana Kembali)</option>
-                    </select>
-                  </div>
+                  <Select
+                    label="Tipe"
+                    value={payType}
+                    onChange={(val) => setPayType(val as any)}
+                    options={[
+                      { value: "dp", label: "DP (Down Payment)" },
+                      { value: "pelunasan", label: "Pelunasan (Sisa)" },
+                      { value: "refund", label: "Refund (Dana Kembali)" },
+                    ]}
+                    className="w-full"
+                  />
                   <div className="flex flex-col gap-1">
                     <label className="text-[10px] font-bold text-neutral-500">Tanggal Bayar</label>
                     <input
@@ -966,25 +954,22 @@ function OrderDetailsContent() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] uppercase font-bold tracking-wider text-neutral-500">
-                    Status Item
-                  </label>
-                  <select
-                    value={itemStatus}
-                    onChange={(e) => setItemStatus(e.target.value as any)}
-                    className="px-3 py-2.5 bg-neutral-50 dark:bg-zinc-950 border border-neutral-200 dark:border-zinc-800 focus:outline-none focus:border-orange-500 rounded-xl text-xs font-bold"
-                  >
-                    <option value="requested">Diminta (requested)</option>
-                    <option value="hunting">Dicari (hunting)</option>
-                    <option value="found">Ditemukan (found)</option>
-                    <option value="purchased">Dibelanjakan (purchased)</option>
-                    <option value="warehouse">Di Gudang (warehouse)</option>
-                    <option value="shipped">Dikirim (shipped)</option>
-                    <option value="out_of_stock">Habis (out_of_stock)</option>
-                    <option value="cancelled">Dibatalkan (cancelled)</option>
-                  </select>
-                </div>
+                <Select
+                  label="Status Item"
+                  value={itemStatus}
+                  onChange={(val) => setItemStatus(val as any)}
+                  options={[
+                    { value: "requested", label: "Diminta (requested)" },
+                    { value: "hunting", label: "Dicari (hunting)" },
+                    { value: "found", label: "Ditemukan (found)" },
+                    { value: "purchased", label: "Dibelanjakan (purchased)" },
+                    { value: "warehouse", label: "Di Gudang (warehouse)" },
+                    { value: "shipped", label: "Dikirim (shipped)" },
+                    { value: "out_of_stock", label: "Habis (out_of_stock)" },
+                    { value: "cancelled", label: "Dibatalkan (cancelled)" },
+                  ]}
+                  className="w-full"
+                />
 
                 <div className="flex flex-col justify-center gap-1.5 pt-4 pl-2">
                   <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-500">
