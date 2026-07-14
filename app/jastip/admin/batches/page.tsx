@@ -39,6 +39,50 @@ export default function AdminBatchesPage() {
   const [eta, setEta] = useState("");
   const [status, setStatus] = useState<"open" | "closed" | "shipping" | "done">("open");
   const [submitting, setSubmitting] = useState(false);
+  const [fetchingRate, setFetchingRate] = useState(false);
+
+  const fetchLiveRate = async (curr: string) => {
+    if (!curr) return;
+    setFetchingRate(true);
+    setError(null);
+    try {
+      const res = await fetch(`https://api.frankfurter.app/latest?from=${curr}&to=IDR`);
+      if (!res.ok) throw new Error("Gagal mengambil kurs.");
+      const data = await res.json();
+      const liveRate = data.rates.IDR;
+      if (liveRate) {
+        setExchangeRate(Math.round(liveRate).toString());
+      } else {
+        setError("Mata uang ini tidak memiliki rate IDR di API Frankfurter.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Gagal mengambil kurs real-time. Silakan masukkan secara manual.");
+    } finally {
+      setFetchingRate(false);
+    }
+  };
+
+  const handleCurrencyChange = (val: string) => {
+    setCurrency(val);
+
+    // Auto-map country code
+    const countryMap: Record<string, string> = {
+      MYR: "MY",
+      SGD: "SG",
+      JPY: "JP",
+      USD: "US",
+      THB: "TH",
+      EUR: "EU",
+      CNY: "CN",
+      GBP: "GB",
+      AUD: "AU",
+      HKD: "HK"
+    };
+    if (countryMap[val]) {
+      setCountryCode(countryMap[val]);
+    }
+  };
 
   useEffect(() => {
     fetchBatches();
@@ -317,6 +361,24 @@ export default function AdminBatchesPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
+                <Select
+                  label="Mata Uang"
+                  value={currency}
+                  onChange={handleCurrencyChange}
+                  options={[
+                    { value: "MYR", label: "MYR - Malaysia Ringgit" },
+                    { value: "SGD", label: "SGD - Singapore Dollar" },
+                    { value: "JPY", label: "JPY - Japan Yen" },
+                    { value: "USD", label: "USD - US Dollar" },
+                    { value: "THB", label: "THB - Thailand Baht" },
+                    { value: "EUR", label: "EUR - Europe Euro" },
+                    { value: "CNY", label: "CNY - China Renminbi" },
+                    { value: "GBP", label: "GBP - UK Pound" },
+                    { value: "AUD", label: "AUD - Australia Dollar" },
+                    { value: "HKD", label: "HKD - Hong Kong Dollar" },
+                  ]}
+                  className="w-full"
+                />
                 <div className="flex flex-col gap-1">
                   <label className="text-[10px] uppercase font-bold tracking-wider text-neutral-500">
                     Kode Negara (2 huruf)
@@ -328,27 +390,13 @@ export default function AdminBatchesPage() {
                     value={countryCode}
                     onChange={(e) => setCountryCode(e.target.value.toUpperCase())}
                     required
-                    className="px-3 py-2 bg-neutral-50 dark:bg-zinc-950 border border-neutral-200 dark:border-zinc-800 focus:outline-none focus:border-orange-500 rounded-xl text-xs font-bold text-center"
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] uppercase font-bold tracking-wider text-neutral-500">
-                    Mata Uang (3 huruf)
-                  </label>
-                  <input
-                    type="text"
-                    maxLength={3}
-                    placeholder="MYR"
-                    value={currency}
-                    onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-                    required
-                    className="px-3 py-2 bg-neutral-50 dark:bg-zinc-950 border border-neutral-200 dark:border-zinc-800 focus:outline-none focus:border-orange-500 rounded-xl text-xs font-bold text-center"
+                    className="px-3 py-2.5 bg-neutral-50 dark:bg-zinc-950 border border-neutral-200 dark:border-zinc-800 focus:outline-none focus:border-orange-500 rounded-xl text-xs font-bold text-center"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                <div className="flex flex-col gap-1">
+              <div className="grid grid-cols-3 gap-4 items-end">
+                <div className="col-span-2 flex flex-col gap-1">
                   <label className="text-[10px] uppercase font-bold tracking-wider text-neutral-500">
                     Kurs IDR
                   </label>
@@ -359,9 +407,20 @@ export default function AdminBatchesPage() {
                     value={exchangeRate}
                     onChange={(e) => setExchangeRate(e.target.value)}
                     required
-                    className="px-3 py-2 bg-neutral-50 dark:bg-zinc-950 border border-neutral-200 dark:border-zinc-800 focus:outline-none focus:border-orange-500 rounded-xl text-xs font-bold"
+                    className="px-3 py-2.5 bg-neutral-50 dark:bg-zinc-950 border border-neutral-200 dark:border-zinc-800 focus:outline-none focus:border-orange-500 rounded-xl text-xs font-bold"
                   />
                 </div>
+                <button
+                  type="button"
+                  disabled={fetchingRate || !currency}
+                  onClick={() => fetchLiveRate(currency)}
+                  className="py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition cursor-pointer h-10 w-full"
+                >
+                  {fetchingRate ? "Loading..." : "Ambil Kurs"}
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
                 <Select
                   label="Jenis Fee"
                   value={feeType}
