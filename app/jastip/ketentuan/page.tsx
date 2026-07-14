@@ -4,23 +4,19 @@ import Link from "next/link";
 import Logo from "@/components/Logo";
 import { siteConfig } from "@/config/site";
 
-const PAGE_TITLE = "Media Downloader — Bagaskara Cell";
-const PAGE_DESC =
-  "Unduh video YouTube, video TikTok tanpa watermark, Reels Instagram, video Facebook, Twitter/X, SoundCloud, Pinterest, dan TeraBox secara gratis di Bagaskara Cell. Cepat, mudah, tanpa aplikasi.";
-
 export const metadata: Metadata = {
-  title: PAGE_TITLE,
-  description: PAGE_DESC,
+  title: "Ketentuan Layanan Jastip — Bagaskara Cell",
+  description: "Syarat dan Ketentuan layanan Jasa Titip (Jastip) barang luar negeri di Bagaskara Cell.",
   openGraph: {
-    title: PAGE_TITLE,
-    description: PAGE_DESC,
+    title: "Ketentuan Layanan Jastip — Bagaskara Cell",
+    description: "Syarat dan Ketentuan layanan Jasa Titip (Jastip) barang luar negeri di Bagaskara Cell.",
     type: "website",
     locale: "id_ID",
     siteName: "Bagaskara Cell",
-  },
+  }
 };
 
-export default function MediaDownloaderPage() {
+export default function JastipKetentuanPage() {
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-zinc-950 text-neutral-800 dark:text-zinc-100 font-sans flex flex-col transition-colors duration-200">
 
@@ -59,61 +55,99 @@ export default function MediaDownloaderPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M7 12l3-3 3 3 4-4M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
               </svg>
             </Link>
-            <Link
-              href="/jastip"
-              className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 flex items-center justify-center text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer"
-              title="Jasa Titip (Jastip)"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-              </svg>
-            </Link>
           </div>
         </div>
       </header>
 
       {/* Main Container */}
-      <main className="flex-grow max-w-lg w-full mx-auto px-4 py-10 md:py-16 flex flex-col justify-center">
+      <main className="flex-grow max-w-2xl w-full mx-auto px-4 py-8 md:py-12 flex flex-col gap-6">
 
         {/* Title and Intro */}
-        <div className="text-center mb-8 space-y-2">
+        <div className="text-center space-y-2">
           {/* Breadcrumb / Back button */}
           <Link
-            href="/"
+            href="/jastip"
             className="inline-flex items-center gap-1 text-xs font-extrabold text-neutral-400 dark:text-zinc-500 hover:text-orange-600 dark:hover:text-orange-400 transition-colors uppercase tracking-wider cursor-pointer mb-2"
           >
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            Kembali ke Katalog
+            Kembali ke Jastip
           </Link>
 
           <h1 className="text-2xl md:text-3xl font-black text-neutral-800 dark:text-zinc-100 tracking-tight">
-            Media Downloader
+            Syarat & Ketentuan Jastip
           </h1>
+          <p className="text-xs md:text-sm font-medium text-neutral-400 dark:text-zinc-450 leading-relaxed">
+            Harap membaca ketentuan layanan Jasa Titip di Bagaskara Cell sebelum melakukan pemesanan.
+          </p>
         </div>
 
-        {/* Maintenance Card */}
-        <div className="bg-white dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-800 rounded-3xl p-8 shadow-sm flex flex-col items-center text-center space-y-6">
-          <div className="w-16 h-16 rounded-2xl bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center text-orange-500 dark:text-orange-400">
-            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-          </div>
-          <div className="space-y-2">
-            <h2 className="text-xl font-bold text-neutral-800 dark:text-zinc-100">
-              Layanan Dinonaktifkan Sementara
+        {/* T&C Content Card */}
+        <div className="bg-white dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-800 p-6 md:p-8 rounded-3xl shadow-sm space-y-6 text-sm leading-relaxed text-neutral-700 dark:text-zinc-300">
+
+          <section className="space-y-2">
+            <h2 className="text-base font-black text-neutral-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+              <span className="text-orange-600">01.</span> Sistem Pemesanan & Down Payment (DP)
             </h2>
-            <p className="text-sm text-neutral-500 dark:text-zinc-455 leading-relaxed">
-              Fitur Media Downloader saat ini sedang dinonaktifkan untuk peningkatan sistem dan pemeliharaan server. Silakan hubungi kami atau kembali beberapa saat lagi.
+            <p>
+              Setiap penitipan barang wajib disertai dengan pembayaran uang muka (Down Payment) sebesar minimal <strong>50%</strong> dari estimasi harga total barang dalam Rupiah. Pesanan baru akan mulai diproses (dibelanjakan) setelah bukti pembayaran DP diverifikasi oleh admin kami.
             </p>
+          </section>
+
+          <section className="space-y-2">
+            <h2 className="text-base font-black text-neutral-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+              <span className="text-orange-600">02.</span> Pembelian & Substitusi Barang
+            </h2>
+            <p>
+              Admin/owner akan berupaya maksimal untuk mencarian barang titipan sesuai spesifikasi (warna, varian, ukuran) yang Anda minta. Jika barang utama kosong:
+            </p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Jika Anda mengaktifkan opsi <strong>"Substitusi OK"</strong>, kami akan membelikan varian alternatif terdekat yang tersedia di toko tanpa konfirmasi ulang.</li>
+              <li>Jika opsi tidak diaktifkan, kami akan membatalkan item tersebut dan mengembalikan dana (refund) untuk item terkait.</li>
+            </ul>
+          </section>
+
+          <section className="space-y-2">
+            <h2 className="text-base font-black text-neutral-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+              <span className="text-orange-600">03.</span> Bea Cukai & Pajak Masuk
+            </h2>
+            <p>
+              Seluruh barang jastip luar negeri akan dideklarasikan secara resmi melalui Bea Cukai Indonesia. Pajak masuk, bea masuk, dan PPN impor yang timbul dari proses impor barang jastip sudah dimasukkan ke dalam perhitungan komisi/fee jastip final yang kami tawarkan di awal. Tidak ada biaya siluman di kemudian hari mengenai pajak masuk ini.
+            </p>
+          </section>
+
+          <section className="space-y-2">
+            <h2 className="text-base font-black text-neutral-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+              <span className="text-orange-600">04.</span> Estimasi Kedatangan (ETA)
+            </h2>
+            <p>
+              Tanggal ETA yang dicantumkan merupakan estimasi perkiraan barang sampai di gudang kami di Gresik. Kami tidak memberikan jaminan garansi ketepatan waktu dikarenakan adanya potensi keterlambatan kargo internasional atau proses clearance Bea Cukai di bandara/pelabuhan yang berada di luar kendali kami.
+            </p>
+          </section>
+
+          <section className="space-y-2">
+            <h2 className="text-base font-black text-neutral-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+              <span className="text-orange-600">05.</span> Pelunasan & Pengiriman Domestik
+            </h2>
+            <p>
+              Pelunasan sisa pembayaran <strong>wajib dilakukan maksimal 7 hari</strong> setelah barang dikonfirmasi tiba di gudang Gresik dan siap dikirim ke alamat Anda. Barang hanya akan dikirimkan ke ekspedisi lokal setelah pelunasan diverifikasi. Jika dalam waktu 14 hari barang tidak dilunasi tanpa kabar, maka DP dianggap hangus.
+            </p>
+          </section>
+
+          <div className="border-t border-neutral-100 dark:border-zinc-800 pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-[10px] font-medium text-neutral-450 dark:text-zinc-500">
+              Terakhir diperbarui: 14 Juli 2026
+            </div>
+            <a
+              href={`https://wa.me/${siteConfig.whatsappNumber}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-sm cursor-pointer transition-colors"
+            >
+              Tanya Hubungi WhatsApp
+            </a>
           </div>
-          <Link
-            href="/"
-            className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-orange-600 hover:bg-orange-500 active:bg-orange-700 text-white font-bold text-sm shadow-sm transition-all w-full cursor-pointer"
-          >
-            Kembali ke Katalog HP
-          </Link>
         </div>
 
       </main>

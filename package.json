@@ -9,10 +9,15 @@
     "lint": "eslint",
     "import-csv": "tsx scripts/import-scraped-data.ts",
     "update-stock": "tsx scripts/update-stock.ts",
-    "migrate-to-turso": "tsx scripts/migrate-to-turso.ts"
+    "migrate-to-turso": "tsx scripts/migrate-to-turso.ts",
+    "seed-jastip": "tsx scripts/seed-jastip.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.17.4",
+    "@neondatabase/serverless": "^1.1.0",
+    "@vercel/blob": "^2.6.1",
+    "drizzle-orm": "^0.45.2",
+    "nanoid": "^6.0.0",
     "next": "16.2.10",
     "react": "19.2.4",
     "react-dom": "19.2.4"
@@ -20,10 +25,13 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
+    "pg": "^8.22.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.0",
     "typescript": "^5"
