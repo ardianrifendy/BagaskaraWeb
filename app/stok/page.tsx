@@ -1,14 +1,16 @@
 "use client";
 
 import React, { useState, useEffect, useTransition } from "react";
-import { 
-  checkPin, 
-  getOwnerProducts, 
-  getVariantsForProduct, 
-  saveProduct, 
-  deleteProduct, 
-  saveVariant, 
-  deleteVariant 
+import {
+  checkPin,
+  checkAuth,
+  logout,
+  getOwnerProducts,
+  getVariantsForProduct,
+  saveProduct,
+  deleteProduct,
+  saveVariant,
+  deleteVariant
 } from "./actions";
 
 interface ProductItem {
@@ -76,13 +78,11 @@ export default function StokManagerPage() {
 
   // Auth checking
   useEffect(() => {
-    const auth = localStorage.getItem("bagaskara_stok_auth");
-    if (auth === "true") {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
-    }
+    const initAuth = async () => {
+      const isOk = await checkAuth();
+      setIsAuthenticated(isOk);
+    };
+    initAuth();
   }, []);
 
   // Fetch products
@@ -116,14 +116,14 @@ export default function StokManagerPage() {
     setPinError("");
     const isOk = await checkPin(pin);
     if (isOk) {
-      localStorage.setItem("bagaskara_stok_auth", "true");
       setIsAuthenticated(true);
     } else {
       setPinError("PIN Toko salah! Coba lagi.");
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logout();
     localStorage.removeItem("bagaskara_stok_auth");
     setIsAuthenticated(false);
     setPin("");

@@ -2,15 +2,49 @@
 
 import { dbOwner } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+
+const getStokPin = () => process.env.STOK_PIN || "bagaskara";
+
+async function verifyAuth() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("stok_auth_token")?.value;
+  const expectedToken = btoa(getStokPin());
+  return token === expectedToken;
+}
+
+export async function checkAuth() {
+  return await verifyAuth();
+}
+
+export async function logout() {
+  const cookieStore = await cookies();
+  cookieStore.delete("stok_auth_token");
+}
 
 export async function checkPin(pin: string) {
-  return pin === "bagaskara";
+  const targetPin = getStokPin();
+  if (pin === targetPin) {
+    const cookieStore = await cookies();
+    cookieStore.set("stok_auth_token", btoa(targetPin), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 hari
+    });
+    return true;
+  }
+  return false;
 }
 
 export async function getOwnerProducts(searchQuery: string = "") {
+  if (!(await verifyAuth())) {
+    return [];
+  }
   try {
     let sql = `
-      SELECT p.*, COUNT(v.id) as variantCount 
+      SELECT p.*, COUNT(v.id) as variantCount
       FROM products p
       LEFT JOIN variants v ON p.id = v.productId
     `;
@@ -43,6 +77,9 @@ export async function getOwnerProducts(searchQuery: string = "") {
 }
 
 export async function getVariantsForProduct(productId: string) {
+  if (!(await verifyAuth())) {
+    return [];
+  }
   try {
     const res = await dbOwner.execute({
       sql: "SELECT * FROM variants WHERE productId = ?",
@@ -74,14 +111,17 @@ export async function saveProduct(data: {
   warranty: string;
   defects: string[];
 }) {
+  if (!(await verifyAuth())) {
+    return { success: false, error: "Unauthorized: Sesi Anda telah berakhir, silakan login kembali." };
+  }
   try {
     const id = data.id || data.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     const defectsJson = JSON.stringify(data.defects || []);
-    
+
     if (data.id) {
       await dbOwner.execute({
         sql: `
-          UPDATE products 
+          UPDATE products
           SET brand = ?, name = ?, condition = ?, completeness = ?, warranty = ?, defects = ?
           WHERE id = ?
         `,
@@ -117,6 +157,9 @@ export async function saveProduct(data: {
 }
 
 export async function deleteProduct(id: string) {
+  if (!(await verifyAuth())) {
+    return { success: false, error: "Unauthorized: Sesi Anda telah berakhir, silakan login kembali." };
+  }
   try {
     await dbOwner.execute({ sql: "DELETE FROM variants WHERE productId = ?", args: [id] });
     await dbOwner.execute({ sql: "DELETE FROM products WHERE id = ?", args: [id] });
@@ -140,14 +183,17 @@ export async function saveVariant(data: {
   stock: "ready" | "habis";
   images: string[];
 }) {
+  if (!(await verifyAuth())) {
+    return { success: false, error: "Unauthorized: Sesi Anda telah berakhir, silakan login kembali." };
+  }
   try {
     const id = data.id || `${data.productId}-${data.color.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${data.storage.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
     const imagesJson = JSON.stringify(data.images || []);
-    
+
     if (data.id) {
       await dbOwner.execute({
         sql: `
-          UPDATE variants 
+          UPDATE variants
           SET color = ?, colorHex = ?, storage = ?, price = ?, stock = ?, images = ?
           WHERE id = ?
         `,
@@ -162,7 +208,7 @@ export async function saveVariant(data: {
         args: [id, data.productId, data.color, data.colorHex || "#8e8e93", data.storage, data.price, data.stock, imagesJson]
       });
     }
-    
+
     const variantsRes = await dbOwner.execute({
       sql: "SELECT storage FROM variants WHERE productId = ?",
       args: [data.productId]
@@ -184,9 +230,12 @@ export async function saveVariant(data: {
 }
 
 export async function deleteVariant(id: string, productId: string) {
+  if (!(await verifyAuth())) {
+    return { success: false, error: "Unauthorized: Sesi Anda telah berakhir, silakan login kembali." };
+  }
   try {
     await dbOwner.execute({ sql: "DELETE FROM variants WHERE id = ?", args: [id] });
-    
+
     const variantsRes = await dbOwner.execute({
       sql: "SELECT storage FROM variants WHERE productId = ?",
       args: [productId]
