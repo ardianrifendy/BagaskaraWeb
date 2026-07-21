@@ -16,6 +16,9 @@ import Link from 'next/link';
 import Logo from '@/components/Logo';
 import { siteConfig } from '@/config/site';
 import TutorialModal from '@/components/TutorialModal';
+import { DisclaimerShopee } from '@/components/kalkulator-shopee/DisclaimerShopee';
+import { ShopeeTarifTable } from '@/components/kalkulator-shopee/ShopeeTarifTable';
+import { ShopeeFaq } from '@/components/kalkulator-shopee/ShopeeFaq';
 
 export default function CalculatorPage() {
   const [profile, setProfile] = useStoreProfile();
@@ -91,6 +94,13 @@ export default function CalculatorPage() {
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Logo />
           <div className="flex items-center gap-2">
+            <Link
+              href="/kalkulator/tokopedia"
+              className="px-3 h-10 rounded-xl border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-neutral-50 dark:hover:bg-zinc-750 text-neutral-650 dark:text-zinc-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all shadow-sm shadow-neutral-100 dark:shadow-none flex items-center justify-center cursor-pointer font-extrabold text-xs gap-1.5"
+              title="Pindah ke Kalkulator Tokopedia & TikTok"
+            >
+              🟢 Tokopedia &amp; TikTok
+            </Link>
             <button
               type="button"
               onClick={() => setIsTutorialOpen(true)}
@@ -313,6 +323,17 @@ export default function CalculatorPage() {
 
           {/* Program Toggles */}
           <ProgramToggles profile={profile} onChange={setProfile} onCompareClick={() => setIsComparisonOpen(true)} />
+
+          {/* Link Silang ke Tokopedia */}
+          <div className="bg-emerald-50/60 border border-emerald-100 p-3.5 rounded-2xl flex items-center justify-between text-xs mt-4">
+            <span className="font-extrabold text-emerald-900">Jualan di Tokopedia &amp; TikTok juga? Hitung komisi Anda:</span>
+            <Link
+              href="/kalkulator/tokopedia"
+              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-sm transition-all cursor-pointer"
+            >
+              Kalkulator Tokopedia ➔
+            </Link>
+          </div>
         </div>
 
         {/* Right Column (Sticky Result Panel) */}
@@ -332,6 +353,13 @@ export default function CalculatorPage() {
             mode={mode}
           />
         </div>
+      </div>
+
+      {/* Content SEO Section */}
+      <div className="max-w-6xl mx-auto p-4 flex flex-col gap-8 mt-6">
+        <DisclaimerShopee />
+        <ShopeeTarifTable />
+        <ShopeeFaq />
       </div>
 
       {/* Footer Section */}
