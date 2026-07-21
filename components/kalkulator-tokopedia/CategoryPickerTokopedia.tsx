@@ -131,18 +131,18 @@ export const CategoryPickerTokopedia: React.FC<CategoryPickerTokopediaProps> = (
                       )}
                     </div>
                     
-                    {/* Tampilkan Tarif Komisi Dinamis & Tarif Komisi Platform PM/OS */}
+                    {/* Tampilkan Tarif Tanpa Singkatan (User Awam Friendly) */}
                     <div className="text-[10px] text-neutral-400 mt-2.5 font-extrabold flex flex-wrap items-center gap-1.5">
                       <span className="bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider font-extrabold border border-neutral-200 select-none">
-                        Dinamis: {cat.rateDinamis.toString().replace('.', ',')}%
+                        Komisi Dinamis: {cat.rateDinamis.toString().replace('.', ',')}%
                       </span>
                       <span>·</span>
                       <span className="bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider font-extrabold border border-emerald-100/80 select-none">
-                        Plat PM: {(cat.ratePlatformMarketplace || 7.5).toString().replace('.', ',')}%
+                        Power Merchant: {(cat.ratePlatformMarketplace || 7.5).toString().replace('.', ',')}%
                       </span>
                       <span>·</span>
                       <span className="bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider font-extrabold border border-indigo-100 select-none">
-                        Plat OS: {(cat.ratePlatformMall || 10).toString().replace('.', ',')}%
+                        Official Store: {(cat.ratePlatformMall || 10).toString().replace('.', ',')}%
                       </span>
                     </div>
                   </div>

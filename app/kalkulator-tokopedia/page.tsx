@@ -331,16 +331,11 @@ function CalculatorTokopediaContent() {
 
             {showOptions && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3.5 pt-1">
-                {/* Manual Komisi Platform % */}
+                {/* Manual Komisi Platform % (Dihilangkan tag Auto badge redundant agar bersih) */}
                 <div className="flex flex-col gap-1.5">
-                  <div className="flex justify-between items-center">
-                    <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">
-                      Komisi Platform (%)
-                    </label>
-                    <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
-                      Auto: {currentDefaultPlatformRate}%
-                    </span>
-                  </div>
+                  <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">
+                    Komisi Platform (%)
+                  </label>
                   <input
                     type="number"
                     min="0"
