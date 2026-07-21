@@ -22,12 +22,14 @@ export const CategoryPickerTokopedia: React.FC<CategoryPickerTokopediaProps> = (
 
   if (!isOpen) return null;
 
-  const categories: TokopediaCategory[] = tarifData.kategori.map((cat) => ({
+  const categories: TokopediaCategory[] = tarifData.kategori.map((cat: any) => ({
     slug: cat.slug,
     nama: cat.nama,
     rateDinamis: useTarifLama ? cat.rateDinamisLama ?? cat.rateDinamis : cat.rateDinamis,
     rateDinamisLama: cat.rateDinamisLama ?? cat.rateDinamis,
-    ratePlatformDefault: cat.ratePlatformDefault
+    ratePlatformDefault: cat.ratePlatformDefault ?? null,
+    ratePlatformMarketplace: cat.ratePlatformMarketplace,
+    ratePlatformMall: cat.ratePlatformMall
   }));
 
   let filtered = categories.filter((cat) =>

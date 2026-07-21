@@ -5,7 +5,9 @@ export interface TokopediaCategory {
   nama: string;
   rateDinamis: number;
   rateDinamisLama: number;
-  ratePlatformDefault: number | null;
+  ratePlatformDefault?: number | null;
+  ratePlatformMarketplace?: number;
+  ratePlatformMall?: number;
 }
 
 export interface TokopediaInput {

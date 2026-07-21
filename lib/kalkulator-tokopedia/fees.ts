@@ -29,9 +29,15 @@ export function computeTokopediaFees(
 
   const hargaNettoUnit = netPriceTotal / qty;
 
-  const category = getCategoryBySlug(input.categorySlug, profile.useTarifLama);
+  const category = getCategoryBySlug(input.categorySlug, profile.useTarifLama) as any;
   const rateDinamis = category.rateDinamis;
-  const ratePlatform = input.manualPlatformRate ?? category.ratePlatformDefault ?? 0;
+
+  // Dapatkan tarif platform berdasarkan jenis toko (Marketplace vs Mall)
+  const defaultRateForStore = profile.storeType === 'mall'
+    ? (category.ratePlatformMall ?? category.ratePlatformDefault ?? 0)
+    : (category.ratePlatformMarketplace ?? category.ratePlatformDefault ?? 0);
+
+  const ratePlatform = input.manualPlatformRate ?? defaultRateForStore;
 
   const items: TokopediaFeeItem[] = [];
 
@@ -45,7 +51,7 @@ export function computeTokopediaFees(
 
     items.push({
       key: 'komisi_platform',
-      label: `Komisi Platform (${ratePlatform}%)`,
+      label: `Komisi Platform (${ratePlatform.toString().replace('.', ',')}%)`,
       ratePct: ratePlatform,
       amount: amountPlatform,
       capped: isCapped,

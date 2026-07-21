@@ -49,7 +49,9 @@ export function detectTokopediaCategory(query: string): TokopediaCategory[] {
         nama: catData.nama,
         rateDinamis: catData.rateDinamis,
         rateDinamisLama: catData.rateDinamisLama ?? catData.rateDinamis,
-        ratePlatformDefault: catData.ratePlatformDefault
+        ratePlatformDefault: (catData as any).ratePlatformDefault ?? null,
+        ratePlatformMarketplace: (catData as any).ratePlatformMarketplace,
+        ratePlatformMall: (catData as any).ratePlatformMall
       });
     }
   }

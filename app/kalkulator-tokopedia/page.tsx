@@ -8,7 +8,7 @@ import { siteConfig } from '@/config/site';
 import tarifData from '@/data/tarif/tokopedia-2026-05-18.json';
 import { computeTokopediaFees, getCategoryBySlug } from '@/lib/kalkulator-tokopedia/fees';
 import { solveReverse } from '@/lib/kalkulator-tokopedia/solver';
-import { TokopediaProfile } from '@/lib/kalkulator-tokopedia/types';
+import { TokopediaProfile, StoreType } from '@/lib/kalkulator-tokopedia/types';
 import { ProductInputTokopedia } from '@/components/kalkulator-tokopedia/ProductInputTokopedia';
 import { CategoryPickerTokopedia } from '@/components/kalkulator-tokopedia/CategoryPickerTokopedia';
 import { WarningBannerTokopedia } from '@/components/kalkulator-tokopedia/WarningBannerTokopedia';
@@ -25,7 +25,7 @@ function CalculatorTokopediaContent() {
   const [productName, setProductName] = useState('');
   const [mode, setMode] = useState<'reverse' | 'calculate'>('reverse');
   const [useTarifLama, setUseTarifLama] = useState(false);
-  const [storeType, setStoreType] = useState<'marketplace' | 'mall'>('marketplace');
+  const [storeType, setStoreType] = useState<StoreType>('marketplace');
   const [categorySlug, setCategorySlug] = useState('telepon-elektronik');
 
   // Definisikan default 0 agar input bersih
@@ -35,7 +35,7 @@ function CalculatorTokopediaContent() {
   const [sellerDiscount, setSellerDiscount] = useState(0);
   const [qty, setQty] = useState(1);
 
-  // Fisik Paket (Default 0 agar logistik tidak terisi siluman)
+  // Fisik Paket
   const [weightGram, setWeightGram] = useState(0);
 
   // Opsi Lanjutan terbuka secara default agar terlihat jelas oleh seller
@@ -69,6 +69,10 @@ function CalculatorTokopediaContent() {
     if (m === 'calculate' || m === 'reverse') {
       setMode(m);
     }
+    const st = searchParams.get('st');
+    if (st === 'marketplace' || st === 'mall') {
+      setStoreType(st);
+    }
     const modalParam = searchParams.get('modal');
     if (modalParam) setCost(parseInt(modalParam, 10) || 0);
 
@@ -99,6 +103,7 @@ function CalculatorTokopediaContent() {
     const params = new URLSearchParams();
     if (categorySlug !== 'telepon-elektronik') params.set('kat', categorySlug);
     if (mode !== 'reverse') params.set('mode', mode);
+    if (storeType !== 'marketplace') params.set('st', storeType);
     if (cost > 0) params.set('modal', cost.toString());
     if (productName) params.set('q', productName);
     if (mode === 'reverse' && targetProfit > 0) {
@@ -114,7 +119,7 @@ function CalculatorTokopediaContent() {
     const queryString = params.toString();
     const newUrl = queryString ? `?${queryString}` : window.location.pathname;
     router.replace(newUrl, { scroll: false });
-  }, [categorySlug, mode, cost, targetProfit, hargaJualInput, qty, productName, manualPlatformRate, logisticCost, weightGram, router]);
+  }, [categorySlug, mode, storeType, cost, targetProfit, hargaJualInput, qty, productName, manualPlatformRate, logisticCost, weightGram, router]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -123,7 +128,7 @@ function CalculatorTokopediaContent() {
     return () => clearTimeout(timer);
   }, [updateUrl]);
 
-  const category = getCategoryBySlug(categorySlug, useTarifLama);
+  const category = getCategoryBySlug(categorySlug, useTarifLama) as any;
   const profile: TokopediaProfile = { storeType, useTarifLama };
 
   const isInputEmpty = cost === 0 && (mode === 'reverse' ? targetProfit === 0 : hargaJualInput === 0);
@@ -160,17 +165,46 @@ function CalculatorTokopediaContent() {
   const currentHargaUnit = mode === 'reverse' ? (reverseResult?.suggestedPrice || 0) : hargaJualInput;
   const isCapped = calcResult.items.some((i) => i.capped);
 
+  const currentDefaultPlatformRate = storeType === 'mall'
+    ? (category.ratePlatformMall ?? 10.0)
+    : (category.ratePlatformMarketplace ?? 7.75);
+
   return (
     <div className="max-w-6xl mx-auto p-4 grid grid-cols-1 md:grid-cols-12 gap-6">
       {/* Left Column (Inputs & Options) */}
       <div className="md:col-span-7 flex flex-col gap-4">
-        {/* Profile Badges */}
+        {/* Profile & Store Type Badges */}
         <div className="bg-white p-3.5 rounded-2xl border border-neutral-200 text-xs flex flex-wrap justify-between items-center text-neutral-600 font-extrabold shadow-sm gap-2">
+          {/* Tipe Toko Selector */}
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>Platform: <span className="text-emerald-600 font-black">TOKOPEDIA &amp; TIKTOK SHOP</span></span>
+            <span className="text-[10px] font-black uppercase text-neutral-400">TIPE TOKO:</span>
+            <div className="flex items-center gap-1 bg-neutral-100 p-1 rounded-xl">
+              <button
+                type="button"
+                onClick={() => setStoreType('marketplace')}
+                className={`px-2.5 py-1 rounded-lg text-[10px] font-black cursor-pointer transition-all ${
+                  storeType === 'marketplace'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'text-neutral-500 hover:text-neutral-700'
+                }`}
+              >
+                🏪 Power Merchant (Marketplace)
+              </button>
+              <button
+                type="button"
+                onClick={() => setStoreType('mall')}
+                className={`px-2.5 py-1 rounded-lg text-[10px] font-black cursor-pointer transition-all ${
+                  storeType === 'mall'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'text-neutral-500 hover:text-neutral-700'
+                }`}
+              >
+                🏬 Official Store (Mall)
+              </button>
+            </div>
           </div>
 
+          {/* Skema Tarif Switcher */}
           <div className="flex items-center gap-1.5">
             <button
               type="button"
@@ -181,7 +215,7 @@ function CalculatorTokopediaContent() {
                   : 'bg-neutral-100 text-neutral-500 hover:text-neutral-700'
               }`}
             >
-              18 Mei 2026 (Terbaru)
+              18 Mei 2026
             </button>
             <button
               type="button"
@@ -192,7 +226,7 @@ function CalculatorTokopediaContent() {
                   : 'bg-neutral-100 text-neutral-500 hover:text-neutral-700'
               }`}
             >
-              10 Jun 2025 (Lama)
+              10 Jun 2025
             </button>
           </div>
         </div>
@@ -299,9 +333,14 @@ function CalculatorTokopediaContent() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3.5 pt-1">
                 {/* Manual Komisi Platform % */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">
-                    Komisi Platform (%)
-                  </label>
+                  <div className="flex justify-between items-center">
+                    <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">
+                      Komisi Platform (%)
+                    </label>
+                    <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
+                      Auto: {currentDefaultPlatformRate}%
+                    </span>
+                  </div>
                   <input
                     type="number"
                     min="0"
@@ -312,7 +351,7 @@ function CalculatorTokopediaContent() {
                       const val = e.target.value === '' ? null : parseFloat(e.target.value);
                       setManualPlatformRate(val);
                     }}
-                    placeholder="cth. 7.75 (sesuai jenis toko)"
+                    placeholder={`Otomatis (${currentDefaultPlatformRate}%) atau ubah manual...`}
                     className="w-full bg-neutral-50 border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all h-[40px]"
                   />
                 </div>
