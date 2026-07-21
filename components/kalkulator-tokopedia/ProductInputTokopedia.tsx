@@ -76,7 +76,7 @@ export const ProductInputTokopedia: React.FC<ProductInputTokopediaProps> = ({
                         : 'bg-neutral-50 border-neutral-200 text-neutral-600 hover:text-neutral-800 hover:border-neutral-300'
                     }`}
                   >
-                    {isActive ? '✓ ' : ''}{candidate.nama} (Dinamis: {candidate.rateDinamis.toString().replace('.', ',')}%, Platform: {candidatePlatRate.toString().replace('.', ',')}%)
+                    {isActive ? '✓ ' : ''}{candidate.nama} ({candidate.rateDinamis.toString().replace('.', ',')}%)
                   </button>
                 );
               })}
@@ -103,31 +103,32 @@ export const ProductInputTokopedia: React.FC<ProductInputTokopediaProps> = ({
         </div>
       )}
 
-      {/* Status Kategori Terpilih */}
-      <div className="flex flex-col gap-2.5 bg-neutral-50 p-3.5 rounded-xl border border-neutral-200/80">
-        <div className="flex items-center justify-between w-full">
-          <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Kategori Terpilih</span>
-          <button
-            type="button"
-            onClick={onOpenSelector}
-            className="text-emerald-600 font-extrabold hover:underline cursor-pointer text-xs"
-          >
-            [ubah]
-          </button>
+      {/* Status Kategori Terpilih (Sangat Ringkas & Premium Button) */}
+      <div className="flex items-center justify-between bg-neutral-50/80 p-2.5 rounded-xl border border-neutral-200/60 gap-3">
+        <div className="flex flex-col gap-1 min-w-0 flex-1">
+          <span className="text-[9px] font-black text-neutral-400 uppercase tracking-wider select-none">
+            Kategori Terpilih
+          </span>
+          <div className="text-xs font-black text-neutral-800 uppercase tracking-tight truncate">
+            {activeCategory?.nama || 'Tidak diketahui'}
+          </div>
+          <div className="flex flex-wrap gap-1.5 mt-0.5">
+            <span className="bg-emerald-50/60 text-emerald-700 text-[9px] font-black px-2 py-0.5 rounded-md border border-emerald-100/50 select-none">
+              Dinamis: {activeRate.toString().replace('.', ',')}%
+            </span>
+            <span className="bg-indigo-50/60 text-indigo-700 text-[9px] font-black px-2 py-0.5 rounded-md border border-indigo-100/50 select-none">
+              Platform: {currentDefaultPlatformRate.toString().replace('.', ',')}%
+            </span>
+          </div>
         </div>
         
-        <div className="text-sm font-black text-neutral-800 uppercase tracking-tight">
-          {activeCategory?.nama || 'Tidak diketahui'}
-        </div>
-
-        <div className="flex flex-wrap gap-2 pt-0.5">
-          <span className="bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-lg border border-emerald-100/80 select-none">
-            Komisi Dinamis: {activeRate.toString().replace('.', ',')}%
-          </span>
-          <span className="bg-indigo-50 text-indigo-700 text-[10px] font-black px-2.5 py-1 rounded-lg border border-indigo-100 select-none">
-            {storeType === 'mall' ? 'Official Store' : 'Power Merchant'} (Platform): {currentDefaultPlatformRate.toString().replace('.', ',')}%
-          </span>
-        </div>
+        <button
+          type="button"
+          onClick={onOpenSelector}
+          className="flex items-center gap-1 px-2.5 py-1.5 text-[10px] font-black text-emerald-700 bg-white hover:bg-neutral-50 border border-neutral-200 rounded-lg shadow-sm hover:shadow transition-all cursor-pointer select-none flex-shrink-0"
+        >
+          ✏️ Ubah
+        </button>
       </div>
     </div>
   );
