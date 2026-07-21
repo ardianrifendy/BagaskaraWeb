@@ -279,6 +279,7 @@ function CalculatorTokopediaContent() {
           onCategoryChange={setCategorySlug}
           onOpenSelector={() => setIsPickerOpen(true)}
           useTarifLama={useTarifLama}
+          storeType={storeType}
         />
 
         {/* Financial Inputs (Kosong secara default untuk kenyamanan user) */}

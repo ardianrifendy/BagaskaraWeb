@@ -9,6 +9,7 @@ interface ProductInputTokopediaProps {
   onCategoryChange: (slug: string) => void;
   onOpenSelector: () => void;
   useTarifLama?: boolean;
+  storeType: 'marketplace' | 'mall';
 }
 
 export const ProductInputTokopedia: React.FC<ProductInputTokopediaProps> = ({
@@ -17,11 +18,16 @@ export const ProductInputTokopedia: React.FC<ProductInputTokopediaProps> = ({
   onNameChange,
   onCategoryChange,
   onOpenSelector,
-  useTarifLama = false
+  useTarifLama = false,
+  storeType
 }) => {
   const candidates = name ? detectTokopediaCategory(name) : [];
-  const activeCategory = getCategoryBySlug(categorySlug, useTarifLama);
+  const activeCategory = getCategoryBySlug(categorySlug, useTarifLama) as any;
   const activeRate = activeCategory.rateDinamis;
+
+  const currentDefaultPlatformRate = storeType === 'mall'
+    ? (activeCategory.ratePlatformMall ?? 10.0)
+    : (activeCategory.ratePlatformMarketplace ?? 7.75);
 
   // Auto-select category teratas saat user mengetik nama/brand baru
   useEffect(() => {
@@ -35,7 +41,7 @@ export const ProductInputTokopedia: React.FC<ProductInputTokopediaProps> = ({
 
   return (
     <div className="flex flex-col gap-3.5 bg-white p-4 rounded-2xl border border-neutral-200 shadow-sm">
-      {/* Search Input Bar (Identik dengan Shopee) */}
+      {/* Search Input Bar */}
       <div className="flex flex-col gap-1.5 relative">
         <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">APA YANG KAMU JUAL?</label>
         <input
@@ -55,6 +61,10 @@ export const ProductInputTokopedia: React.FC<ProductInputTokopediaProps> = ({
             <div className="flex flex-wrap gap-2">
               {candidates.slice(0, 4).map((candidate) => {
                 const isActive = candidate.slug === categorySlug;
+                const candidatePlatRate = storeType === 'mall'
+                  ? (candidate.ratePlatformMall ?? 10.0)
+                  : (candidate.ratePlatformMarketplace ?? 7.75);
+
                 return (
                   <button
                     key={candidate.slug}
@@ -66,7 +76,7 @@ export const ProductInputTokopedia: React.FC<ProductInputTokopediaProps> = ({
                         : 'bg-neutral-50 border-neutral-200 text-neutral-600 hover:text-neutral-800 hover:border-neutral-300'
                     }`}
                   >
-                    {isActive ? '✓ ' : ''}{candidate.nama} ({candidate.rateDinamis.toString().replace('.', ',')}%)
+                    {isActive ? '✓ ' : ''}{candidate.nama} (Dinamis: {candidate.rateDinamis.toString().replace('.', ',')}%, Platform: {candidatePlatRate.toString().replace('.', ',')}%)
                   </button>
                 );
               })}
@@ -93,13 +103,16 @@ export const ProductInputTokopedia: React.FC<ProductInputTokopediaProps> = ({
         </div>
       )}
 
-      {/* Status Kategori Terpilih (Identik Layout Shopee) */}
+      {/* Status Kategori Terpilih */}
       <div className="flex items-center justify-between text-xs bg-neutral-50 p-3 rounded-xl border border-neutral-200/80">
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="font-extrabold text-neutral-400">Kategori Terpilih: </span>
           <span className="font-black text-emerald-600 uppercase">{activeCategory?.nama || 'Tidak diketahui'}</span>
           <span className="bg-emerald-100 text-[10px] font-black text-emerald-700 px-2 py-0.5 rounded border border-emerald-200 select-none">
             Dinamis {activeRate.toString().replace('.', ',')}%
+          </span>
+          <span className="bg-indigo-100 text-[10px] font-black text-indigo-700 px-2 py-0.5 rounded border border-indigo-200 select-none">
+            {storeType === 'mall' ? 'Official Store' : 'Power Merchant'} {currentDefaultPlatformRate.toString().replace('.', ',')}%
           </span>
         </div>
         <button
