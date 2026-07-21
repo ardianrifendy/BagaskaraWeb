@@ -16,7 +16,7 @@ export const MoneyInput: React.FC<MoneyInputProps> = ({
   className = ''
 }) => {
   const formatNumber = (num: number | '') => {
-    if (!num) return '';
+    if (num === '' || num === undefined) return '';
     return new Intl.NumberFormat('id-ID').format(num);
   };
 
@@ -45,11 +45,11 @@ export const MoneyInput: React.FC<MoneyInputProps> = ({
           placeholder={placeholder}
           className="w-full py-2.5 pl-1 pr-8 text-sm outline-none bg-transparent font-extrabold text-neutral-800 placeholder-neutral-400"
         />
-        {typeof value === 'number' && value > 0 && (
+        {value !== '' && (
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-2 text-neutral-400 hover:text-neutral-600 p-1 rounded-full text-[10px] transition-colors cursor-pointer"
+            className="absolute right-2.5 text-neutral-400 hover:text-neutral-600 p-1 rounded-full text-[10px] transition-colors cursor-pointer"
             title="Clear"
           >
             ✕

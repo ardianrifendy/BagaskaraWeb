@@ -289,18 +289,30 @@ function CalculatorTokopediaContent() {
             <div className="grid grid-cols-2 gap-2">
               <div className="flex flex-col gap-1 w-full">
                 <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Berat (Gram)</label>
-                <input
-                  type="number"
-                  min="0"
-                  max="100000"
-                  value={weightGram}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setWeightGram(val === '' ? '' : Math.max(0, parseInt(val, 10) || 0));
-                  }}
-                  placeholder="cth. 4700"
-                  className="w-full bg-neutral-50 border border-neutral-200 text-sm font-extrabold text-neutral-850 rounded-xl px-3.5 h-[46px] focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-                />
+                <div className="relative flex items-center">
+                  <input
+                    type="number"
+                    min="0"
+                    max="100000"
+                    value={weightGram}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setWeightGram(val === '' ? '' : Math.max(0, parseInt(val, 10) || 0));
+                    }}
+                    placeholder="cth. 4700"
+                    className="w-full bg-neutral-50 border border-neutral-200 text-sm font-extrabold text-neutral-850 rounded-xl pl-3.5 pr-8 h-[46px] focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                  />
+                  {weightGram !== '' && (
+                    <button
+                      type="button"
+                      onClick={() => setWeightGram('')}
+                      className="absolute right-2.5 text-neutral-400 hover:text-neutral-600 p-1 rounded-full text-[10px] transition-colors cursor-pointer"
+                      title="Clear"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
               </div>
 
               <div className="flex flex-col gap-1 w-full">
@@ -363,7 +375,7 @@ function CalculatorTokopediaContent() {
                               : (cat.ratePlatformMarketplace ?? 7.75);
                             setManualPlatformRate(defaultRate);
                           }}
-                          className="text-[9px] font-black text-emerald-650 hover:text-emerald-750 bg-neutral-100 hover:bg-neutral-200 px-1 py-0.5 rounded border border-neutral-300 transition-all cursor-pointer"
+                          className="text-[9px] font-black text-emerald-655 hover:text-emerald-755 bg-neutral-100 hover:bg-neutral-200 px-1 py-0.5 rounded border border-neutral-300 transition-all cursor-pointer"
                           title="Kembali ke Auto"
                         >
                           ↺ Auto
@@ -371,56 +383,95 @@ function CalculatorTokopediaContent() {
                       )}
                     </div>
                   </div>
-                  <input
-                    type="number"
-                    min="0"
-                    max="30"
-                    step="0.01"
-                    value={manualPlatformRate}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setManualPlatformRate(val === '' ? '' : Math.max(0, parseFloat(val) || 0));
-                      setIsPlatformOverridden(true);
-                    }}
-                    placeholder="0"
-                    className="w-full bg-neutral-50 border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all h-[40px]"
-                  />
+                  <div className="relative flex items-center">
+                    <input
+                      type="number"
+                      min="0"
+                      max="30"
+                      step="0.01"
+                      value={manualPlatformRate}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setManualPlatformRate(val === '' ? '' : Math.max(0, parseFloat(val) || 0));
+                        setIsPlatformOverridden(true);
+                      }}
+                      placeholder="0"
+                      className="w-full bg-neutral-50 border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl pl-3.5 pr-8 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all h-[40px]"
+                    />
+                    {manualPlatformRate !== '' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setManualPlatformRate('');
+                          setIsPlatformOverridden(true);
+                        }}
+                        className="absolute right-2.5 text-neutral-400 hover:text-neutral-600 p-1 rounded-full text-[10px] transition-colors cursor-pointer"
+                        title="Clear"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* Komisi Affiliate % */}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Komisi Affiliate TikTok (%)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="50"
-                    step="0.5"
-                    value={affiliateRate}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setAffiliateRate(val === '' ? '' : Math.max(0, parseFloat(val) || 0));
-                    }}
-                    placeholder="0"
-                    className="w-full bg-neutral-50 border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all h-[40px]"
-                  />
+                  <div className="relative flex items-center">
+                    <input
+                      type="number"
+                      min="0"
+                      max="50"
+                      step="0.5"
+                      value={affiliateRate}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setAffiliateRate(val === '' ? '' : Math.max(0, parseFloat(val) || 0));
+                      }}
+                      placeholder="0"
+                      className="w-full bg-neutral-50 border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl pl-3.5 pr-8 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all h-[40px]"
+                    />
+                    {affiliateRate !== '' && (
+                      <button
+                        type="button"
+                        onClick={() => setAffiliateRate('')}
+                        className="absolute right-2.5 text-neutral-400 hover:text-neutral-600 p-1 rounded-full text-[10px] transition-colors cursor-pointer"
+                        title="Clear"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* Diskon GMV Max % */}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Diskon GMV Max (%)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="20"
-                    step="0.1"
-                    value={gmvMaxDiscountRate}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setGmvMaxDiscountRate(val === '' ? '' : Math.max(0, parseFloat(val) || 0));
-                    }}
-                    placeholder="0"
-                    className="w-full bg-neutral-50 border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all h-[40px]"
-                  />
+                  <div className="relative flex items-center">
+                    <input
+                      type="number"
+                      min="0"
+                      max="20"
+                      step="0.1"
+                      value={gmvMaxDiscountRate}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setGmvMaxDiscountRate(val === '' ? '' : Math.max(0, parseFloat(val) || 0));
+                      }}
+                      placeholder="0"
+                      className="w-full bg-neutral-50 border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl pl-3.5 pr-8 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all h-[40px]"
+                    />
+                    {gmvMaxDiscountRate !== '' && (
+                      <button
+                        type="button"
+                        onClick={() => setGmvMaxDiscountRate('')}
+                        className="absolute right-2.5 text-neutral-400 hover:text-neutral-600 p-1 rounded-full text-[10px] transition-colors cursor-pointer"
+                        title="Clear"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* Order Handling Fee */}
@@ -445,9 +496,9 @@ function CalculatorTokopediaContent() {
                     <div className="flex items-center gap-1">
                       <span className={`text-[9px] font-black px-1.5 py-0.5 rounded select-none ${
                         isLogisticOverridden
-                          ? 'bg-orange-50 text-orange-650 border border-orange-100'
+                          ? 'bg-orange-50 text-orange-655 border border-orange-100'
                           : typeof weightGram === 'number' && weightGram > 0
-                          ? 'bg-emerald-50 text-emerald-650 border border-emerald-100'
+                          ? 'bg-emerald-50 text-emerald-655 border border-emerald-100'
                           : 'bg-neutral-100 text-neutral-500 border border-neutral-200'
                       }`}>
                         {isLogisticOverridden
@@ -468,7 +519,7 @@ function CalculatorTokopediaContent() {
                               setLogisticCost(0);
                             }
                           }}
-                          className="text-[9px] font-black text-emerald-650 hover:text-emerald-750 bg-neutral-100 hover:bg-neutral-200 px-1 py-0.5 rounded border border-neutral-300 transition-all cursor-pointer"
+                          className="text-[9px] font-black text-emerald-655 hover:text-emerald-755 bg-neutral-100 hover:bg-neutral-200 px-1 py-0.5 rounded border border-neutral-300 transition-all cursor-pointer"
                           title="Kembali ke Auto"
                         >
                           ↺ Auto
