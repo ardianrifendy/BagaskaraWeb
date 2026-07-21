@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Logo from '@/components/Logo';
@@ -60,6 +60,25 @@ function CalculatorTokopediaContent() {
   const [dimHeight, setDimHeight] = useState<number | ''>('');
 
   const [isPickerOpen, setIsPickerOpen] = useState(false);
+
+  // States & Refs untuk dropdown kustom
+  const [isServiceDropdownOpen, setIsServiceDropdownOpen] = useState(false);
+  const [isRouteDropdownOpen, setIsRouteDropdownOpen] = useState(false);
+  const serviceDropdownRef = useRef<HTMLDivElement>(null);
+  const routeDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (serviceDropdownRef.current && !serviceDropdownRef.current.contains(event.target as Node)) {
+        setIsServiceDropdownOpen(false);
+      }
+      if (routeDropdownRef.current && !routeDropdownRef.current.contains(event.target as Node)) {
+        setIsRouteDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
 
   // Auto-hitung estimasi biaya logistik dari berat paket jika berat > 0 dan belum di-override manual
@@ -203,6 +222,45 @@ function CalculatorTokopediaContent() {
     }, 300);
     return () => clearTimeout(timer);
   }, [updateUrl]);
+
+  const getLogisticServiceLabel = (type: string | null) => {
+    switch (type) {
+      case 'standar': return '🚚 Standar';
+      case 'ekonomi': return '✈️ Ekonomi';
+      case 'kargo': return '📦 Kargo (Berat >2 kg)';
+      case 'instan': return '⚡ Instan & Sameday';
+      default: return 'Pilih Layanan';
+    }
+  };
+
+  const getLogisticRouteLabel = (route: string) => {
+    switch (route) {
+      case 'java_jakarta': return 'Jawa ➔ Jawa (Jakarta)';
+      case 'java_nonjakarta': return 'Jawa ➔ Jawa (Selain Jakarta)';
+      case 'java_bali': return 'Jawa ➔ Bali';
+      case 'java_nusa': return 'Jawa ➔ Nusa Tenggara';
+      case 'java_sumatra': return 'Jawa ➔ Sumatera';
+      case 'java_sulawesi': return 'Jawa ➔ Sulawesi';
+      case 'java_kalimantan': return 'Jawa ➔ Kalimantan';
+      case 'java_papua': return 'Jawa ➔ Papua & Maluku';
+      case 'out_java': return 'Luar Jawa ➔ Luar Jawa';
+      default: return route;
+    }
+  };
+
+  const getLogisticOriginLabel = (origin: string) => {
+    switch (origin) {
+      case 'jakarta': return 'Jawa (Jakarta)';
+      case 'non_jakarta': return 'Jawa (Selain Jakarta)';
+      case 'bali': return 'Bali';
+      case 'nusa': return 'Nusa Tenggara';
+      case 'sumatra': return 'Sumatera';
+      case 'sulawesi': return 'Sulawesi';
+      case 'kalimantan': return 'Kalimantan';
+      case 'papua': return 'Papua & Maluku';
+      default: return origin;
+    }
+  };
 
   const category = getCategoryBySlug(categorySlug, false) as any;
   const profile: TokopediaProfile = { storeType, useTarifLama: false };
@@ -575,59 +633,158 @@ function CalculatorTokopediaContent() {
                   {!isLogisticOverridden && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 bg-neutral-50/50 p-3.5 rounded-xl border border-neutral-200/60">
                       {/* Layanan Logistik */}
-                      <div className="flex flex-col gap-1.5">
+                      <div className="flex flex-col gap-1.5 relative" ref={serviceDropdownRef}>
                         <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Layanan Logistik</span>
-                        <select
-                          value={logisticServiceType || 'standar'}
-                          onChange={(e) => setLogisticServiceType(e.target.value as any)}
-                          className="w-full bg-white border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer h-[40px]"
+                        <button
+                          type="button"
+                          onClick={() => setIsServiceDropdownOpen(!isServiceDropdownOpen)}
+                          className="w-full bg-white border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3.5 py-2.5 text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all flex items-center justify-between shadow-sm h-[40px]"
                         >
-                          <option value="standar">🚚 Standar</option>
-                          <option value="ekonomi">✈️ Ekonomi</option>
-                          <option value="kargo">📦 Kargo (Berat &gt;2 kg)</option>
-                          <option value="instan">⚡ Instan &amp; Sameday</option>
-                        </select>
+                          <span>{getLogisticServiceLabel(logisticServiceType)}</span>
+                          <svg
+                            className={`w-3.5 h-3.5 text-neutral-400 transition-transform duration-200 flex-shrink-0 ${
+                              isServiceDropdownOpen ? "rotate-180" : ""
+                            }`}
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+
+                        {isServiceDropdownOpen && (
+                          <div className="absolute top-[calc(100%+4px)] left-0 w-full bg-white border border-neutral-200/85 rounded-xl shadow-xl z-35 p-1 flex flex-col gap-0.5 animate-in fade-in slide-in-from-top-2 duration-150">
+                            {[
+                              { value: 'standar', label: '🚚 Standar' },
+                              { value: 'ekonomi', label: '✈️ Ekonomi' },
+                              { value: 'kargo', label: '📦 Kargo (Berat >2 kg)' },
+                              { value: 'instan', label: '⚡ Instan & Sameday' }
+                            ].map((opt) => (
+                              <button
+                                key={opt.value}
+                                type="button"
+                                onClick={() => {
+                                  setLogisticServiceType(opt.value as any);
+                                  setIsServiceDropdownOpen(false);
+                                }}
+                                className={`w-full text-left px-3 py-2 text-xs rounded-lg font-bold cursor-pointer transition-colors ${
+                                  logisticServiceType === opt.value ? "bg-emerald-50 text-emerald-600" : "text-neutral-600 hover:bg-neutral-50"
+                                }`}
+                              >
+                                {opt.label}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
 
                       {/* Rute / Asal Pengiriman */}
-                      {logisticServiceType === 'instan' ? (
-                        <div className="flex flex-col gap-1.5">
-                          <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Asal Pengiriman</span>
-                          <select
-                            value={logisticOrigin}
-                            onChange={(e) => setLogisticOrigin(e.target.value)}
-                            className="w-full bg-white border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer h-[40px]"
-                          >
-                            <option value="jakarta">Jawa (Jakarta)</option>
-                            <option value="non_jakarta">Jawa (Selain Jakarta)</option>
-                            <option value="bali">Bali</option>
-                            <option value="nusa">Nusa Tenggara</option>
-                            <option value="sumatra">Sumatera</option>
-                            <option value="sulawesi">Sulawesi</option>
-                            <option value="kalimantan">Kalimantan</option>
-                            <option value="papua">Papua &amp; Maluku</option>
-                          </select>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col gap-1.5">
-                          <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Rute Pengiriman</span>
-                          <select
-                            value={logisticRoute}
-                            onChange={(e) => setLogisticRoute(e.target.value)}
-                            className="w-full bg-white border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer h-[40px]"
-                          >
-                            <option value="java_jakarta">Jawa ➔ Jawa (Jakarta)</option>
-                            <option value="java_nonjakarta">Jawa ➔ Jawa (Selain Jakarta)</option>
-                            <option value="java_bali">Jawa ➔ Bali</option>
-                            <option value="java_nusa">Jawa ➔ Nusa Tenggara</option>
-                            <option value="java_sumatra">Jawa ➔ Sumatera</option>
-                            <option value="java_sulawesi">Jawa ➔ Sulawesi</option>
-                            <option value="java_kalimantan">Jawa ➔ Kalimantan</option>
-                            <option value="java_papua">Jawa ➔ Papua &amp; Maluku</option>
-                            <option value="out_java">Luar Jawa ➔ Luar Jawa</option>
-                          </select>
-                        </div>
-                      )}
+                      <div className="flex flex-col gap-1.5 relative" ref={routeDropdownRef}>
+                        {logisticServiceType === 'instan' ? (
+                          <>
+                            <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Asal Pengiriman</span>
+                            <button
+                              type="button"
+                              onClick={() => setIsRouteDropdownOpen(!isRouteDropdownOpen)}
+                              className="w-full bg-white border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3.5 py-2.5 text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all flex items-center justify-between shadow-sm h-[40px]"
+                            >
+                              <span>{getLogisticOriginLabel(logisticOrigin)}</span>
+                              <svg
+                                className={`w-3.5 h-3.5 text-neutral-400 transition-transform duration-200 flex-shrink-0 ${
+                                  isRouteDropdownOpen ? "rotate-180" : ""
+                                }`}
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                              </svg>
+                            </button>
+
+                            {isRouteDropdownOpen && (
+                              <div className="absolute top-[calc(100%+4px)] left-0 w-full bg-white border border-neutral-200/85 rounded-xl shadow-xl z-35 p-1 flex flex-col gap-0.5 animate-in fade-in slide-in-from-top-2 duration-150 max-h-[220px] overflow-y-auto">
+                                {[
+                                  { value: 'jakarta', label: 'Jawa (Jakarta)' },
+                                  { value: 'non_jakarta', label: 'Jawa (Selain Jakarta)' },
+                                  { value: 'bali', label: 'Bali' },
+                                  { value: 'nusa', label: 'Nusa Tenggara' },
+                                  { value: 'sumatra', label: 'Sumatera' },
+                                  { value: 'sulawesi', label: 'Sulawesi' },
+                                  { value: 'kalimantan', label: 'Kalimantan' },
+                                  { value: 'papua', label: 'Papua & Maluku' }
+                                ].map((opt) => (
+                                  <button
+                                    key={opt.value}
+                                    type="button"
+                                    onClick={() => {
+                                      setLogisticOrigin(opt.value);
+                                      setIsRouteDropdownOpen(false);
+                                    }}
+                                    className={`w-full text-left px-3 py-2 text-xs rounded-lg font-bold cursor-pointer transition-colors ${
+                                      logisticOrigin === opt.value ? "bg-emerald-50 text-emerald-600" : "text-neutral-600 hover:bg-neutral-50"
+                                    }`}
+                                  >
+                                    {opt.label}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Rute Pengiriman</span>
+                            <button
+                              type="button"
+                              onClick={() => setIsRouteDropdownOpen(!isRouteDropdownOpen)}
+                              className="w-full bg-white border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3.5 py-2.5 text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all flex items-center justify-between shadow-sm h-[40px]"
+                            >
+                              <span>{getLogisticRouteLabel(logisticRoute)}</span>
+                              <svg
+                                className={`w-3.5 h-3.5 text-neutral-400 transition-transform duration-200 flex-shrink-0 ${
+                                  isRouteDropdownOpen ? "rotate-180" : ""
+                                }`}
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                              </svg>
+                            </button>
+
+                            {isRouteDropdownOpen && (
+                              <div className="absolute top-[calc(100%+4px)] left-0 w-full bg-white border border-neutral-200/85 rounded-xl shadow-xl z-35 p-1 flex flex-col gap-0.5 animate-in fade-in slide-in-from-top-2 duration-150 max-h-[220px] overflow-y-auto">
+                                {[
+                                  { value: 'java_jakarta', label: 'Jawa ➔ Jawa (Jakarta)' },
+                                  { value: 'java_nonjakarta', label: 'Jawa ➔ Jawa (Selain Jakarta)' },
+                                  { value: 'java_bali', label: 'Jawa ➔ Bali' },
+                                  { value: 'java_nusa', label: 'Jawa ➔ Nusa Tenggara' },
+                                  { value: 'java_sumatra', label: 'Jawa ➔ Sumatera' },
+                                  { value: 'java_sulawesi', label: 'Jawa ➔ Sulawesi' },
+                                  { value: 'java_kalimantan', label: 'Jawa ➔ Kalimantan' },
+                                  { value: 'java_papua', label: 'Jawa ➔ Papua & Maluku' },
+                                  { value: 'out_java', label: 'Luar Jawa ➔ Luar Jawa' }
+                                ].map((opt) => (
+                                  <button
+                                    key={opt.value}
+                                    type="button"
+                                    onClick={() => {
+                                      setLogisticRoute(opt.value);
+                                      setIsRouteDropdownOpen(false);
+                                    }}
+                                    className={`w-full text-left px-3 py-2 text-xs rounded-lg font-bold cursor-pointer transition-colors ${
+                                      logisticRoute === opt.value ? "bg-emerald-50 text-emerald-600" : "text-neutral-600 hover:bg-neutral-50"
+                                    }`}
+                                  >
+                                    {opt.label}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+
 
                       {/* Dimensi Paket */}
                       <div className="col-span-1 md:col-span-2 flex flex-col gap-1.5">
