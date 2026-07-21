@@ -601,14 +601,14 @@ export default function TokopediaCalculatorPage() {
             <button
               type="button"
               onClick={() => setIsTutorialOpen(true)}
-              className="px-3 py-2 rounded-xl border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-neutral-50 dark:hover:bg-zinc-750 text-neutral-600 dark:text-zinc-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all shadow-sm shadow-neutral-100 dark:shadow-none flex items-center justify-center cursor-pointer font-bold text-xs gap-1"
+              className="px-3 h-10 rounded-xl border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-neutral-50 dark:hover:bg-zinc-750 text-neutral-600 dark:text-zinc-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all shadow-sm shadow-neutral-100 dark:shadow-none flex items-center justify-center cursor-pointer font-extrabold text-xs gap-1"
               title="Cara Penggunaan"
             >
               ❓ Cara Pakai
             </button>
             <Link
               href="/"
-              className="p-2.5 rounded-xl border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-neutral-50 text-neutral-600 dark:text-zinc-300 transition-all flex items-center justify-center shadow-sm"
+              className="w-10 h-10 rounded-xl border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-neutral-50 dark:hover:bg-zinc-750 text-neutral-600 dark:text-zinc-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all flex items-center justify-center shadow-sm"
               title="Beranda"
             >
               🏠
