@@ -30,7 +30,7 @@ export function computeTokopediaFees(
   const hargaNettoUnit = netPriceTotal / qty;
 
   const category = getCategoryBySlug(input.categorySlug, profile.useTarifLama);
-  const rateDinamis = profile.useTarifLama ? category.rateDinamisLama ?? category.rateDinamis : category.rateDinamis;
+  const rateDinamis = category.rateDinamis;
   const ratePlatform = input.manualPlatformRate ?? category.ratePlatformDefault ?? 0;
 
   const items: TokopediaFeeItem[] = [];
