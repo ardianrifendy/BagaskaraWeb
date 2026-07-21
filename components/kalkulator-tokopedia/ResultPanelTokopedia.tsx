@@ -9,6 +9,7 @@ interface ResultPanelTokopediaProps {
   mode: 'calculate' | 'reverse';
   shareUrl?: string;
   categoryName?: string;
+  isEmpty?: boolean;
 }
 
 export const ResultPanelTokopedia: React.FC<ResultPanelTokopediaProps> = ({
@@ -17,10 +18,33 @@ export const ResultPanelTokopedia: React.FC<ResultPanelTokopediaProps> = ({
   rawPrice,
   mode,
   shareUrl,
-  categoryName
+  categoryName,
+  isEmpty = false
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  if (isEmpty) {
+    return (
+      <div className="bg-white text-neutral-850 rounded-2xl shadow-sm border border-neutral-200 p-6 flex flex-col items-center justify-center text-center gap-3 transition-all duration-300">
+        <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold">
+          💡
+        </div>
+        <div className="flex flex-col gap-1">
+          <span className="text-xs font-black text-neutral-800 uppercase tracking-wider">
+            {mode === 'reverse' ? 'REKOMENDASI HARGA JUAL' : 'HASIL BERSIH PENJUALAN'}
+          </span>
+          <p className="text-xs text-neutral-500 font-medium max-w-xs leading-relaxed">
+            Masukkan nilai <strong className="text-neutral-700">Modal / HPP</strong> dan{' '}
+            <strong className="text-neutral-700">{mode === 'reverse' ? 'Target Profit' : 'Harga Jual'}</strong> di formulir sebelah kiri untuk melihat hasil kalkulasi otomatis.
+          </p>
+        </div>
+        <div className="mt-2 text-2xl font-black text-neutral-300">
+          Rp 0
+        </div>
+      </div>
+    );
+  }
 
   const mainPrice = mode === 'reverse' ? (suggestedPrice || 0) : result.grossPrice;
   const isLoss = result.profit < 0;

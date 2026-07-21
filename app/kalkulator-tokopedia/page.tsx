@@ -101,6 +101,8 @@ function CalculatorTokopediaContent() {
   const category = getCategoryBySlug(categorySlug, useTarifLama);
   const profile: TokopediaProfile = { storeType, useTarifLama };
 
+  const isInputEmpty = cost === 0 && (mode === 'reverse' ? targetProfit === 0 : hargaJualInput === 0);
+
   const inputPayload = {
     categorySlug,
     cost,
@@ -338,6 +340,7 @@ function CalculatorTokopediaContent() {
           isCapped={isCapped}
           hargaJualUnit={currentHargaUnit}
           qty={qty}
+          isEmpty={isInputEmpty}
         />
 
         <ResultPanelTokopedia
@@ -346,6 +349,7 @@ function CalculatorTokopediaContent() {
           rawPrice={reverseResult?.rawPrice}
           mode={mode}
           categoryName={category.nama}
+          isEmpty={isInputEmpty}
         />
       </div>
 

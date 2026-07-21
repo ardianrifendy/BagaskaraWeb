@@ -7,6 +7,7 @@ interface WarningBannerTokopediaProps {
   isCapped: boolean;
   hargaJualUnit: number;
   qty: number;
+  isEmpty?: boolean;
 }
 
 export const WarningBannerTokopedia: React.FC<WarningBannerTokopediaProps> = ({
@@ -14,10 +15,13 @@ export const WarningBannerTokopedia: React.FC<WarningBannerTokopediaProps> = ({
   marginPct,
   isCapped,
   hargaJualUnit,
-  qty
+  qty,
+  isEmpty = false
 }) => {
+  if (isEmpty) return null;
+
   const isLoss = profit < 0;
-  const isThinMargin = !isLoss && marginPct < 5;
+  const isThinMargin = !isLoss && marginPct < 5 && marginPct > 0;
   const isHighValueThreshold = hargaJualUnit >= 21600000;
 
   if (!isLoss && !isThinMargin && !isCapped && !isHighValueThreshold) {
