@@ -38,9 +38,13 @@ function CalculatorTokopediaContent() {
   // Fisik Paket
   const [weightGram, setWeightGram] = useState(0);
 
-  // Opsi Lanjutan terbuka secara default agar terlihat jelas oleh seller
+  // Opsi Lanjutan
   const [showOptions, setShowOptions] = useState(true);
-  const [manualPlatformRate, setManualPlatformRate] = useState<number | null>(null);
+  
+  // Nilai komisi platform diisi sebagai nilai angka riil agar tampil otomatis
+  const [manualPlatformRate, setManualPlatformRate] = useState<number>(3.5);
+  const [isPlatformOverridden, setIsPlatformOverridden] = useState(false);
+
   const [affiliateRate, setAffiliateRate] = useState<number>(0);
   const [gmvMaxDiscountRate, setGmvMaxDiscountRate] = useState<number>(0);
   const [enableRisk, setEnableRisk] = useState(false);
@@ -58,6 +62,17 @@ function CalculatorTokopediaContent() {
       setLogisticCost(0);
     }
   }, [weightGram]);
+
+  // Sinkronisasi otomatis komisi platform berdasarkan kategori dan tipe toko
+  useEffect(() => {
+    if (!isPlatformOverridden) {
+      const cat = getCategoryBySlug(categorySlug, useTarifLama) as any;
+      const defaultRate = storeType === 'mall'
+        ? (cat.ratePlatformMall ?? 10.0)
+        : (cat.ratePlatformMarketplace ?? 7.75);
+      setManualPlatformRate(defaultRate);
+    }
+  }, [categorySlug, storeType, useTarifLama, isPlatformOverridden]);
 
   // Read URL query params jika diakses via shared URL
   useEffect(() => {
@@ -89,7 +104,10 @@ function CalculatorTokopediaContent() {
     if (q) setProductName(q);
 
     const platformParam = searchParams.get('plat');
-    if (platformParam) setManualPlatformRate(parseFloat(platformParam) || null);
+    if (platformParam) {
+      setManualPlatformRate(parseFloat(platformParam) || 0);
+      setIsPlatformOverridden(true);
+    }
 
     const logistikParam = searchParams.get('log');
     if (logistikParam) setLogisticCost(parseInt(logistikParam, 10) || 0);
@@ -112,14 +130,14 @@ function CalculatorTokopediaContent() {
       params.set('harga', hargaJualInput.toString());
     }
     if (qty > 1) params.set('qty', qty.toString());
-    if (manualPlatformRate && manualPlatformRate > 0) params.set('plat', manualPlatformRate.toString());
+    if (isPlatformOverridden && manualPlatformRate > 0) params.set('plat', manualPlatformRate.toString());
     if (logisticCost > 0) params.set('log', logisticCost.toString());
     if (weightGram > 0) params.set('berat', weightGram.toString());
 
     const queryString = params.toString();
     const newUrl = queryString ? `?${queryString}` : window.location.pathname;
     router.replace(newUrl, { scroll: false });
-  }, [categorySlug, mode, storeType, cost, targetProfit, hargaJualInput, qty, productName, manualPlatformRate, logisticCost, weightGram, router]);
+  }, [categorySlug, mode, storeType, cost, targetProfit, hargaJualInput, qty, productName, manualPlatformRate, isPlatformOverridden, logisticCost, weightGram, router]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -164,10 +182,6 @@ function CalculatorTokopediaContent() {
 
   const currentHargaUnit = mode === 'reverse' ? (reverseResult?.suggestedPrice || 0) : hargaJualInput;
   const isCapped = calcResult.items.some((i) => i.capped);
-
-  const currentDefaultPlatformRate = storeType === 'mall'
-    ? (category.ratePlatformMall ?? 10.0)
-    : (category.ratePlatformMarketplace ?? 7.75);
 
   return (
     <div className="max-w-6xl mx-auto p-4 grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -331,7 +345,7 @@ function CalculatorTokopediaContent() {
 
             {showOptions && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3.5 pt-1">
-                {/* Manual Komisi Platform % (Dihilangkan tag Auto badge redundant agar bersih) */}
+                {/* Manual Komisi Platform % */}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">
                     Komisi Platform (%)
@@ -341,12 +355,13 @@ function CalculatorTokopediaContent() {
                     min="0"
                     max="30"
                     step="0.01"
-                    value={manualPlatformRate ?? ''}
+                    value={manualPlatformRate || ''}
                     onChange={(e) => {
-                      const val = e.target.value === '' ? null : parseFloat(e.target.value);
+                      const val = e.target.value === '' ? 0 : parseFloat(e.target.value);
                       setManualPlatformRate(val);
+                      setIsPlatformOverridden(true);
                     }}
-                    placeholder={`Otomatis (${currentDefaultPlatformRate}%) atau ubah manual...`}
+                    placeholder="0"
                     className="w-full bg-neutral-50 border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all h-[40px]"
                   />
                 </div>
