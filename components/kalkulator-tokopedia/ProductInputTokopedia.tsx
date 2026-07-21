@@ -104,24 +104,30 @@ export const ProductInputTokopedia: React.FC<ProductInputTokopediaProps> = ({
       )}
 
       {/* Status Kategori Terpilih */}
-      <div className="flex items-center justify-between text-xs bg-neutral-50 p-3 rounded-xl border border-neutral-200/80">
-        <div className="flex flex-wrap items-center gap-1.5">
-          <span className="font-extrabold text-neutral-400">Kategori Terpilih: </span>
-          <span className="font-black text-emerald-600 uppercase">{activeCategory?.nama || 'Tidak diketahui'}</span>
-          <span className="bg-emerald-100 text-[10px] font-black text-emerald-700 px-2 py-0.5 rounded border border-emerald-200 select-none">
-            Dinamis {activeRate.toString().replace('.', ',')}%
+      <div className="flex flex-col gap-2.5 bg-neutral-50 p-3.5 rounded-xl border border-neutral-200/80">
+        <div className="flex items-center justify-between w-full">
+          <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Kategori Terpilih</span>
+          <button
+            type="button"
+            onClick={onOpenSelector}
+            className="text-emerald-600 font-extrabold hover:underline cursor-pointer text-xs"
+          >
+            [ubah]
+          </button>
+        </div>
+        
+        <div className="text-sm font-black text-neutral-800 uppercase tracking-tight">
+          {activeCategory?.nama || 'Tidak diketahui'}
+        </div>
+
+        <div className="flex flex-wrap gap-2 pt-0.5">
+          <span className="bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-lg border border-emerald-100/80 select-none">
+            Komisi Dinamis: {activeRate.toString().replace('.', ',')}%
           </span>
-          <span className="bg-indigo-100 text-[10px] font-black text-indigo-700 px-2 py-0.5 rounded border border-indigo-200 select-none">
-            {storeType === 'mall' ? 'Official Store' : 'Power Merchant'} {currentDefaultPlatformRate.toString().replace('.', ',')}%
+          <span className="bg-indigo-50 text-indigo-700 text-[10px] font-black px-2.5 py-1 rounded-lg border border-indigo-100 select-none">
+            {storeType === 'mall' ? 'Official Store' : 'Power Merchant'} (Platform): {currentDefaultPlatformRate.toString().replace('.', ',')}%
           </span>
         </div>
-        <button
-          type="button"
-          onClick={onOpenSelector}
-          className="text-emerald-600 font-extrabold hover:underline cursor-pointer flex-shrink-0"
-        >
-          [ubah]
-        </button>
       </div>
     </div>
   );
