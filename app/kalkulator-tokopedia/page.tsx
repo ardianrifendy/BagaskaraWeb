@@ -9,6 +9,7 @@ import tarifData from '@/data/tarif/tokopedia-2026-05-18.json';
 import { computeTokopediaFees, getCategoryBySlug } from '@/lib/kalkulator-tokopedia/fees';
 import { solveReverse } from '@/lib/kalkulator-tokopedia/solver';
 import { TokopediaProfile } from '@/lib/kalkulator-tokopedia/types';
+import { ProductInputTokopedia } from '@/components/kalkulator-tokopedia/ProductInputTokopedia';
 import { CategoryPickerTokopedia } from '@/components/kalkulator-tokopedia/CategoryPickerTokopedia';
 import { WarningBannerTokopedia } from '@/components/kalkulator-tokopedia/WarningBannerTokopedia';
 import { DisclaimerTokopedia } from '@/components/kalkulator-tokopedia/DisclaimerTokopedia';
@@ -21,6 +22,7 @@ function CalculatorTokopediaContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  const [productName, setProductName] = useState('');
   const [mode, setMode] = useState<'reverse' | 'calculate'>('reverse');
   const [useTarifLama, setUseTarifLama] = useState(false);
   const [storeType, setStoreType] = useState<'marketplace' | 'mall'>('marketplace');
@@ -63,6 +65,9 @@ function CalculatorTokopediaContent() {
 
     const qtyParam = searchParams.get('qty');
     if (qtyParam) setQty(parseInt(qtyParam, 10) || 1);
+
+    const q = searchParams.get('q');
+    if (q) setProductName(q);
   }, [searchParams]);
 
   // Sync to URL with 300ms debounce
@@ -71,6 +76,7 @@ function CalculatorTokopediaContent() {
     params.set('kat', categorySlug);
     params.set('mode', mode);
     params.set('modal', cost.toString());
+    if (productName) params.set('q', productName);
     if (mode === 'reverse') {
       params.set('profit', targetProfit.toString());
     } else {
@@ -79,7 +85,7 @@ function CalculatorTokopediaContent() {
     if (qty > 1) params.set('qty', qty.toString());
 
     router.replace(`?${params.toString()}`, { scroll: false });
-  }, [categorySlug, mode, cost, targetProfit, hargaJualInput, qty, router]);
+  }, [categorySlug, mode, cost, targetProfit, hargaJualInput, qty, productName, router]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -186,25 +192,15 @@ function CalculatorTokopediaContent() {
           </button>
         </div>
 
-        {/* Category Picker Selector */}
-        <div className="bg-white p-4 rounded-2xl border border-neutral-200 shadow-sm flex flex-col gap-2">
-          <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">APA YANG KAMU JUAL?</span>
-          <div className="flex items-center justify-between bg-neutral-50 p-3 rounded-xl border border-neutral-200/80 gap-2">
-            <div className="flex flex-col gap-0.5">
-              <span className="text-xs font-black text-neutral-850">{category.nama}</span>
-              <span className="text-[10px] font-bold text-emerald-600">
-                Komisi Dinamis: {category.rateDinamis.toString().replace('.', ',')}%
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={() => setIsPickerOpen(true)}
-              className="text-xs font-black text-emerald-600 hover:underline px-3 py-1.5 bg-white border border-neutral-200 rounded-lg shadow-sm cursor-pointer"
-            >
-              [Ubah Kategori]
-            </button>
-          </div>
-        </div>
+        {/* Product Search & Category Input Section (Identik Shopee) */}
+        <ProductInputTokopedia
+          name={productName}
+          categorySlug={categorySlug}
+          onNameChange={setProductName}
+          onCategoryChange={setCategorySlug}
+          onOpenSelector={() => setIsPickerOpen(true)}
+          useTarifLama={useTarifLama}
+        />
 
         {/* Financial Inputs */}
         <div className="bg-white p-4 rounded-2xl border border-neutral-200 shadow-sm flex flex-col gap-4">
