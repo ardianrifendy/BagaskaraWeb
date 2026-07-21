@@ -32,11 +32,11 @@ export default function Logo() {
 
   if (logoError) {
     return (
-      <Link href="https://bagaskaracell.net" className="flex items-center gap-2 select-none cursor-pointer">
-        <span className="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center text-white font-black text-lg shadow-sm shadow-orange-200">
+      <Link href="https://bagaskaracell.net" className="flex items-center gap-1.5 sm:gap-2 select-none cursor-pointer">
+        <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-orange-600 flex items-center justify-center text-white font-black text-sm sm:text-lg shadow-sm shadow-orange-200">
           B
         </span>
-        <span className="font-extrabold text-base tracking-tight text-neutral-900 dark:text-zinc-100">
+        <span className="font-extrabold text-xs sm:text-base tracking-tight text-neutral-900 dark:text-zinc-100">
           {siteConfig.name}
         </span>
       </Link>
@@ -44,11 +44,11 @@ export default function Logo() {
   }
 
   return (
-    <Link href="https://bagaskaracell.net" className="flex items-center h-12 select-none cursor-pointer">
+    <Link href="https://bagaskaracell.net" className="flex items-center h-10 select-none cursor-pointer">
       <img
         src={logoSrc}
         alt={siteConfig.name}
-        className="h-9 md:h-11 w-auto object-contain"
+        className="h-7.5 sm:h-8 md:h-10 w-auto object-contain transition-all"
         onError={() => setLogoError(true)}
       />
     </Link>
