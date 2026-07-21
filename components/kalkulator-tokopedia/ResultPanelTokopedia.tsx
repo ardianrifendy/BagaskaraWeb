@@ -21,7 +21,7 @@ export const ResultPanelTokopedia: React.FC<ResultPanelTokopediaProps> = ({
   categoryName,
   isEmpty = false
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true); // Default terbuka agar user langsung melihat rincian
   const [copied, setCopied] = useState(false);
 
   if (isEmpty) {
@@ -48,6 +48,9 @@ export const ResultPanelTokopedia: React.FC<ResultPanelTokopediaProps> = ({
 
   const mainPrice = mode === 'reverse' ? (suggestedPrice || 0) : result.grossPrice;
   const isLoss = result.profit < 0;
+
+  const hasPlatformCommission = result.items.some((i) => i.key === 'komisi_platform');
+  const hasLogisticsFee = result.items.some((i) => i.key === 'biaya_logistik');
 
   const handleCopy = () => {
     const textBreakdown = result.items
@@ -154,6 +157,20 @@ ${textBreakdown}
                 </div>
               );
             })}
+
+            {/* Petunjuk Tambahan Jika Komisi Platform / Biaya Logistik Belum Diisi */}
+            {!hasPlatformCommission && (
+              <div className="py-1 flex justify-between text-[11px] text-amber-700 bg-amber-50/60 p-2 rounded-lg border border-amber-100">
+                <span>➕ Komisi Platform Toko (7,75%)</span>
+                <span className="font-extrabold">Isi di Opsi Lanjutan</span>
+              </div>
+            )}
+            {!hasLogisticsFee && (
+              <div className="py-1 flex justify-between text-[11px] text-amber-700 bg-amber-50/60 p-2 rounded-lg border border-amber-100">
+                <span>➕ Biaya Layanan Logistik (Rp 1.520)</span>
+                <span className="font-extrabold">Isi di Opsi Lanjutan</span>
+              </div>
+            )}
 
             <div className="flex justify-between border-t border-neutral-200 pt-3 mt-2 text-sm font-black text-neutral-900">
               <span>Dana Masuk (Saldo)</span>

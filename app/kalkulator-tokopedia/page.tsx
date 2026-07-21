@@ -28,15 +28,15 @@ function CalculatorTokopediaContent() {
   const [storeType, setStoreType] = useState<'marketplace' | 'mall'>('marketplace');
   const [categorySlug, setCategorySlug] = useState('telepon-elektronik');
 
-  // Definisikan default 0 agar input kosong saat pertama dibuka
+  // Definisikan default 0 agar input bersih
   const [cost, setCost] = useState(0);
   const [targetProfit, setTargetProfit] = useState(0);
   const [hargaJualInput, setHargaJualInput] = useState(0);
   const [sellerDiscount, setSellerDiscount] = useState(0);
   const [qty, setQty] = useState(1);
 
-  // Opsi Lanjutan
-  const [showOptions, setShowOptions] = useState(false);
+  // Opsi Lanjutan terbuka secara default agar Komisi Platform % & Biaya Logistik langsung terlihat
+  const [showOptions, setShowOptions] = useState(true);
   const [manualPlatformRate, setManualPlatformRate] = useState<number | null>(null);
   const [affiliateRate, setAffiliateRate] = useState<number>(0);
   const [gmvMaxDiscountRate, setGmvMaxDiscountRate] = useState<number>(0);
@@ -70,6 +70,12 @@ function CalculatorTokopediaContent() {
 
     const q = searchParams.get('q');
     if (q) setProductName(q);
+
+    const platformParam = searchParams.get('plat');
+    if (platformParam) setManualPlatformRate(parseFloat(platformParam) || null);
+
+    const logistikParam = searchParams.get('log');
+    if (logistikParam) setLogisticCost(parseInt(logistikParam, 10) || 0);
   }, [searchParams]);
 
   // Sync state ke URL secara debounced
@@ -85,11 +91,13 @@ function CalculatorTokopediaContent() {
       params.set('harga', hargaJualInput.toString());
     }
     if (qty > 1) params.set('qty', qty.toString());
+    if (manualPlatformRate && manualPlatformRate > 0) params.set('plat', manualPlatformRate.toString());
+    if (logisticCost > 0) params.set('log', logisticCost.toString());
 
     const queryString = params.toString();
     const newUrl = queryString ? `?${queryString}` : window.location.pathname;
     router.replace(newUrl, { scroll: false });
-  }, [categorySlug, mode, cost, targetProfit, hargaJualInput, qty, productName, router]);
+  }, [categorySlug, mode, cost, targetProfit, hargaJualInput, qty, productName, manualPlatformRate, logisticCost, router]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -248,7 +256,7 @@ function CalculatorTokopediaContent() {
             <button
               type="button"
               onClick={() => setShowOptions(!showOptions)}
-              className="text-[10px] font-extrabold text-neutral-400 hover:text-neutral-700 flex items-center gap-1.5 uppercase tracking-wider transition-colors cursor-pointer"
+              className="text-[10px] font-extrabold text-emerald-600 hover:text-emerald-700 flex items-center gap-1.5 uppercase tracking-wider transition-colors cursor-pointer"
             >
               <span>{showOptions ? '▼' : '▶'} Opsi Lanjutan &amp; Program Diskon</span>
             </button>
@@ -257,18 +265,20 @@ function CalculatorTokopediaContent() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3.5 pt-1">
                 {/* Manual Komisi Platform % */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Komisi Platform (%)</label>
+                  <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">
+                    Komisi Platform (%)
+                  </label>
                   <input
                     type="number"
                     min="0"
                     max="30"
-                    step="0.1"
+                    step="0.01"
                     value={manualPlatformRate ?? ''}
                     onChange={(e) => {
                       const val = e.target.value === '' ? null : parseFloat(e.target.value);
                       setManualPlatformRate(val);
                     }}
-                    placeholder="Input % manual..."
+                    placeholder="cth. 7.75 (sesuai jenis toko)"
                     className="w-full bg-neutral-50 border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all h-[40px]"
                   />
                 </div>
@@ -313,7 +323,12 @@ function CalculatorTokopediaContent() {
 
                 {/* Logistik */}
                 <div className="flex flex-col gap-1.5 col-span-1 md:col-span-2">
-                  <MoneyInput label="Estimasi Biaya Logistik Variabel" value={logisticCost} onChange={setLogisticCost} placeholder="0" />
+                  <MoneyInput
+                    label="Estimasi Biaya Layanan Logistik (Pengiriman)"
+                    value={logisticCost}
+                    onChange={setLogisticCost}
+                    placeholder="cth. 1.520 (sesuai berat paket)"
+                  />
                 </div>
               </div>
             )}
