@@ -2,11 +2,24 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import Logo from './Logo';
 import { CalculatorSelectorModal } from './CalculatorSelectorModal';
 
 export default function Navbar() {
+  const pathname = usePathname() || '';
   const [isCalculatorModalOpen, setIsCalculatorModalOpen] = useState(false);
+
+  const isCalcActive = pathname.startsWith('/kalkulator');
+  const isCekResiActive = pathname.startsWith('/cek-resi');
+  const isPredictionActive = pathname.startsWith('/prediction');
+  const isJastipActive = pathname.startsWith('/jastip');
+
+  const getButtonClass = (isActive: boolean) => {
+    return isActive
+      ? "w-10 h-10 rounded-xl bg-orange-600 flex items-center justify-center text-white shadow-sm transition-all cursor-pointer border border-orange-600"
+      : "w-10 h-10 rounded-xl bg-neutral-100 dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 flex items-center justify-center text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer";
+  };
 
   return (
     <>
@@ -19,7 +32,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setIsCalculatorModalOpen(true)}
-              className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 flex items-center justify-center text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer"
+              className={getButtonClass(isCalcActive)}
               title="Kalkulator Potongan Shopee & Tokopedia"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -31,7 +44,7 @@ export default function Navbar() {
             {/* Tombol Cek Resi */}
             <Link
               href="/cek-resi"
-              className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 flex items-center justify-center text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer"
+              className={getButtonClass(isCekResiActive)}
               title="Lacak Pengiriman (Cek Resi)"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -43,7 +56,7 @@ export default function Navbar() {
             {/* Tombol Prediksi Pasar */}
             <Link
               href="/prediction"
-              className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 flex items-center justify-center text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer"
+              className={getButtonClass(isPredictionActive)}
               title="Prediksi Pasar"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -54,7 +67,7 @@ export default function Navbar() {
             {/* Tombol Jastip (Box) */}
             <Link
               href="/jastip"
-              className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-zinc-800 border border-neutral-200 dark:border-zinc-700 flex items-center justify-center text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer"
+              className={getButtonClass(isJastipActive)}
               title="Jasa Titip (Jastip)"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
