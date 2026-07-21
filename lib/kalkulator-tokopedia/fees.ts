@@ -6,6 +6,71 @@ import {
 } from './types';
 import tarifBaruData from '../../data/tarif/tokopedia-2026-05-18.json';
 import tarifLamaData from '../../data/tarif/tokopedia-2025-06-10.json';
+import logisticsRates from '../../data/tarif/tokopedia-logistics-2026-05-01.json';
+
+export function calculateLogisticsFee(
+  serviceType: 'standar' | 'ekonomi' | 'kargo' | 'instan',
+  routeOrOrigin: string,
+  totalWeightGram: number,
+  dimensions?: { p: number; l: number; t: number } | null,
+  qty: number = 1
+): { amount: number; isUnavailable: boolean; reason?: string; billableWeight: number } {
+  if (!serviceType || !routeOrOrigin) {
+    return { amount: 0, isUnavailable: false, billableWeight: 0 };
+  }
+
+  const actualWeightKg = totalWeightGram / 1000;
+  const volumetricWeightKg = dimensions
+    ? ((dimensions.p * dimensions.l * dimensions.t) / 6000) * qty
+    : 0;
+  const billableWeight = Math.max(actualWeightKg, volumetricWeightKg);
+
+
+  if (billableWeight <= 0) {
+    return { amount: 0, isUnavailable: false, billableWeight: 0 };
+  }
+
+  if (serviceType === 'instan') {
+    const rate = (logisticsRates.instan_sameday as any)[routeOrOrigin];
+    if (rate === undefined || rate === null) {
+      return { amount: 0, isUnavailable: true, reason: 'Rute asal tidak didukung untuk Instan/Sameday', billableWeight };
+    }
+    return { amount: rate, isUnavailable: false, billableWeight };
+  }
+
+  let tierIdx = 0;
+  if (billableWeight <= 1.0) {
+    tierIdx = 0;
+  } else if (billableWeight <= 2.0) {
+    tierIdx = 1;
+  } else if (billableWeight <= 3.0) {
+    tierIdx = 2;
+  } else if (billableWeight <= 4.0) {
+    tierIdx = 3;
+  } else if (billableWeight <= 5.0) {
+    tierIdx = 4;
+  } else {
+    tierIdx = 5;
+  }
+
+  const serviceRates = (logisticsRates as any)[serviceType];
+  if (!serviceRates) {
+    return { amount: 0, isUnavailable: true, reason: `Layanan ${serviceType} tidak didukung`, billableWeight };
+  }
+
+  const routeRates = serviceRates[routeOrOrigin];
+  if (!routeRates) {
+    return { amount: 0, isUnavailable: true, reason: 'Rute pengiriman tidak didukung', billableWeight };
+  }
+
+  const amount = routeRates[tierIdx];
+  if (amount === null || amount === undefined) {
+    return { amount: 0, isUnavailable: true, reason: 'Layanan tidak tersedia untuk berat/rute ini (N.A.)', billableWeight };
+  }
+
+  return { amount, isUnavailable: false, billableWeight };
+}
+
 
 export function getCategoryBySlug(slug: string, useTarifLama = false) {
   const data = useTarifLama ? tarifLamaData : tarifBaruData;
@@ -119,18 +184,46 @@ export function computeTokopediaFees(
     });
   }
 
-  // 6. Biaya Layanan Logistik Variabel (per order / berat paket)
-  const logistikTotal = (input.logisticCost ?? 0) * qty;
+  // 6. Biaya Layanan Logistik (BLL) atau Override Manual
+  let logistikTotal = 0;
+  let isLogisticUnavailable = false;
+  let logisticUnavailableReason = '';
+  let totalBillableWeight = 0;
+
+  if (input.logisticCost !== undefined && input.logisticCost !== null && input.logisticCost > 0) {
+    logistikTotal = input.logisticCost;
+  } else if (!profile.useTarifLama && input.logisticServiceType) {
+    const totalWeightGram = (input.weightGram ?? 0) * qty;
+    const bllRes = calculateLogisticsFee(
+      input.logisticServiceType,
+      input.logisticServiceType === 'instan' ? (input.logisticOrigin ?? '') : (input.logisticRoute ?? ''),
+      totalWeightGram,
+      input.dimensions,
+      qty
+    );
+    totalBillableWeight = bllRes.billableWeight;
+    if (bllRes.isUnavailable) {
+      isLogisticUnavailable = true;
+      logisticUnavailableReason = bllRes.reason ?? '';
+    } else {
+      logistikTotal = bllRes.amount;
+    }
+  }
+
   if (logistikTotal > 0) {
+    const labelService = input.logisticServiceType 
+      ? input.logisticServiceType.toUpperCase() 
+      : 'Variabel';
     items.push({
       key: 'biaya_logistik',
-      label: `Biaya Layanan Logistik Variabel`,
+      label: `Biaya Layanan Logistik (${labelService})`,
       ratePct: null,
       amount: logistikTotal,
       capped: false,
       effectivePct: 0
     });
   }
+
 
   // 7. Biaya Risiko (Order bermasalah/retur/pengiriman gagal)
   if (input.riskyOrderPct && input.riskyOrderPct > 0) {
@@ -167,6 +260,10 @@ export function computeTokopediaFees(
     totalFeesPct: Number(totalFeesPct.toFixed(2)),
     netReceived,
     profit,
-    marginPct: Number(marginPct.toFixed(2))
+    marginPct: Number(marginPct.toFixed(2)),
+    isLogisticUnavailable,
+    logisticUnavailableReason,
+    totalBillableWeight
   };
+
 }

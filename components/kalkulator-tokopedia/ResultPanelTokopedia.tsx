@@ -54,7 +54,14 @@ export const ResultPanelTokopedia: React.FC<ResultPanelTokopediaProps> = ({
 
   const handleCopy = () => {
     const textBreakdown = result.items
-      .map((item) => `▪️ *${item.label}:* ${formatIDR(item.amount)}${item.capped ? ' _(cap Rp650k)_' : ''}`)
+      .map((item) => {
+        let suffix = '';
+        if (item.capped) suffix = ' _(cap Rp650k)_';
+        if (item.key === 'biaya_logistik' && result.totalBillableWeight) {
+          suffix += ` _(${result.totalBillableWeight.toFixed(2)} kg)_`;
+        }
+        return `▪️ *${item.label}:* ${formatIDR(item.amount)}${suffix}`;
+      })
       .join('\n');
 
     const fullUrl = shareUrl || (typeof window !== 'undefined' ? window.location.href : '');
@@ -70,13 +77,14 @@ ${textBreakdown}
 -----------------------------------------------
 📥 *Net Diterima Seller:* *${formatIDR(result.netReceived)}*
 📈 *Profit Bersih:* *${formatIDR(result.profit)}* (${result.marginPct}%)
-===============================
+==============================
 🔗 Hitung sendiri di: ${fullUrl}`;
 
     navigator.clipboard.writeText(textToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };
+
 
   return (
     <div className="bg-white text-neutral-850 rounded-2xl shadow-md border border-neutral-200 overflow-hidden flex flex-col transition-all duration-300 hover:shadow-lg">
@@ -150,6 +158,11 @@ ${textBreakdown}
                         cap 650k
                       </span>
                     )}
+                    {item.key === 'biaya_logistik' && result.totalBillableWeight && (
+                      <span className="bg-neutral-100 text-neutral-600 text-[9px] px-1.5 py-0.5 rounded font-black">
+                        {result.totalBillableWeight.toFixed(2)} kg
+                      </span>
+                    )}
                   </div>
                   <span className={isDiscount ? 'text-emerald-600 font-extrabold' : 'text-rose-600 font-extrabold'}>
                     {isDiscount ? '' : '-'}{formatIDR(Math.abs(item.amount))}
@@ -165,7 +178,13 @@ ${textBreakdown}
                 <span className="font-extrabold">Isi di Opsi Lanjutan</span>
               </div>
             )}
-            {!hasLogisticsFee && (
+            {result.isLogisticUnavailable && (
+              <div className="py-1 flex justify-between text-[11px] text-rose-700 bg-rose-50/60 p-2 rounded-lg border border-rose-100 font-bold animate-pulse">
+                <span>⚠️ Biaya Layanan Logistik (N.A.)</span>
+                <span className="font-extrabold">Layanan tidak tersedia</span>
+              </div>
+            )}
+            {!hasLogisticsFee && !result.isLogisticUnavailable && (
               <div className="py-1 flex justify-between text-[11px] text-amber-700 bg-amber-50/60 p-2 rounded-lg border border-amber-100">
                 <span>➕ Biaya Layanan Logistik (Rp 1.520)</span>
                 <span className="font-extrabold">Isi di Opsi Lanjutan</span>

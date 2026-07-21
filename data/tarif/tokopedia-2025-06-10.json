@@ -10,181 +10,211 @@
       "slug": "telepon-elektronik",
       "nama": "Telepon & Elektronik",
       "rateDinamis": 4.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 10.0,
+      "ratePlatformMall": 9.2
     },
     {
       "slug": "komputer-peralatan-kantor",
       "nama": "Komputer & Peralatan Kantor",
       "rateDinamis": 4.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 4.75,
+      "ratePlatformMall": 3.0
     },
     {
       "slug": "aksesoris-perhiasan-turunannya",
       "nama": "Aksesoris Perhiasan & Turunannya",
       "rateDinamis": 4.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 4.75,
+      "ratePlatformMall": 3.7
     },
     {
       "slug": "produk-virtual",
       "nama": "Produk Virtual",
       "rateDinamis": 4.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 3.0,
+      "ratePlatformMall": 11.7
     },
     {
       "slug": "pemesanan-voucher",
       "nama": "Pemesanan & Voucher",
       "rateDinamis": 4.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 9.5,
+      "ratePlatformMall": 4.5
     },
     {
       "slug": "peralatan-rumah-tangga",
       "nama": "Peralatan Rumah Tangga",
       "rateDinamis": 4.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 7.5,
+      "ratePlatformMall": 6.95
     },
     {
       "slug": "makanan-minuman",
       "nama": "Makanan & Minuman",
       "rateDinamis": 5.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 7.75,
+      "ratePlatformMall": 11.7
     },
     {
       "slug": "kesehatan",
       "nama": "Kesehatan",
       "rateDinamis": 4.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 9.5,
+      "ratePlatformMall": 8.2
     },
     {
       "slug": "olahraga-aktivitas-luar-ruangan",
       "nama": "Olahraga & Aktivitas Luar Ruangan",
       "rateDinamis": 6.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 10.0,
+      "ratePlatformMall": 12.2
     },
     {
       "slug": "furnitur",
       "nama": "Furnitur",
       "rateDinamis": 5.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 10.0,
+      "ratePlatformMall": 12.2
     },
     {
       "slug": "perkakas-perangkat-keras",
       "nama": "Perkakas & Perangkat Keras",
       "rateDinamis": 5.5,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 10.0,
+      "ratePlatformMall": 12.2
     },
     {
       "slug": "kecantikan-perawatan-pribadi",
       "nama": "Kecantikan & Perawatan Pribadi",
       "rateDinamis": 4.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 9.25,
+      "ratePlatformMall": 10.95
     },
     {
       "slug": "bayi-ibu-hamil",
       "nama": "Bayi & Ibu Hamil",
       "rateDinamis": 4.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 9.25,
+      "ratePlatformMall": 10.95
     },
     {
       "slug": "otomotif-sepeda-motor",
       "nama": "Otomotif & Sepeda Motor",
       "rateDinamis": 5.5,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 9.25,
+      "ratePlatformMall": 12.2
     },
     {
       "slug": "perbaikan-rumah",
       "nama": "Perbaikan Rumah",
       "rateDinamis": 5.5,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 10.0,
+      "ratePlatformMall": 12.2
     },
     {
       "slug": "aksesoris-fesyen",
       "nama": "Aksesoris Fesyen",
       "rateDinamis": 6.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 10.0,
+      "ratePlatformMall": 11.7
     },
     {
       "slug": "busana-anak-anak",
       "nama": "Busana Anak-Anak",
       "rateDinamis": 4.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 10.0,
+      "ratePlatformMall": 11.7
     },
     {
       "slug": "perlengkapan-rumah-tangga",
       "nama": "Perlengkapan Rumah Tangga",
       "rateDinamis": 6.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 10.0,
+      "ratePlatformMall": 12.2
     },
     {
       "slug": "perlengkapan-hewan-peliharaan",
       "nama": "Perlengkapan Hewan Peliharaan",
       "rateDinamis": 6.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 9.5,
+      "ratePlatformMall": 9.2
     },
     {
       "slug": "mainan-hobi",
       "nama": "Mainan & Hobi",
       "rateDinamis": 6.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 9.5,
+      "ratePlatformMall": 9.2
     },
     {
       "slug": "peralatan-dapur",
       "nama": "Peralatan Dapur",
       "rateDinamis": 6.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 10.0,
+      "ratePlatformMall": 12.2
     },
     {
       "slug": "pakaian-pria-pakaian-dalam",
       "nama": "Pakaian Pria & Pakaian Dalam",
       "rateDinamis": 5.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 9.25,
+      "ratePlatformMall": 10.95
     },
     {
       "slug": "koper-tas",
       "nama": "Koper & Tas",
       "rateDinamis": 5.5,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 10.0,
+      "ratePlatformMall": 11.7
     },
     {
       "slug": "sepatu",
       "nama": "Sepatu",
       "rateDinamis": 5.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 10.0,
+      "ratePlatformMall": 11.7
     },
     {
       "slug": "pakaian-wanita-pakaian-dalam",
       "nama": "Pakaian Wanita & Pakaian Dalam",
       "rateDinamis": 5.5,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 9.25,
+      "ratePlatformMall": 10.95
     },
     {
       "slug": "tekstil-perabot-rumah-tangga",
       "nama": "Tekstil & Perabot Rumah Tangga",
       "rateDinamis": 5.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 10.0,
+      "ratePlatformMall": 9.2
     },
     {
       "slug": "buku-majalah-audio",
       "nama": "Buku, Majalah & Audio",
       "rateDinamis": 5.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 10.0,
+      "ratePlatformMall": 8.2
     },
     {
       "slug": "barang-koleksi",
       "nama": "Barang Koleksi",
       "rateDinamis": 6.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 9.5,
+      "ratePlatformMall": 9.2
     },
     {
       "slug": "busana-muslim",
       "nama": "Busana Muslim",
       "rateDinamis": 5.5,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 9.25,
+      "ratePlatformMall": 10.95
     },
     {
       "slug": "peralatan-perlengkapan-kantor",
       "nama": "Peralatan dan Perlengkapan Kantor",
       "rateDinamis": 4.0,
-      "ratePlatformDefault": null
+      "ratePlatformMarketplace": 8.0,
+      "ratePlatformMall": 7.2
     }
   ]
 }

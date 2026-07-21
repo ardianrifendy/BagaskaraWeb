@@ -6,7 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Logo from '@/components/Logo';
 import { siteConfig } from '@/config/site';
 import tarifData from '@/data/tarif/tokopedia-2026-05-18.json';
-import { computeTokopediaFees, getCategoryBySlug } from '@/lib/kalkulator-tokopedia/fees';
+import { computeTokopediaFees, getCategoryBySlug, calculateLogisticsFee } from '@/lib/kalkulator-tokopedia/fees';
 import { solveReverse } from '@/lib/kalkulator-tokopedia/solver';
 import { TokopediaProfile, StoreType } from '@/lib/kalkulator-tokopedia/types';
 import { ProductInputTokopedia } from '@/components/kalkulator-tokopedia/ProductInputTokopedia';
@@ -51,19 +51,42 @@ function CalculatorTokopediaContent() {
   const [logisticCost, setLogisticCost] = useState<number | ''>('');
   const [isLogisticOverridden, setIsLogisticOverridden] = useState(false);
 
+  // Parameter Logistik BLL Otomatis
+  const [logisticServiceType, setLogisticServiceType] = useState<'standar' | 'ekonomi' | 'kargo' | 'instan' | null>('standar');
+  const [logisticRoute, setLogisticRoute] = useState<string>('java_jakarta');
+  const [logisticOrigin, setLogisticOrigin] = useState<string>('jakarta');
+  const [dimLength, setDimLength] = useState<number | ''>('');
+  const [dimWidth, setDimWidth] = useState<number | ''>('');
+  const [dimHeight, setDimHeight] = useState<number | ''>('');
+
   const [isPickerOpen, setIsPickerOpen] = useState(false);
+
 
   // Auto-hitung estimasi biaya logistik dari berat paket jika berat > 0 dan belum di-override manual
   useEffect(() => {
     if (!isLogisticOverridden) {
-      if (typeof weightGram === 'number' && weightGram > 0) {
-        const computedLogistics = Math.min(5055, 300 + Math.ceil(weightGram / 1000) * 260);
-        setLogisticCost(computedLogistics);
+      if (logisticServiceType) {
+        const totalWeightGram = (typeof weightGram === 'number' ? weightGram : 0) * qty;
+        const dims = (dimLength && dimWidth && dimHeight)
+          ? { p: Number(dimLength), l: Number(dimWidth), t: Number(dimHeight) }
+          : null;
+        const bllRes = calculateLogisticsFee(
+          logisticServiceType,
+          logisticServiceType === 'instan' ? logisticOrigin : logisticRoute,
+          totalWeightGram,
+          dims,
+          qty
+        );
+        if (bllRes.isUnavailable) {
+          setLogisticCost(0);
+        } else {
+          setLogisticCost(bllRes.amount);
+        }
       } else {
         setLogisticCost(0);
       }
     }
-  }, [weightGram, isLogisticOverridden]);
+  }, [weightGram, qty, logisticServiceType, logisticRoute, logisticOrigin, dimLength, dimWidth, dimHeight, isLogisticOverridden]);
 
   // Sinkronisasi otomatis komisi platform berdasarkan kategori dan tipe toko
   useEffect(() => {
@@ -119,6 +142,21 @@ function CalculatorTokopediaContent() {
 
     const beratParam = searchParams.get('berat');
     if (beratParam) setWeightGram(parseInt(beratParam, 10) || '');
+
+    const servParam = searchParams.get('serv');
+    if (servParam === 'standar' || servParam === 'ekonomi' || servParam === 'kargo' || servParam === 'instan') {
+      setLogisticServiceType(servParam);
+    }
+    const routeParam = searchParams.get('route');
+    if (routeParam) setLogisticRoute(routeParam);
+    const origParam = searchParams.get('orig');
+    if (origParam) setLogisticOrigin(origParam);
+    const pParam = searchParams.get('p');
+    if (pParam) setDimLength(parseInt(pParam, 10) || '');
+    const lParam = searchParams.get('l');
+    if (lParam) setDimWidth(parseInt(lParam, 10) || '');
+    const tParam = searchParams.get('t');
+    if (tParam) setDimHeight(parseInt(tParam, 10) || '');
   }, [searchParams]);
 
   // Sync state ke URL secara debounced
@@ -143,10 +181,21 @@ function CalculatorTokopediaContent() {
     }
     if (typeof weightGram === 'number' && weightGram > 0) params.set('berat', weightGram.toString());
 
+    if (logisticServiceType && logisticServiceType !== 'standar') params.set('serv', logisticServiceType);
+    if (logisticRoute && logisticRoute !== 'java_jakarta') params.set('route', logisticRoute);
+    if (logisticOrigin && logisticOrigin !== 'jakarta') params.set('orig', logisticOrigin);
+    if (typeof dimLength === 'number' && dimLength > 0) params.set('p', dimLength.toString());
+    if (typeof dimWidth === 'number' && dimWidth > 0) params.set('l', dimWidth.toString());
+    if (typeof dimHeight === 'number' && dimHeight > 0) params.set('t', dimHeight.toString());
+
     const queryString = params.toString();
     const newUrl = queryString ? `?${queryString}` : window.location.pathname;
     router.replace(newUrl, { scroll: false });
-  }, [categorySlug, mode, storeType, cost, targetProfit, hargaJualInput, qty, productName, manualPlatformRate, isPlatformOverridden, logisticCost, isLogisticOverridden, weightGram, router]);
+  }, [
+    categorySlug, mode, storeType, cost, targetProfit, hargaJualInput, qty, productName,
+    manualPlatformRate, isPlatformOverridden, logisticCost, isLogisticOverridden, weightGram,
+    logisticServiceType, logisticRoute, logisticOrigin, dimLength, dimWidth, dimHeight, router
+  ]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -170,8 +219,17 @@ function CalculatorTokopediaContent() {
     affiliateRate: affiliateRate === '' ? 0 : affiliateRate,
     gmvMaxDiscountRate: gmvMaxDiscountRate === '' ? 0 : gmvMaxDiscountRate,
     orderHandlingFee: 1250,
-    logisticCost: logisticCost === '' ? 0 : logisticCost,
-    riskyOrderPct: enableRisk && typeof riskyOrderPct === 'number' ? riskyOrderPct : 0
+    logisticCost: logisticCost === '' ? 0 : (isLogisticOverridden ? logisticCost : 0),
+    riskyOrderPct: enableRisk && typeof riskyOrderPct === 'number' ? riskyOrderPct : 0,
+
+    // BLL parameters
+    logisticServiceType: isLogisticOverridden ? null : logisticServiceType,
+    logisticRoute: isLogisticOverridden ? null : logisticRoute,
+    logisticOrigin: isLogisticOverridden ? null : logisticOrigin,
+    weightGram: weightGram === '' ? 0 : weightGram,
+    dimensions: (dimLength && dimWidth && dimHeight)
+      ? { p: Number(dimLength), l: Number(dimWidth), t: Number(dimHeight) }
+      : null
   };
 
   let calcResult;
@@ -489,54 +547,154 @@ function CalculatorTokopediaContent() {
                 </div>
 
                 {/* Logistik */}
-                <div className="flex flex-col gap-1.5 col-span-1 md:col-span-2">
+                <div className="flex flex-col gap-3.5 col-span-1 md:col-span-2 border-t border-neutral-100 pt-3.5">
                   <div className="flex justify-between items-center">
                     <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">
-                      Estimasi Biaya Layanan Logistik (Pengiriman)
+                      Biaya Layanan Logistik (BLL) &amp; Fisik Paket
                     </label>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5">
                       <span className={`text-[9px] font-black px-1.5 py-0.5 rounded select-none ${
                         isLogisticOverridden
-                          ? 'bg-orange-50 text-orange-655 border border-orange-100'
-                          : typeof weightGram === 'number' && weightGram > 0
-                          ? 'bg-emerald-50 text-emerald-655 border border-emerald-100'
-                          : 'bg-neutral-100 text-neutral-500 border border-neutral-200'
+                          ? 'bg-orange-50 text-orange-600 border border-orange-100'
+                          : 'bg-emerald-50 text-emerald-600 border border-emerald-100'
                       }`}>
-                        {isLogisticOverridden
-                          ? 'Kustom (Manual)'
-                          : typeof weightGram === 'number' && weightGram > 0
-                          ? 'Mengikuti Berat Paket'
-                          : 'Belum diisi'}
+                        {isLogisticOverridden ? 'Kustom (Manual)' : 'Hitung Otomatis (BLL)'}
                       </span>
                       {isLogisticOverridden && (
                         <button
                           type="button"
-                          onClick={() => {
-                            setIsLogisticOverridden(false);
-                            if (typeof weightGram === 'number' && weightGram > 0) {
-                              const computedLogistics = Math.min(5055, 300 + Math.ceil(weightGram / 1000) * 260);
-                              setLogisticCost(computedLogistics);
-                            } else {
-                              setLogisticCost(0);
-                            }
-                          }}
-                          className="text-[9px] font-black text-emerald-655 hover:text-emerald-755 bg-neutral-100 hover:bg-neutral-200 px-1 py-0.5 rounded border border-neutral-300 transition-all cursor-pointer"
-                          title="Kembali ke Auto"
+                          onClick={() => setIsLogisticOverridden(false)}
+                          className="text-[9px] font-black text-emerald-600 hover:text-emerald-750 bg-neutral-100 hover:bg-neutral-200 px-1.5 py-0.5 rounded border border-neutral-300 transition-all cursor-pointer"
                         >
                           ↺ Auto
                         </button>
                       )}
                     </div>
                   </div>
-                  <MoneyInput
-                    label=""
-                    value={logisticCost}
-                    onChange={(val) => {
-                      setLogisticCost(val);
-                      setIsLogisticOverridden(true);
-                    }}
-                    placeholder="cth. 1.520 (sesuai berat paket)"
-                  />
+
+                  {!isLogisticOverridden && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 bg-neutral-50/50 p-3.5 rounded-xl border border-neutral-200/60">
+                      {/* Layanan Logistik */}
+                      <div className="flex flex-col gap-1.5">
+                        <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Layanan Logistik</span>
+                        <select
+                          value={logisticServiceType || 'standar'}
+                          onChange={(e) => setLogisticServiceType(e.target.value as any)}
+                          className="w-full bg-white border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer h-[40px]"
+                        >
+                          <option value="standar">🚚 Standar</option>
+                          <option value="ekonomi">✈️ Ekonomi</option>
+                          <option value="kargo">📦 Kargo (Berat &gt;2 kg)</option>
+                          <option value="instan">⚡ Instan &amp; Sameday</option>
+                        </select>
+                      </div>
+
+                      {/* Rute / Asal Pengiriman */}
+                      {logisticServiceType === 'instan' ? (
+                        <div className="flex flex-col gap-1.5">
+                          <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Asal Pengiriman</span>
+                          <select
+                            value={logisticOrigin}
+                            onChange={(e) => setLogisticOrigin(e.target.value)}
+                            className="w-full bg-white border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer h-[40px]"
+                          >
+                            <option value="jakarta">Jawa (Jakarta)</option>
+                            <option value="non_jakarta">Jawa (Selain Jakarta)</option>
+                            <option value="bali">Bali</option>
+                            <option value="nusa">Nusa Tenggara</option>
+                            <option value="sumatra">Sumatera</option>
+                            <option value="sulawesi">Sulawesi</option>
+                            <option value="kalimantan">Kalimantan</option>
+                            <option value="papua">Papua &amp; Maluku</option>
+                          </select>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col gap-1.5">
+                          <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Rute Pengiriman</span>
+                          <select
+                            value={logisticRoute}
+                            onChange={(e) => setLogisticRoute(e.target.value)}
+                            className="w-full bg-white border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer h-[40px]"
+                          >
+                            <option value="java_jakarta">Jawa ➔ Jawa (Jakarta)</option>
+                            <option value="java_nonjakarta">Jawa ➔ Jawa (Selain Jakarta)</option>
+                            <option value="java_bali">Jawa ➔ Bali</option>
+                            <option value="java_nusa">Jawa ➔ Nusa Tenggara</option>
+                            <option value="java_sumatra">Jawa ➔ Sumatera</option>
+                            <option value="java_sulawesi">Jawa ➔ Sulawesi</option>
+                            <option value="java_kalimantan">Jawa ➔ Kalimantan</option>
+                            <option value="java_papua">Jawa ➔ Papua &amp; Maluku</option>
+                            <option value="out_java">Luar Jawa ➔ Luar Jawa</option>
+                          </select>
+                        </div>
+                      )}
+
+                      {/* Dimensi Paket */}
+                      <div className="col-span-1 md:col-span-2 flex flex-col gap-1.5">
+                        <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Dimensi Paket per Unit (P x L x T cm) - Opsional</span>
+                        <div className="grid grid-cols-3 gap-2">
+                          <input
+                            type="number"
+                            min="0"
+                            value={dimLength}
+                            onChange={(e) => setDimLength(e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value, 10) || 0))}
+                            placeholder="P (cm)"
+                            className="w-full bg-white border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all h-[40px]"
+                          />
+                          <input
+                            type="number"
+                            min="0"
+                            value={dimWidth}
+                            onChange={(e) => setDimWidth(e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value, 10) || 0))}
+                            placeholder="L (cm)"
+                            className="w-full bg-white border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all h-[40px]"
+                          />
+                          <input
+                            type="number"
+                            min="0"
+                            value={dimHeight}
+                            onChange={(e) => setDimHeight(e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value, 10) || 0))}
+                            placeholder="T (cm)"
+                            className="w-full bg-white border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all h-[40px]"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Display Info Berat Paket */}
+                      <div className="col-span-1 md:col-span-2 text-[10px] border-t border-neutral-100 pt-2.5 mt-0.5 flex flex-wrap justify-between items-center text-neutral-500 font-extrabold gap-2">
+                        {calcResult.totalBillableWeight ? (
+                          <span>
+                            Berat Dihitung: <strong className="text-neutral-700">{calcResult.totalBillableWeight.toFixed(2)} kg</strong>
+                          </span>
+                        ) : (
+                          <span>Masukkan berat/dimensi</span>
+                        )}
+                        {calcResult.isLogisticUnavailable ? (
+                          <span className="text-rose-600 font-black">⚠️ Rute / Berat N.A.</span>
+                        ) : (
+                          <span className="text-emerald-700 font-black">
+                            Tarif BLL: Rp {(logisticCost || 0).toLocaleString('id-ID')}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Manual Override Input */}
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">
+                      {isLogisticOverridden ? 'Kustomisasi Manual Biaya Logistik (Rp)' : 'Atau Masukkan Manual (Override)'}
+                    </span>
+                    <MoneyInput
+                      label=""
+                      value={logisticCost}
+                      onChange={(val) => {
+                        setLogisticCost(val);
+                        setIsLogisticOverridden(true);
+                      }}
+                      placeholder="cth. 1.520 (akan mengesampingkan hitungan otomatis)"
+                    />
+                  </div>
                 </div>
               </div>
             )}

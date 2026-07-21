@@ -8,7 +8,7 @@ interface FaqItem {
 const faqList: FaqItem[] = [
   {
     question: 'Berapa biaya admin TikTok Shop 2026?',
-    answer: 'Biaya admin TikTok Shop & Tokopedia terdiri dari Komisi Platform (2,5% - 12.2% tergantung kategori) dan Komisi Dinamis per kategori induk (3,0% - 8,0%). Batas maksimal (cap) komisi adalah Rp 650.000 per item.'
+    answer: 'Biaya admin TikTok Shop & Tokopedia terdiri dari Komisi Platform (2,5% - 12,2% tergantung kategori) dan Komisi Dinamis per kategori induk (3,0% - 8,0%). Batas maksimal (cap) komisi adalah Rp 650.000 per item.'
   },
   {
     question: 'Apa itu biaya komisi dinamis?',
@@ -19,8 +19,12 @@ const faqList: FaqItem[] = [
     answer: 'Ya, sejak Mei 2026, Tokopedia dan TikTok Shop menggunakan satu skema tarif dan model komisi yang terintegrasi penuh di bawah grup GoTo & ByteDance.'
   },
   {
-    question: 'Apakah komisi dikembalikan kalau produk diretur?',
-    answer: 'Komisi dinamis dan platform tidak dikembalikan oleh marketplace jika order diretur/dibatalkan setelah barang terkirim ke pembeli.'
+    question: 'Apa itu Biaya Layanan Logistik (BLL) mulai 1 Mei 2026?',
+    answer: 'Biaya Layanan Logistik (BLL) adalah biaya tetap per pesanan (order) yang dikenakan kepada seller berdasarkan jenis pengiriman (Standar, Ekonomi, Kargo, Instan), rute pengiriman, dan berat paket (berat billable: berat aktual vs berat volumetrik P x L x T / 6000, mana yang lebih besar).'
+  },
+  {
+    question: 'Apakah BLL dikembalikan jika pesanan dibatalkan atau diretur?',
+    answer: 'BLL tidak akan dikembalikan jika pengiriman pertama berhasil diterima pembeli lalu pembeli mengajukan retur/refund purna jual. Namun, BLL tidak dikenakan jika pengiriman pertama gagal (COD/non-COD) atau untuk pengiriman pengganti/tukar.'
   },
   {
     question: 'Bagaimana cara mengurangi komisi platform?',

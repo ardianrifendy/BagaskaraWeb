@@ -157,3 +157,71 @@ test('Test Vector E: QTY 5, HP Rp 3.000.000 (dinamis 3%) - Cap per-item per-unit
   assert.strictEqual(laptopDinamis.amount, 3250000, 'Cap per item: 5 x 650.000 = Rp 3.250.000');
   assert.strictEqual(laptopDinamis.capped, true);
 });
+
+test('Test Vector F: BLL Standar Jawa -> Jawa (Jakarta) berat 1.5kg', () => {
+  const input: TokopediaInput = {
+    categorySlug: 'telepon-elektronik',
+    cost: 10000,
+    qty: 1,
+    sellerDiscount: 0,
+    manualPlatformRate: 0,
+    orderHandlingFee: 0,
+    logisticServiceType: 'standar',
+    logisticRoute: 'java_jakarta',
+    weightGram: 1500
+  };
+
+  const res = computeTokopediaFees(input, defaultProfileBaru, 20000);
+  const logistik = res.items.find((i) => i.key === 'biaya_logistik');
+
+  assert.ok(logistik, 'biaya_logistik harus ada');
+  assert.strictEqual(logistik.amount, 890, 'BLL Standar Jawa->Jakarta 1.5kg harus Rp 890');
+  assert.strictEqual(res.isLogisticUnavailable, false);
+  assert.strictEqual(res.totalBillableWeight, 1.5);
+});
+
+test('Test Vector G: BLL Kargo Jawa -> Nusa Tenggara berat 1.5kg (N.A.)', () => {
+  const input: TokopediaInput = {
+    categorySlug: 'telepon-elektronik',
+    cost: 10000,
+    qty: 1,
+    sellerDiscount: 0,
+    manualPlatformRate: 0,
+    orderHandlingFee: 0,
+    logisticServiceType: 'kargo',
+    logisticRoute: 'java_nusa',
+    weightGram: 1500
+  };
+
+  const res = computeTokopediaFees(input, defaultProfileBaru, 20000);
+  const logistik = res.items.find((i) => i.key === 'biaya_logistik');
+
+  assert.ok(!logistik, 'biaya_logistik tidak boleh ada jika N.A.');
+  assert.strictEqual(res.isLogisticUnavailable, true, 'isLogisticUnavailable harus true');
+});
+
+test('Test Vector H: BLL Volumetric Weight (30x20x10cm = 1kg per unit, qty 10)', () => {
+  const input: TokopediaInput = {
+    categorySlug: 'telepon-elektronik',
+    cost: 10000,
+    qty: 10,
+    sellerDiscount: 0,
+    manualPlatformRate: 0,
+    orderHandlingFee: 0,
+    logisticServiceType: 'standar',
+    logisticRoute: 'java_nonjakarta',
+    weightGram: 500, // 0.5kg per unit actual weight
+    dimensions: { p: 30, l: 20, t: 10 } // volumetric: 30*20*10/6000 = 1.0kg per unit
+  };
+
+  const res = computeTokopediaFees(input, defaultProfileBaru, 20000);
+  const logistik = res.items.find((i) => i.key === 'biaya_logistik');
+
+  assert.ok(logistik, 'biaya_logistik harus ada');
+  // Billable weight = max(0.5, 1.0) = 1.0kg per unit. Total weight = 10 units * 1.0kg = 10kg.
+  // Standard, Java to non-Jakarta, >5kg tier is Rp 5.060.
+  assert.strictEqual(logistik.amount, 5060, 'BLL total untuk 10kg standar Java->NonJakarta harus Rp 5.060');
+  assert.strictEqual(res.isLogisticUnavailable, false);
+  assert.strictEqual(res.totalBillableWeight, 10.0);
+});
+
