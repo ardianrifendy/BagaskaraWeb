@@ -180,6 +180,8 @@ export default function CalculatorPage() {
             onNameChange={(name) => setProduct({ ...product, name })}
             onCategoryChange={(key) => setProduct({ ...product, categoryKey: key })}
             onOpenSelector={() => setIsCategorySheetOpen(true)}
+            sellerType={profile.sellerType}
+            size={product.size}
           />
 
           {/* Financial Inputs */}
