@@ -69,7 +69,7 @@ export function computeTokopediaFees(
     effectivePct: Number(effectiveDinamisPct.toFixed(2))
   });
 
-  // 3. Komisi Affiliate (opsional)
+  // 3. Komisi Affiliate TikTok (opsional)
   if (input.affiliateRate && input.affiliateRate > 0) {
     const amountAffiliate = Math.round(netPriceTotal * (input.affiliateRate / 100));
     items.push({
@@ -100,23 +100,33 @@ export function computeTokopediaFees(
     }
   }
 
-  // 5. Biaya Order (Order Handling Fee Rp1.250 + Biaya Logistik per order/unit)
+  // 5. Order Handling Fee (Flat Rp 1.250 / order berhasil)
   const handlingTotal = (input.orderHandlingFee ?? handlingFeeUnit) * qty;
-  const logistikTotal = (input.logisticCost ?? 0) * qty;
-  const totalBiayaOrder = handlingTotal + logistikTotal;
-
-  if (totalBiayaOrder > 0) {
+  if (handlingTotal > 0) {
     items.push({
-      key: 'biaya_order',
-      label: `Biaya Order & Logistik`,
+      key: 'order_handling',
+      label: `Order Handling Fee (Rp1.250/order)`,
       ratePct: null,
-      amount: totalBiayaOrder,
+      amount: handlingTotal,
       capped: false,
       effectivePct: 0
     });
   }
 
-  // 6. Biaya Risiko (Order bermasalah)
+  // 6. Biaya Layanan Logistik Variabel (per order / berat paket)
+  const logistikTotal = (input.logisticCost ?? 0) * qty;
+  if (logistikTotal > 0) {
+    items.push({
+      key: 'biaya_logistik',
+      label: `Biaya Layanan Logistik Variabel`,
+      ratePct: null,
+      amount: logistikTotal,
+      capped: false,
+      effectivePct: 0
+    });
+  }
+
+  // 7. Biaya Risiko (Order bermasalah/retur/pengiriman gagal)
   if (input.riskyOrderPct && input.riskyOrderPct > 0) {
     const amountRisiko = Math.round(10000 * (input.riskyOrderPct / 100) * qty);
     if (amountRisiko > 0) {
