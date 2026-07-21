@@ -24,7 +24,6 @@ function CalculatorTokopediaContent() {
 
   const [productName, setProductName] = useState('');
   const [mode, setMode] = useState<'reverse' | 'calculate'>('reverse');
-  const [useTarifLama, setUseTarifLama] = useState(false);
   const [storeType, setStoreType] = useState<StoreType>('marketplace');
   const [categorySlug, setCategorySlug] = useState('telepon-elektronik');
 
@@ -40,8 +39,6 @@ function CalculatorTokopediaContent() {
 
   // Opsi Lanjutan
   const [showOptions, setShowOptions] = useState(true);
-  
-  // Nilai komisi platform diisi sebagai nilai angka riil agar tampil otomatis
   const [manualPlatformRate, setManualPlatformRate] = useState<number>(3.5);
   const [isPlatformOverridden, setIsPlatformOverridden] = useState(false);
 
@@ -66,13 +63,13 @@ function CalculatorTokopediaContent() {
   // Sinkronisasi otomatis komisi platform berdasarkan kategori dan tipe toko
   useEffect(() => {
     if (!isPlatformOverridden) {
-      const cat = getCategoryBySlug(categorySlug, useTarifLama) as any;
+      const cat = getCategoryBySlug(categorySlug, false) as any;
       const defaultRate = storeType === 'mall'
         ? (cat.ratePlatformMall ?? 10.0)
         : (cat.ratePlatformMarketplace ?? 7.75);
       setManualPlatformRate(defaultRate);
     }
-  }, [categorySlug, storeType, useTarifLama, isPlatformOverridden]);
+  }, [categorySlug, storeType, isPlatformOverridden]);
 
   // Read URL query params jika diakses via shared URL
   useEffect(() => {
@@ -146,8 +143,8 @@ function CalculatorTokopediaContent() {
     return () => clearTimeout(timer);
   }, [updateUrl]);
 
-  const category = getCategoryBySlug(categorySlug, useTarifLama) as any;
-  const profile: TokopediaProfile = { storeType, useTarifLama };
+  const category = getCategoryBySlug(categorySlug, false) as any;
+  const profile: TokopediaProfile = { storeType, useTarifLama: false };
 
   const isInputEmpty = cost === 0 && (mode === 'reverse' ? targetProfit === 0 : hargaJualInput === 0);
 
@@ -218,30 +215,10 @@ function CalculatorTokopediaContent() {
             </div>
           </div>
 
-          {/* Skema Tarif Switcher */}
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => setUseTarifLama(false)}
-              className={`px-2.5 py-1 rounded-lg text-[10px] font-black cursor-pointer transition-all ${
-                !useTarifLama
-                  ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'bg-neutral-100 text-neutral-500 hover:text-neutral-700'
-              }`}
-            >
-              18 Mei 2026
-            </button>
-            <button
-              type="button"
-              onClick={() => setUseTarifLama(true)}
-              className={`px-2.5 py-1 rounded-lg text-[10px] font-black cursor-pointer transition-all ${
-                useTarifLama
-                  ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'bg-neutral-100 text-neutral-500 hover:text-neutral-700'
-              }`}
-            >
-              10 Jun 2025
-            </button>
+          {/* Skema Aktif */}
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-wider">Tarif: 18 Mei 2026 (Terbaru)</span>
           </div>
         </div>
 
@@ -278,7 +255,7 @@ function CalculatorTokopediaContent() {
           onNameChange={setProductName}
           onCategoryChange={setCategorySlug}
           onOpenSelector={() => setIsPickerOpen(true)}
-          useTarifLama={useTarifLama}
+          useTarifLama={false}
           storeType={storeType}
         />
 
@@ -348,9 +325,18 @@ function CalculatorTokopediaContent() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3.5 pt-1">
                 {/* Manual Komisi Platform % */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">
-                    Komisi Platform (%)
-                  </label>
+                  <div className="flex justify-between items-center">
+                    <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">
+                      Komisi Platform (%)
+                    </label>
+                    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded select-none ${
+                      isPlatformOverridden
+                        ? 'bg-orange-50 text-orange-650 border border-orange-100'
+                        : 'bg-emerald-50 text-emerald-650 border border-emerald-100'
+                    }`}>
+                      {isPlatformOverridden ? 'Kustom (Manual)' : 'Otomatis Kategori'}
+                    </span>
+                  </div>
                   <input
                     type="number"
                     min="0"
@@ -458,7 +444,7 @@ function CalculatorTokopediaContent() {
         onClose={() => setIsPickerOpen(false)}
         selectedSlug={categorySlug}
         onSelect={setCategorySlug}
-        useTarifLama={useTarifLama}
+        useTarifLama={false}
       />
     </div>
   );
