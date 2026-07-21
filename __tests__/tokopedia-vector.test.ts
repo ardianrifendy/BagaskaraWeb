@@ -19,6 +19,7 @@ test('Test Vector A: HP Rp 3.000.000, Telepon & Elektronik (dinamis 3%)', () => 
     cost: 2500000,
     qty: 1,
     sellerDiscount: 0,
+    manualPlatformRate: 0,
     orderHandlingFee: 0 // isolasi hanya tes komisi dinamis
   };
 
@@ -49,6 +50,7 @@ test('Test Vector B: Laptop Rp 20.000.000, Komputer & Peralatan Kantor (dinamis 
     cost: 18000000,
     qty: 1,
     sellerDiscount: 0,
+    manualPlatformRate: 0,
     orderHandlingFee: 0
   };
 
@@ -78,6 +80,7 @@ test('Test Vector C: Baju Wanita Rp 1.000.000, Pakaian Wanita (dinamis 8%)', () 
     cost: 800000,
     qty: 1,
     sellerDiscount: 0,
+    manualPlatformRate: 0,
     orderHandlingFee: 0
   };
 
@@ -103,6 +106,7 @@ test('Test Vector D: Fashion Rp 50.000, Margin Rp 5.000 (cost 45.000), dinamis 8
     cost: 45000,
     qty: 1,
     sellerDiscount: 0,
+    manualPlatformRate: 0,
     orderHandlingFee: 0
   };
 
@@ -122,6 +126,7 @@ test('Test Vector E: QTY 5, HP Rp 3.000.000 (dinamis 3%) - Cap per-item per-unit
     cost: 2500000,
     qty: 5,
     sellerDiscount: 0,
+    manualPlatformRate: 0,
     orderHandlingFee: 0
   };
 
@@ -142,6 +147,7 @@ test('Test Vector E: QTY 5, HP Rp 3.000.000 (dinamis 3%) - Cap per-item per-unit
     cost: 18000000,
     qty: 5,
     sellerDiscount: 0,
+    manualPlatformRate: 0,
     orderHandlingFee: 0
   };
   const laptopRes = computeTokopediaFees(laptopInput, defaultProfileBaru, 20000000);
