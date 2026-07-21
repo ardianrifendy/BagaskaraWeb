@@ -35,25 +35,28 @@ function CalculatorTokopediaContent() {
   const [sellerDiscount, setSellerDiscount] = useState(0);
   const [qty, setQty] = useState(1);
 
-  // Fisik Paket
-  const [weightGram, setWeightGram] = useState(1000); // Default 1.000 gram (1 kg)
+  // Fisik Paket (Default 0 agar logistik tidak terisi siluman)
+  const [weightGram, setWeightGram] = useState(0);
 
-  // Opsi Lanjutan
+  // Opsi Lanjutan terbuka secara default agar terlihat jelas oleh seller
   const [showOptions, setShowOptions] = useState(true);
   const [manualPlatformRate, setManualPlatformRate] = useState<number | null>(null);
   const [affiliateRate, setAffiliateRate] = useState<number>(0);
   const [gmvMaxDiscountRate, setGmvMaxDiscountRate] = useState<number>(0);
   const [enableRisk, setEnableRisk] = useState(false);
   const [riskyOrderPct, setRiskyOrderPct] = useState<number>(0);
-  const [logisticCost, setLogisticCost] = useState<number>(560); // Terhitung otomatis dari 1kg default
+  const [logisticCost, setLogisticCost] = useState<number>(0);
 
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
-  // Auto-hitung estimasi biaya logistik dari berat paket (bisa di-override manual oleh user)
+  // Auto-hitung estimasi biaya logistik dari berat paket jika berat > 0
   useEffect(() => {
-    // Rumus logistik standard TikTok Shop: Rp300 + (Rp260 per kg) dengan batas max Rp5.055
-    const computedLogistics = Math.min(5055, 300 + Math.ceil(weightGram / 1000) * 260);
-    setLogisticCost(computedLogistics);
+    if (weightGram > 0) {
+      const computedLogistics = Math.min(5055, 300 + Math.ceil(weightGram / 1000) * 260);
+      setLogisticCost(computedLogistics);
+    } else {
+      setLogisticCost(0);
+    }
   }, [weightGram]);
 
   // Read URL query params jika diakses via shared URL
@@ -85,10 +88,10 @@ function CalculatorTokopediaContent() {
     if (platformParam) setManualPlatformRate(parseFloat(platformParam) || null);
 
     const logistikParam = searchParams.get('log');
-    if (logistikParam) setLogisticCost(parseInt(logistikParam, 10) || 560);
+    if (logistikParam) setLogisticCost(parseInt(logistikParam, 10) || 0);
 
     const beratParam = searchParams.get('berat');
-    if (beratParam) setWeightGram(parseInt(beratParam, 10) || 1000);
+    if (beratParam) setWeightGram(parseInt(beratParam, 10) || 0);
   }, [searchParams]);
 
   // Sync state ke URL secara debounced
@@ -106,7 +109,7 @@ function CalculatorTokopediaContent() {
     if (qty > 1) params.set('qty', qty.toString());
     if (manualPlatformRate && manualPlatformRate > 0) params.set('plat', manualPlatformRate.toString());
     if (logisticCost > 0) params.set('log', logisticCost.toString());
-    if (weightGram !== 1000) params.set('berat', weightGram.toString());
+    if (weightGram > 0) params.set('berat', weightGram.toString());
 
     const queryString = params.toString();
     const newUrl = queryString ? `?${queryString}` : window.location.pathname;
@@ -250,11 +253,11 @@ function CalculatorTokopediaContent() {
                 <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Berat (Gram)</label>
                 <input
                   type="number"
-                  min="1"
+                  min="0"
                   max="100000"
                   value={weightGram || ''}
-                  onChange={(e) => setWeightGram(Math.max(1, parseInt(e.target.value, 10) || 0))}
-                  placeholder="1000"
+                  onChange={(e) => setWeightGram(Math.max(0, parseInt(e.target.value, 10) || 0))}
+                  placeholder="cth. 4700"
                   className="w-full bg-neutral-50 border border-neutral-200 text-sm font-extrabold text-neutral-850 rounded-xl px-3.5 h-[46px] focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                 />
               </div>
