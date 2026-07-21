@@ -344,13 +344,32 @@ function CalculatorTokopediaContent() {
                     <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">
                       Komisi Platform (%)
                     </label>
-                    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded select-none ${
-                      isPlatformOverridden
-                        ? 'bg-orange-50 text-orange-600 border border-orange-100'
-                        : 'bg-emerald-50 text-emerald-600 border border-emerald-100'
-                    }`}>
-                      {isPlatformOverridden ? 'Kustom (Manual)' : 'Mengikuti Kategori'}
-                    </span>
+                    <div className="flex items-center gap-1">
+                      <span className={`text-[9px] font-black px-1.5 py-0.5 rounded select-none ${
+                        isPlatformOverridden
+                          ? 'bg-orange-50 text-orange-650 border border-orange-100'
+                          : 'bg-emerald-50 text-emerald-650 border border-emerald-100'
+                      }`}>
+                        {isPlatformOverridden ? 'Kustom (Manual)' : 'Mengikuti Kategori'}
+                      </span>
+                      {isPlatformOverridden && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsPlatformOverridden(false);
+                            const cat = getCategoryBySlug(categorySlug, false) as any;
+                            const defaultRate = storeType === 'mall'
+                              ? (cat.ratePlatformMall ?? 10.0)
+                              : (cat.ratePlatformMarketplace ?? 7.75);
+                            setManualPlatformRate(defaultRate);
+                          }}
+                          className="text-[9px] font-black text-emerald-650 hover:text-emerald-750 bg-neutral-100 hover:bg-neutral-200 px-1 py-0.5 rounded border border-neutral-300 transition-all cursor-pointer"
+                          title="Kembali ke Auto"
+                        >
+                          ↺ Auto
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <input
                     type="number"
@@ -423,19 +442,39 @@ function CalculatorTokopediaContent() {
                     <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">
                       Estimasi Biaya Layanan Logistik (Pengiriman)
                     </label>
-                    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded select-none ${
-                      isLogisticOverridden
-                        ? 'bg-orange-50 text-orange-600 border border-orange-100'
-                        : typeof weightGram === 'number' && weightGram > 0
-                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
-                        : 'bg-neutral-100 text-neutral-500 border border-neutral-200'
-                    }`}>
-                      {isLogisticOverridden
-                        ? 'Kustom (Manual)'
-                        : typeof weightGram === 'number' && weightGram > 0
-                        ? 'Mengikuti Berat Paket'
-                        : 'Belum diisi'}
-                    </span>
+                    <div className="flex items-center gap-1">
+                      <span className={`text-[9px] font-black px-1.5 py-0.5 rounded select-none ${
+                        isLogisticOverridden
+                          ? 'bg-orange-50 text-orange-650 border border-orange-100'
+                          : typeof weightGram === 'number' && weightGram > 0
+                          ? 'bg-emerald-50 text-emerald-650 border border-emerald-100'
+                          : 'bg-neutral-100 text-neutral-500 border border-neutral-200'
+                      }`}>
+                        {isLogisticOverridden
+                          ? 'Kustom (Manual)'
+                          : typeof weightGram === 'number' && weightGram > 0
+                          ? 'Mengikuti Berat Paket'
+                          : 'Belum diisi'}
+                      </span>
+                      {isLogisticOverridden && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsLogisticOverridden(false);
+                            if (typeof weightGram === 'number' && weightGram > 0) {
+                              const computedLogistics = Math.min(5055, 300 + Math.ceil(weightGram / 1000) * 260);
+                              setLogisticCost(computedLogistics);
+                            } else {
+                              setLogisticCost(0);
+                            }
+                          }}
+                          className="text-[9px] font-black text-emerald-650 hover:text-emerald-750 bg-neutral-100 hover:bg-neutral-200 px-1 py-0.5 rounded border border-neutral-300 transition-all cursor-pointer"
+                          title="Kembali ke Auto"
+                        >
+                          ↺ Auto
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <MoneyInput
                     label=""
