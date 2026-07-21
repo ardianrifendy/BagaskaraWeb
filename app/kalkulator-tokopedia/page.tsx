@@ -27,9 +27,11 @@ function CalculatorTokopediaContent() {
   const [useTarifLama, setUseTarifLama] = useState(false);
   const [storeType, setStoreType] = useState<'marketplace' | 'mall'>('marketplace');
   const [categorySlug, setCategorySlug] = useState('telepon-elektronik');
-  const [cost, setCost] = useState(45000);
-  const [targetProfit, setTargetProfit] = useState(15000);
-  const [hargaJualInput, setHargaJualInput] = useState(65900);
+
+  // Definisikan default 0 agar input kosong saat pertama dibuka
+  const [cost, setCost] = useState(0);
+  const [targetProfit, setTargetProfit] = useState(0);
+  const [hargaJualInput, setHargaJualInput] = useState(0);
   const [sellerDiscount, setSellerDiscount] = useState(0);
   const [qty, setQty] = useState(1);
 
@@ -44,7 +46,7 @@ function CalculatorTokopediaContent() {
 
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
-  // Read URL query params on mount
+  // Read URL query params jika diakses via shared URL
   useEffect(() => {
     const kat = searchParams.get('kat');
     if (kat && tarifData.kategori.some((k) => k.slug === kat)) {
@@ -55,13 +57,13 @@ function CalculatorTokopediaContent() {
       setMode(m);
     }
     const modalParam = searchParams.get('modal');
-    if (modalParam) setCost(parseInt(modalParam, 10) || 45000);
+    if (modalParam) setCost(parseInt(modalParam, 10) || 0);
 
     const profitParam = searchParams.get('profit');
-    if (profitParam) setTargetProfit(parseInt(profitParam, 10) || 15000);
+    if (profitParam) setTargetProfit(parseInt(profitParam, 10) || 0);
 
     const hargaParam = searchParams.get('harga');
-    if (hargaParam) setHargaJualInput(parseInt(hargaParam, 10) || 65900);
+    if (hargaParam) setHargaJualInput(parseInt(hargaParam, 10) || 0);
 
     const qtyParam = searchParams.get('qty');
     if (qtyParam) setQty(parseInt(qtyParam, 10) || 1);
@@ -70,21 +72,23 @@ function CalculatorTokopediaContent() {
     if (q) setProductName(q);
   }, [searchParams]);
 
-  // Sync to URL with 300ms debounce
+  // Sync state ke URL secara debounced
   const updateUrl = useCallback(() => {
     const params = new URLSearchParams();
-    params.set('kat', categorySlug);
-    params.set('mode', mode);
-    params.set('modal', cost.toString());
+    if (categorySlug !== 'telepon-elektronik') params.set('kat', categorySlug);
+    if (mode !== 'reverse') params.set('mode', mode);
+    if (cost > 0) params.set('modal', cost.toString());
     if (productName) params.set('q', productName);
-    if (mode === 'reverse') {
+    if (mode === 'reverse' && targetProfit > 0) {
       params.set('profit', targetProfit.toString());
-    } else {
+    } else if (mode === 'calculate' && hargaJualInput > 0) {
       params.set('harga', hargaJualInput.toString());
     }
     if (qty > 1) params.set('qty', qty.toString());
 
-    router.replace(`?${params.toString()}`, { scroll: false });
+    const queryString = params.toString();
+    const newUrl = queryString ? `?${queryString}` : window.location.pathname;
+    router.replace(newUrl, { scroll: false });
   }, [categorySlug, mode, cost, targetProfit, hargaJualInput, qty, productName, router]);
 
   useEffect(() => {
@@ -202,19 +206,19 @@ function CalculatorTokopediaContent() {
           useTarifLama={useTarifLama}
         />
 
-        {/* Financial Inputs */}
+        {/* Financial Inputs (Kosong secara default untuk kenyamanan user) */}
         <div className="bg-white p-4 rounded-2xl border border-neutral-200 shadow-sm flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-4">
-            <MoneyInput label="Modal / HPP per unit" value={cost} onChange={setCost} />
+            <MoneyInput label="Modal / HPP per unit" value={cost} onChange={setCost} placeholder="0" />
             {mode === 'reverse' ? (
-              <MoneyInput label="Target Profit / unit" value={targetProfit} onChange={setTargetProfit} />
+              <MoneyInput label="Target Profit / unit" value={targetProfit} onChange={setTargetProfit} placeholder="0" />
             ) : (
-              <MoneyInput label="Harga Jual per unit" value={hargaJualInput} onChange={setHargaJualInput} />
+              <MoneyInput label="Harga Jual per unit" value={hargaJualInput} onChange={setHargaJualInput} placeholder="0" />
             )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <MoneyInput label="Diskon seller per unit" value={sellerDiscount} onChange={setSellerDiscount} />
+            <MoneyInput label="Diskon seller per unit" value={sellerDiscount} onChange={setSellerDiscount} placeholder="0" />
             <div className="flex flex-col gap-1 w-full">
               <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Jumlah (QTY)</label>
               <div className="flex items-center justify-between rounded-xl border border-neutral-200 px-3 py-2 bg-neutral-50 h-[46px]">
@@ -307,7 +311,7 @@ function CalculatorTokopediaContent() {
 
                 {/* Logistik */}
                 <div className="flex flex-col gap-1.5 col-span-1 md:col-span-2">
-                  <MoneyInput label="Estimasi Biaya Logistik Variabel" value={logisticCost} onChange={setLogisticCost} />
+                  <MoneyInput label="Estimasi Biaya Logistik Variabel" value={logisticCost} onChange={setLogisticCost} placeholder="0" />
                 </div>
               </div>
             )}
