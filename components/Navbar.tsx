@@ -12,8 +12,6 @@ export default function Navbar() {
 
   const isCalcActive = pathname.startsWith('/kalkulator');
   const isCekResiActive = pathname.startsWith('/cek-resi');
-  const isPredictionActive = pathname.startsWith('/prediction');
-  const isJastipActive = pathname.startsWith('/jastip');
 
   const getButtonClass = (isActive: boolean) => {
     return isActive
@@ -50,28 +48,6 @@ export default function Navbar() {
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 011-1v-4a1 1 0 011-1h2m4 4h1a1 1 0 001-1v-4a1 1 0 00-.8-.8l-2.7-2.7a1 1 0 00-.7-.5H15" />
-              </svg>
-            </Link>
-
-            {/* Tombol Prediksi Pasar */}
-            <Link
-              href="/prediction"
-              className={getButtonClass(isPredictionActive)}
-              title="Prediksi Pasar"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M7 12l3-3 3 3 4-4M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            </Link>
-
-            {/* Tombol Jastip (Box) */}
-            <Link
-              href="/jastip"
-              className={getButtonClass(isJastipActive)}
-              title="Jasa Titip (Jastip)"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
               </svg>
             </Link>
           </div>
