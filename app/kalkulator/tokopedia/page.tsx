@@ -610,23 +610,32 @@ function CalculatorTokopediaContent() {
                     <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">
                       Biaya Layanan Logistik (BLL) &amp; Fisik Paket
                     </label>
-                    <div className="flex items-center gap-1.5">
-                      <span className={`text-[9px] font-black px-1.5 py-0.5 rounded select-none ${
-                        isLogisticOverridden
-                          ? 'bg-orange-50 text-orange-600 border border-orange-100'
-                          : 'bg-emerald-50 text-emerald-600 border border-emerald-100'
-                      }`}>
-                        {isLogisticOverridden ? 'Kustom (Manual)' : 'Hitung Otomatis (BLL)'}
-                      </span>
-                      {isLogisticOverridden && (
-                        <button
-                          type="button"
-                          onClick={() => setIsLogisticOverridden(false)}
-                          className="text-[9px] font-black text-emerald-600 hover:text-emerald-750 bg-neutral-100 hover:bg-neutral-200 px-1.5 py-0.5 rounded border border-neutral-300 transition-all cursor-pointer"
-                        >
-                          ↺ Auto
-                        </button>
-                      )}
+                    <div className="flex items-center bg-neutral-100 dark:bg-zinc-800 p-0.5 rounded-lg border border-neutral-200 dark:border-zinc-700 select-none">
+                      <button
+                        type="button"
+                        onClick={() => setIsLogisticOverridden(false)}
+                        className={`px-2 py-0.5 rounded-md text-[9px] font-black cursor-pointer transition-all ${
+                          !isLogisticOverridden
+                            ? 'bg-emerald-600 text-white shadow-sm'
+                            : 'text-neutral-500 hover:text-neutral-750 dark:text-zinc-400'
+                        }`}
+                      >
+                        Hitung Otomatis (BLL)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsLogisticOverridden(true);
+                          if (logisticCost === '') setLogisticCost(0);
+                        }}
+                        className={`px-2 py-0.5 rounded-md text-[9px] font-black cursor-pointer transition-all ${
+                          isLogisticOverridden
+                            ? 'bg-orange-600 text-white shadow-sm'
+                            : 'text-neutral-500 hover:text-neutral-750 dark:text-zinc-400'
+                        }`}
+                      >
+                        Manual
+                      </button>
                     </div>
                   </div>
 
