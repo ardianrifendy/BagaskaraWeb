@@ -34,11 +34,11 @@ export default function CalculatorPage() {
   const [showOptions, setShowOptions] = useState(false);
 
   // States lokal dinamis untuk input
-  const [targetProfit, setTargetProfit] = useState<number>(30000);
-  const [cost, setCost] = useState<number>(45000);
-  const [sellerDiscount, setSellerDiscount] = useState<number>(0);
+  const [targetProfit, setTargetProfit] = useState<number | ''>(30000);
+  const [cost, setCost] = useState<number | ''>(45000);
+  const [sellerDiscount, setSellerDiscount] = useState<number | ''>(0);
   const [qty, setQty] = useState<number>(1);
-  const [priceInput, setPriceInput] = useState<number>(95000); // untuk mode Cek Profit
+  const [priceInput, setPriceInput] = useState<number | ''>(95000); // untuk mode Cek Profit
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -59,9 +59,9 @@ export default function CalculatorPage() {
     reverseResult = findMinimumPrice(
       {
         ...product,
-        cost: cost,
-        targetProfit: targetProfit,
-        sellerDiscount: sellerDiscount,
+        cost: cost === '' ? 0 : cost,
+        targetProfit: targetProfit === '' ? 0 : targetProfit,
+        sellerDiscount: sellerDiscount === '' ? 0 : sellerDiscount,
         qty: qty
       },
       profile
@@ -72,16 +72,16 @@ export default function CalculatorPage() {
     calcResult = calculateFees(
       {
         ...product,
-        cost: cost,
-        sellerDiscount: sellerDiscount,
+        cost: cost === '' ? 0 : cost,
+        sellerDiscount: sellerDiscount === '' ? 0 : sellerDiscount,
         qty: qty
       },
       profile,
-      priceInput
+      priceInput === '' ? 0 : priceInput
     );
   }
 
-  const activePriceForComparison = mode === 'reverse' ? (reverseResult?.suggestedPrice || 0) : priceInput;
+  const activePriceForComparison = mode === 'reverse' ? (reverseResult?.suggestedPrice || 0) : (priceInput === '' ? 0 : priceInput);
 
   return (
     <main className="min-h-screen bg-neutral-50 pb-24 text-neutral-850 font-sans">

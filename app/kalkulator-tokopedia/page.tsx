@@ -27,27 +27,27 @@ function CalculatorTokopediaContent() {
   const [storeType, setStoreType] = useState<StoreType>('marketplace');
   const [categorySlug, setCategorySlug] = useState('telepon-elektronik');
 
-  // Definisikan default 0 agar input bersih
-  const [cost, setCost] = useState(0);
-  const [targetProfit, setTargetProfit] = useState(0);
-  const [hargaJualInput, setHargaJualInput] = useState(0);
-  const [sellerDiscount, setSellerDiscount] = useState(0);
+  // Input finansial utama (menggunakan number | '' agar bisa dihapus bersih)
+  const [cost, setCost] = useState<number | ''>('');
+  const [targetProfit, setTargetProfit] = useState<number | ''>('');
+  const [hargaJualInput, setHargaJualInput] = useState<number | ''>('');
+  const [sellerDiscount, setSellerDiscount] = useState<number | ''>('');
   const [qty, setQty] = useState(1);
 
-  // Fisik Paket
-  const [weightGram, setWeightGram] = useState(0);
+  // Fisik Paket (Berat Gram)
+  const [weightGram, setWeightGram] = useState<number | ''>('');
 
   // Opsi Lanjutan
   const [showOptions, setShowOptions] = useState(true);
-  const [manualPlatformRate, setManualPlatformRate] = useState<number>(3.5);
+  const [manualPlatformRate, setManualPlatformRate] = useState<number | ''>(3.5);
   const [isPlatformOverridden, setIsPlatformOverridden] = useState(false);
 
-  const [affiliateRate, setAffiliateRate] = useState<number>(0);
-  const [gmvMaxDiscountRate, setGmvMaxDiscountRate] = useState<number>(0);
+  const [affiliateRate, setAffiliateRate] = useState<number | ''>('');
+  const [gmvMaxDiscountRate, setGmvMaxDiscountRate] = useState<number | ''>('');
   const [enableRisk, setEnableRisk] = useState(false);
-  const [riskyOrderPct, setRiskyOrderPct] = useState<number>(0);
+  const [riskyOrderPct, setRiskyOrderPct] = useState<number | ''>('');
   
-  const [logisticCost, setLogisticCost] = useState<number>(0);
+  const [logisticCost, setLogisticCost] = useState<number | ''>('');
   const [isLogisticOverridden, setIsLogisticOverridden] = useState(false);
 
   const [isPickerOpen, setIsPickerOpen] = useState(false);
@@ -55,7 +55,7 @@ function CalculatorTokopediaContent() {
   // Auto-hitung estimasi biaya logistik dari berat paket jika berat > 0 dan belum di-override manual
   useEffect(() => {
     if (!isLogisticOverridden) {
-      if (weightGram > 0) {
+      if (typeof weightGram === 'number' && weightGram > 0) {
         const computedLogistics = Math.min(5055, 300 + Math.ceil(weightGram / 1000) * 260);
         setLogisticCost(computedLogistics);
       } else {
@@ -90,13 +90,13 @@ function CalculatorTokopediaContent() {
       setStoreType(st);
     }
     const modalParam = searchParams.get('modal');
-    if (modalParam) setCost(parseInt(modalParam, 10) || 0);
+    if (modalParam) setCost(parseInt(modalParam, 10) || '');
 
     const profitParam = searchParams.get('profit');
-    if (profitParam) setTargetProfit(parseInt(profitParam, 10) || 0);
+    if (profitParam) setTargetProfit(parseInt(profitParam, 10) || '');
 
     const hargaParam = searchParams.get('harga');
-    if (hargaParam) setHargaJualInput(parseInt(hargaParam, 10) || 0);
+    if (hargaParam) setHargaJualInput(parseInt(hargaParam, 10) || '');
 
     const qtyParam = searchParams.get('qty');
     if (qtyParam) setQty(parseInt(qtyParam, 10) || 1);
@@ -106,18 +106,18 @@ function CalculatorTokopediaContent() {
 
     const platformParam = searchParams.get('plat');
     if (platformParam) {
-      setManualPlatformRate(parseFloat(platformParam) || 0);
+      setManualPlatformRate(parseFloat(platformParam) || '');
       setIsPlatformOverridden(true);
     }
 
     const logistikParam = searchParams.get('log');
     if (logistikParam) {
-      setLogisticCost(parseInt(logistikParam, 10) || 0);
+      setLogisticCost(parseInt(logistikParam, 10) || '');
       setIsLogisticOverridden(true);
     }
 
     const beratParam = searchParams.get('berat');
-    if (beratParam) setWeightGram(parseInt(beratParam, 10) || 0);
+    if (beratParam) setWeightGram(parseInt(beratParam, 10) || '');
   }, [searchParams]);
 
   // Sync state ke URL secara debounced
@@ -126,17 +126,21 @@ function CalculatorTokopediaContent() {
     if (categorySlug !== 'telepon-elektronik') params.set('kat', categorySlug);
     if (mode !== 'reverse') params.set('mode', mode);
     if (storeType !== 'marketplace') params.set('st', storeType);
-    if (cost > 0) params.set('modal', cost.toString());
+    if (typeof cost === 'number' && cost > 0) params.set('modal', cost.toString());
     if (productName) params.set('q', productName);
-    if (mode === 'reverse' && targetProfit > 0) {
+    if (mode === 'reverse' && typeof targetProfit === 'number' && targetProfit > 0) {
       params.set('profit', targetProfit.toString());
-    } else if (mode === 'calculate' && hargaJualInput > 0) {
+    } else if (mode === 'calculate' && typeof hargaJualInput === 'number' && hargaJualInput > 0) {
       params.set('harga', hargaJualInput.toString());
     }
     if (qty > 1) params.set('qty', qty.toString());
-    if (isPlatformOverridden && manualPlatformRate > 0) params.set('plat', manualPlatformRate.toString());
-    if (isLogisticOverridden && logisticCost > 0) params.set('log', logisticCost.toString());
-    if (weightGram > 0) params.set('berat', weightGram.toString());
+    if (isPlatformOverridden && typeof manualPlatformRate === 'number' && manualPlatformRate > 0) {
+      params.set('plat', manualPlatformRate.toString());
+    }
+    if (isLogisticOverridden && typeof logisticCost === 'number' && logisticCost > 0) {
+      params.set('log', logisticCost.toString());
+    }
+    if (typeof weightGram === 'number' && weightGram > 0) params.set('berat', weightGram.toString());
 
     const queryString = params.toString();
     const newUrl = queryString ? `?${queryString}` : window.location.pathname;
@@ -153,19 +157,20 @@ function CalculatorTokopediaContent() {
   const category = getCategoryBySlug(categorySlug, false) as any;
   const profile: TokopediaProfile = { storeType, useTarifLama: false };
 
-  const isInputEmpty = cost === 0 && (mode === 'reverse' ? targetProfit === 0 : hargaJualInput === 0);
+  const isInputEmpty = (cost === '' || cost === 0) && 
+    (mode === 'reverse' ? (targetProfit === '' || targetProfit === 0) : (hargaJualInput === '' || hargaJualInput === 0));
 
   const inputPayload = {
     categorySlug,
-    cost,
+    cost: cost === '' ? 0 : cost,
     qty,
-    sellerDiscount,
-    manualPlatformRate,
-    affiliateRate,
-    gmvMaxDiscountRate,
+    sellerDiscount: sellerDiscount === '' ? 0 : sellerDiscount,
+    manualPlatformRate: manualPlatformRate === '' ? 0 : manualPlatformRate,
+    affiliateRate: affiliateRate === '' ? 0 : affiliateRate,
+    gmvMaxDiscountRate: gmvMaxDiscountRate === '' ? 0 : gmvMaxDiscountRate,
     orderHandlingFee: 1250,
-    logisticCost,
-    riskyOrderPct: enableRisk ? riskyOrderPct : 0
+    logisticCost: logisticCost === '' ? 0 : logisticCost,
+    riskyOrderPct: enableRisk && typeof riskyOrderPct === 'number' ? riskyOrderPct : 0
   };
 
   let calcResult;
@@ -175,16 +180,16 @@ function CalculatorTokopediaContent() {
     reverseResult = solveReverse(
       {
         ...inputPayload,
-        targetProfit
+        targetProfit: targetProfit === '' ? 0 : targetProfit
       },
       profile
     );
     calcResult = reverseResult.breakdown;
   } else {
-    calcResult = computeTokopediaFees(inputPayload, profile, hargaJualInput);
+    calcResult = computeTokopediaFees(inputPayload, profile, hargaJualInput === '' ? 0 : hargaJualInput);
   }
 
-  const currentHargaUnit = mode === 'reverse' ? (reverseResult?.suggestedPrice || 0) : hargaJualInput;
+  const currentHargaUnit = mode === 'reverse' ? (reverseResult?.suggestedPrice || 0) : (hargaJualInput === '' ? 0 : hargaJualInput);
   const isCapped = calcResult.items.some((i) => i.capped);
 
   return (
@@ -266,7 +271,7 @@ function CalculatorTokopediaContent() {
           storeType={storeType}
         />
 
-        {/* Financial Inputs (Kosong secara default untuk kenyamanan user) */}
+        {/* Financial Inputs */}
         <div className="bg-white p-4 rounded-2xl border border-neutral-200 shadow-sm flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-4">
             <MoneyInput label="Modal / HPP per unit" value={cost} onChange={setCost} placeholder="0" />
@@ -288,8 +293,11 @@ function CalculatorTokopediaContent() {
                   type="number"
                   min="0"
                   max="100000"
-                  value={weightGram || ''}
-                  onChange={(e) => setWeightGram(Math.max(0, parseInt(e.target.value, 10) || 0))}
+                  value={weightGram}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setWeightGram(val === '' ? '' : Math.max(0, parseInt(val, 10) || 0));
+                  }}
                   placeholder="cth. 4700"
                   className="w-full bg-neutral-50 border border-neutral-200 text-sm font-extrabold text-neutral-850 rounded-xl px-3.5 h-[46px] focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                 />
@@ -349,10 +357,10 @@ function CalculatorTokopediaContent() {
                     min="0"
                     max="30"
                     step="0.01"
-                    value={manualPlatformRate || ''}
+                    value={manualPlatformRate}
                     onChange={(e) => {
-                      const val = e.target.value === '' ? 0 : parseFloat(e.target.value);
-                      setManualPlatformRate(val);
+                      const val = e.target.value;
+                      setManualPlatformRate(val === '' ? '' : Math.max(0, parseFloat(val) || 0));
                       setIsPlatformOverridden(true);
                     }}
                     placeholder="0"
@@ -369,7 +377,10 @@ function CalculatorTokopediaContent() {
                     max="50"
                     step="0.5"
                     value={affiliateRate}
-                    onChange={(e) => setAffiliateRate(Math.max(0, parseFloat(e.target.value) || 0))}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setAffiliateRate(val === '' ? '' : Math.max(0, parseFloat(val) || 0));
+                    }}
                     placeholder="0"
                     className="w-full bg-neutral-50 border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all h-[40px]"
                   />
@@ -384,8 +395,11 @@ function CalculatorTokopediaContent() {
                     max="20"
                     step="0.1"
                     value={gmvMaxDiscountRate}
-                    onChange={(e) => setGmvMaxDiscountRate(Math.max(0, parseFloat(e.target.value) || 0))}
-                    placeholder="0 (max 20%)"
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setGmvMaxDiscountRate(val === '' ? '' : Math.max(0, parseFloat(val) || 0));
+                    }}
+                    placeholder="0"
                     className="w-full bg-neutral-50 border border-neutral-200 text-xs font-bold text-neutral-850 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all h-[40px]"
                   />
                 </div>
@@ -412,13 +426,13 @@ function CalculatorTokopediaContent() {
                     <span className={`text-[9px] font-black px-1.5 py-0.5 rounded select-none ${
                       isLogisticOverridden
                         ? 'bg-orange-50 text-orange-600 border border-orange-100'
-                        : weightGram > 0
+                        : typeof weightGram === 'number' && weightGram > 0
                         ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
                         : 'bg-neutral-100 text-neutral-500 border border-neutral-200'
                     }`}>
                       {isLogisticOverridden
                         ? 'Kustom (Manual)'
-                        : weightGram > 0
+                        : typeof weightGram === 'number' && weightGram > 0
                         ? 'Mengikuti Berat Paket'
                         : 'Belum diisi'}
                     </span>
