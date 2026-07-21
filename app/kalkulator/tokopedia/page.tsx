@@ -542,17 +542,6 @@ function CalculatorTokopediaContent() {
             )}
           </div>
         </div>
-
-        {/* Link Silang ke Shopee */}
-        <div className="bg-orange-50/60 border border-orange-100 p-3.5 rounded-2xl flex items-center justify-between text-xs">
-          <span className="font-extrabold text-orange-900">Jualan di Shopee juga? Hitung komisi Shopee Anda:</span>
-          <Link
-            href="/kalkulator/shopee"
-            className="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white font-black text-xs rounded-xl shadow-sm transition-all"
-          >
-            Kalkulator Shopee ➔
-          </Link>
-        </div>
       </div>
 
       {/* Right Column (Sticky Result Panel) */}
@@ -574,6 +563,19 @@ function CalculatorTokopediaContent() {
           categoryName={category.nama}
           isEmpty={isInputEmpty}
         />
+
+        {/* Link Silang ke Shopee */}
+        <div className="bg-orange-50/60 dark:bg-orange-950/10 border border-orange-100 dark:border-orange-900/30 p-4 rounded-2xl flex flex-col gap-2.5 text-xs shadow-sm mt-2">
+          <span className="font-black text-orange-900 dark:text-orange-450 uppercase tracking-widest text-[11px] text-center w-full block select-none">
+            Jualan di Shopee juga?
+          </span>
+          <Link
+            href="/kalkulator/shopee"
+            className="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-black text-xs rounded-xl shadow-sm transition-all cursor-pointer text-center"
+          >
+            Hitung Harga Jual di Shopee ➔
+          </Link>
+        </div>
       </div>
 
       {/* Category Sheet Dialog */}
@@ -598,6 +600,13 @@ export default function TokopediaCalculatorPage() {
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Logo />
           <div className="flex items-center gap-2">
+            <Link
+              href="/kalkulator/shopee"
+              className="px-3 h-10 rounded-xl border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-neutral-50 dark:hover:bg-zinc-750 text-neutral-650 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 transition-all shadow-sm shadow-neutral-100 dark:shadow-none flex items-center justify-center cursor-pointer font-extrabold text-xs gap-1.5"
+              title="Pindah ke Kalkulator Shopee"
+            >
+              🛍️ Shopee
+            </Link>
             <button
               type="button"
               onClick={() => setIsTutorialOpen(true)}

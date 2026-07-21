@@ -323,17 +323,6 @@ export default function CalculatorPage() {
 
           {/* Program Toggles */}
           <ProgramToggles profile={profile} onChange={setProfile} onCompareClick={() => setIsComparisonOpen(true)} />
-
-          {/* Link Silang ke Tokopedia */}
-          <div className="bg-emerald-50/60 border border-emerald-100 p-3.5 rounded-2xl flex items-center justify-between text-xs mt-4">
-            <span className="font-extrabold text-emerald-900">Jualan di Tokopedia &amp; TikTok juga? Hitung komisi Anda:</span>
-            <Link
-              href="/kalkulator/tokopedia"
-              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-sm transition-all cursor-pointer"
-            >
-              Kalkulator Tokopedia ➔
-            </Link>
-          </div>
         </div>
 
         {/* Right Column (Sticky Result Panel) */}
@@ -352,6 +341,19 @@ export default function CalculatorPage() {
             rawPrice={reverseResult?.rawPrice}
             mode={mode}
           />
+
+          {/* Link Silang ke Tokopedia */}
+          <div className="bg-emerald-50/60 dark:bg-emerald-950/10 border border-emerald-100 dark:border-emerald-900/30 p-4 rounded-2xl flex flex-col gap-2.5 text-xs shadow-sm mt-2">
+            <span className="font-black text-emerald-900 dark:text-emerald-450 uppercase tracking-widest text-[11px] text-center w-full block select-none">
+              Jualan di Tokopedia &amp; TikTok juga?
+            </span>
+            <Link
+              href="/kalkulator/tokopedia"
+              className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-sm transition-all cursor-pointer text-center"
+            >
+              Hitung Harga Jual di Tokopedia &amp; TikTok ➔
+            </Link>
+          </div>
         </div>
       </div>
 
