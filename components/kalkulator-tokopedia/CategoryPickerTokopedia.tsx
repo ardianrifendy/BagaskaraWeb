@@ -47,7 +47,7 @@ export const CategoryPickerTokopedia: React.FC<CategoryPickerTokopediaProps> = (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="absolute inset-0" onClick={onClose} />
       <div className="relative w-full max-w-lg bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col max-h-[85vh] sm:max-h-[75vh] transition-all duration-300 border border-neutral-100/80 overflow-hidden">
-        {/* Header (Identik Shopee CategorySheet) */}
+        {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-150">
           <div>
             <h3 className="text-xs font-black tracking-wider text-neutral-800 uppercase select-none">Pilih Kategori Produk</h3>
@@ -100,7 +100,7 @@ export const CategoryPickerTokopedia: React.FC<CategoryPickerTokopediaProps> = (
           </div>
         </div>
 
-        {/* List Kategori (Identik Shopee Style) */}
+        {/* List Kategori */}
         <div className="overflow-y-auto p-4 flex flex-col gap-2 bg-neutral-50/50 flex-1">
           {filtered.length > 0 ? (
             filtered.map((cat) => {
@@ -121,7 +121,7 @@ export const CategoryPickerTokopedia: React.FC<CategoryPickerTokopediaProps> = (
                       : 'border-neutral-200 hover:border-neutral-300 text-neutral-700 bg-white'
                   }`}
                 >
-                  <div>
+                  <div className="flex-1 pr-2">
                     <div className="text-sm font-extrabold tracking-tight text-neutral-800 flex items-center gap-2">
                       <span>{cat.nama}</span>
                       {isLowest && (
@@ -130,16 +130,24 @@ export const CategoryPickerTokopedia: React.FC<CategoryPickerTokopediaProps> = (
                         </span>
                       )}
                     </div>
-                    <div className="text-[10px] text-neutral-400 mt-1 font-extrabold flex items-center gap-1.5 flex-wrap">
-                      <span className="bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider font-extrabold border border-neutral-200">
+                    
+                    {/* Tampilkan Tarif Komisi Dinamis & Tarif Komisi Platform PM/OS */}
+                    <div className="text-[10px] text-neutral-400 mt-2.5 font-extrabold flex flex-wrap items-center gap-1.5">
+                      <span className="bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider font-extrabold border border-neutral-200 select-none">
                         Dinamis: {cat.rateDinamis.toString().replace('.', ',')}%
                       </span>
                       <span>·</span>
-                      <span>Cap Max: Rp 650.000 / item</span>
+                      <span className="bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider font-extrabold border border-emerald-100/80 select-none">
+                        Plat PM: {(cat.ratePlatformMarketplace || 7.5).toString().replace('.', ',')}%
+                      </span>
+                      <span>·</span>
+                      <span className="bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider font-extrabold border border-indigo-100 select-none">
+                        Plat OS: {(cat.ratePlatformMall || 10).toString().replace('.', ',')}%
+                      </span>
                     </div>
                   </div>
                   {isSelected && (
-                    <span className="h-5 w-5 bg-emerald-600 text-white rounded-full flex items-center justify-center text-xs font-black shadow-sm">
+                    <span className="h-5 w-5 bg-emerald-600 text-white rounded-full flex items-center justify-center text-xs font-black shadow-sm flex-shrink-0">
                       ✓
                     </span>
                   )}
