@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { detectTokopediaCategory } from '../../lib/kalkulator-tokopedia/detect';
 import { getCategoryBySlug } from '../../lib/kalkulator-tokopedia/fees';
 
@@ -23,6 +23,16 @@ export const ProductInputTokopedia: React.FC<ProductInputTokopediaProps> = ({
   const activeCategory = getCategoryBySlug(categorySlug, useTarifLama);
   const activeRate = activeCategory.rateDinamis;
 
+  // Auto-select category teratas saat user mengetik nama/brand baru
+  useEffect(() => {
+    if (name && candidates.length > 0) {
+      const topMatch = candidates[0].slug;
+      if (topMatch !== categorySlug) {
+        onCategoryChange(topMatch);
+      }
+    }
+  }, [name]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <div className="flex flex-col gap-3.5 bg-white p-4 rounded-2xl border border-neutral-200 shadow-sm">
       {/* Search Input Bar (Identik dengan Shopee) */}
@@ -37,13 +47,13 @@ export const ProductInputTokopedia: React.FC<ProductInputTokopediaProps> = ({
         />
       </div>
 
-      {/* Saran Kategori otomatis dari ketikan nama */}
+      {/* Saran Kategori otomatis dari ketikan nama/brand */}
       {name && (
         <div className="flex flex-col gap-1.5 border-t border-neutral-100 pt-3">
           <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Saran Kategori (Tap untuk pilih):</span>
           {candidates.length > 0 ? (
             <div className="flex flex-wrap gap-2">
-              {candidates.slice(0, 3).map((candidate) => {
+              {candidates.slice(0, 4).map((candidate) => {
                 const isActive = candidate.slug === categorySlug;
                 return (
                   <button
