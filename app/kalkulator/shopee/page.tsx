@@ -26,6 +26,7 @@ export default function CalculatorPage() {
   const [isCategorySheetOpen, setIsCategorySheetOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isComparisonOpen, setIsComparisonOpen] = useState(false);
+  const [isTutorialOpen, setIsTutorialOpen] = useState<boolean | undefined>(undefined);
   
   // Custom dropdown state
   const [isSizeDropdownOpen, setIsSizeDropdownOpen] = useState(false);
@@ -97,6 +98,14 @@ export default function CalculatorPage() {
             >
               🏠
             </Link>
+            <button
+              type="button"
+              onClick={() => setIsTutorialOpen(true)}
+              className="px-3 py-2 rounded-xl border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-neutral-50 dark:hover:bg-zinc-750 text-neutral-600 dark:text-zinc-300 hover:text-orange-600 dark:hover:text-orange-400 transition-all shadow-sm shadow-neutral-100 dark:shadow-none flex items-center justify-center cursor-pointer font-bold text-xs gap-1"
+              title="Cara Penggunaan"
+            >
+              ❓ Cara Pakai
+            </button>
             <button
               type="button"
               onClick={() => setIsSettingsOpen(true)}
@@ -438,6 +447,8 @@ export default function CalculatorPage() {
         storageKey="bagaskara-tutorial-kalkulator"
         badge="Tutorial Kalkulator"
         title="Cara Pakai Kalkulator Shopee"
+        isOpen={isTutorialOpen}
+        onClose={() => setIsTutorialOpen(false)}
         steps={[
           {
             icon: "⚖️",

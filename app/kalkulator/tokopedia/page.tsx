@@ -17,6 +17,7 @@ import { ResultPanelTokopedia } from '@/components/kalkulator-tokopedia/ResultPa
 import { TokopediaTarifTable } from '@/components/kalkulator-tokopedia/TokopediaTarifTable';
 import { TokopediaFaq } from '@/components/kalkulator-tokopedia/TokopediaFaq';
 import { MoneyInput } from '@/components/kalkulator/MoneyInput';
+import TutorialModal from '@/components/TutorialModal';
 
 function CalculatorTokopediaContent() {
   const searchParams = useSearchParams();
@@ -588,6 +589,8 @@ function CalculatorTokopediaContent() {
 }
 
 export default function TokopediaCalculatorPage() {
+  const [isTutorialOpen, setIsTutorialOpen] = useState<boolean | undefined>(undefined);
+
   return (
     <main className="min-h-screen bg-neutral-50 pb-24 text-neutral-850 font-sans">
       {/* Header */}
@@ -595,6 +598,14 @@ export default function TokopediaCalculatorPage() {
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Logo />
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsTutorialOpen(true)}
+              className="px-3 py-2 rounded-xl border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-neutral-50 dark:hover:bg-zinc-750 text-neutral-600 dark:text-zinc-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all shadow-sm shadow-neutral-100 dark:shadow-none flex items-center justify-center cursor-pointer font-bold text-xs gap-1"
+              title="Cara Penggunaan"
+            >
+              ❓ Cara Pakai
+            </button>
             <Link
               href="/"
               className="p-2.5 rounded-xl border border-neutral-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-neutral-50 text-neutral-600 dark:text-zinc-300 transition-all flex items-center justify-center shadow-sm"
@@ -630,10 +641,120 @@ export default function TokopediaCalculatorPage() {
         <TokopediaFaq />
       </div>
 
-      {/* Footer */}
-      <footer className="w-full bg-white dark:bg-zinc-900 border-t border-neutral-100 dark:border-zinc-800 py-8 px-4 mt-16 text-center text-[10px] text-neutral-400">
-        &copy; {new Date().getFullYear()} {siteConfig.name}. Tokopedia &amp; TikTok Shop Calculator v1.0.
+      {/* Footer Section */}
+      <footer className="w-full bg-white dark:bg-zinc-900 border-t border-neutral-100 dark:border-zinc-800 py-10 px-4 mt-16 transition-colors duration-200">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+          
+          {/* Identity */}
+          <div className="flex flex-col gap-2 text-left">
+            <Logo />
+            <p className="text-xs text-neutral-500 dark:text-zinc-400 max-w-xs mt-1">
+              Katalog HP terpercaya di Gresik. Transaksi aman, transparan, dan jaminan barang berkualitas.
+            </p>
+          </div>
+
+          {/* Location & Address */}
+          <div className="flex flex-col gap-2 text-left">
+            <span className="text-xs font-bold text-neutral-400 dark:text-zinc-500 uppercase tracking-wider">Lokasi Toko</span>
+            <p className="text-xs text-neutral-600 dark:text-zinc-300 leading-relaxed max-w-xs">
+              {siteConfig.address}
+            </p>
+            <a
+              href={siteConfig.googleMapsLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs font-bold text-orange-600 dark:text-orange-400 hover:underline mt-1 cursor-pointer"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              Buka di Google Maps
+            </a>
+          </div>
+
+          {/* Contact & Marketplaces */}
+          <div className="flex flex-col gap-2 text-left">
+            <span className="text-xs font-bold text-neutral-400 dark:text-zinc-500 uppercase tracking-wider">Hubungi / Toko Online</span>
+            <div className="flex flex-col gap-2 mt-1">
+              <div className="flex flex-col gap-1.5">
+                <span className="text-xs font-semibold text-neutral-500 dark:text-zinc-400">WhatsApp Admin:</span>
+                <a
+                  href={`https://wa.me/${siteConfig.whatsappNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-neutral-800 dark:text-zinc-200 hover:text-orange-600 dark:hover:text-orange-400 cursor-pointer"
+                >
+                  CS 1: +62 895-1367-9939
+                </a>
+                <a
+                  href={`https://wa.me/${siteConfig.whatsappNumber2}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-neutral-800 dark:text-zinc-200 hover:text-orange-600 dark:hover:text-orange-400 cursor-pointer"
+                >
+                  CS 2: +62 81-959-77777-0
+                </a>
+              </div>
+              <div className="flex gap-3 items-center mt-1">
+                <a
+                  href={siteConfig.marketplaceLinks.shopee}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-bold text-orange-600 dark:text-orange-500 hover:underline"
+                >
+                  Shopee
+                </a>
+                <a
+                  href={siteConfig.marketplaceLinks.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-bold text-pink-600 dark:text-pink-400 hover:underline"
+                >
+                  Instagram
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div className="max-w-6xl mx-auto border-t border-neutral-100 dark:border-zinc-800 mt-8 pt-6 text-center text-[10px] text-neutral-400 dark:text-zinc-500 font-medium">
+          &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
+        </div>
       </footer>
+
+      {/* Render Welcome Tutorial Modal on first visit */}
+      <TutorialModal
+        storageKey="bagaskara-tutorial-tokopedia"
+        badge="Tutorial Kalkulator"
+        title="Cara Pakai Kalkulator Tokopedia &amp; TikTok"
+        theme="emerald"
+        isOpen={isTutorialOpen}
+        onClose={() => setIsTutorialOpen(false)}
+        steps={[
+          {
+            icon: "⚖️",
+            title: "Pilih Mode Perhitungan",
+            description: "Mode 'Cari Harga Jual' mencari harga optimum untuk target profit tertentu. Mode 'Cek Profit' menghitung laba bersih dari harga jual Anda."
+          },
+          {
+            icon: "🏷️",
+            title: "Ketik Nama / Pilih Kategori",
+            description: "Ketik nama barang Anda untuk mendapatkan saran kategori otomatis, atau klik 'Ubah' untuk memilih dari 30 kategori tarif resmi Tokopedia & TikTok Shop."
+          },
+          {
+            icon: "⚙️",
+            title: "Sesuaikan Opsi Lanjutan",
+            description: "Gunakan menu Opsi Lanjutan untuk mengatur Komisi Platform kustom, Komisi Affiliate, Diskon GMV Max, Berat Paket, dan Estimasi Biaya Logistik Pengiriman."
+          },
+          {
+            icon: "📊",
+            title: "Salin &amp; Bagikan Hasil",
+            description: "Klik tombol 'Salin Hasil' di panel kanan untuk menyalin rincian potongan biaya admin dan net profit bersih Anda ke papan klip dalam format teks rapi beserta link tautan."
+          }
+        ]}
+      />
     </main>
   );
 }
