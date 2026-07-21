@@ -1,0 +1,226 @@
+{
+  "categories": [
+    {
+      "slug": "telepon-elektronik",
+      "keywords": [
+        "hp", "handphone", "smartphone", "ponsel", "iphone", "android", "samsung", "xiaomi", "oppo", "vivo",
+        "realme", "infinix", "tecno", "huawei", "asus rog", "nubia", "zte", "google pixel", "sony xperia",
+        "ipad", "tab", "galaxy tab", "mi pad", "tws", "airpods", "earphone", "headset", "charger", "kabel data",
+        "powerbank", "anker", "baseus", "ugreen", "tempered glass", "casing hp", "softcase", "hardcase",
+        "charger fast charging", "hydrogel", "case hp", "adaptor hp", "power bank"
+      ]
+    },
+    {
+      "slug": "komputer-peralatan-kantor",
+      "keywords": [
+        "laptop", "pc", "komputer", "desktop", "monitor", "macbook", "imac", "asus zenbook", "lenovo thinkpad",
+        "acer swift", "hp pavilion", "dell", "msi", "axioo", "advan", "zyrex", "intel", "amd ryzen", "nvidia rtx",
+        "gtx", "printer", "epson", "canon", "hp printer", "keyboard", "mouse", "logitech", "razer", "rexus",
+        "fantech", "ssd", "harddisk", "flashdisk", "sandisk", "router", "tp-link", "modem", "webcam", "proyektor"
+      ]
+    },
+    {
+      "slug": "aksesoris-perhiasan-turunannya",
+      "keywords": [
+        "kalung", "cincin", "gelang", "anting", "perhiasan", "mutiara", "emas", "perak", "liontin",
+        "emas antam", "ubs", "tiaria", "frank & co", "semar nusantara", "cincin kawin", "gelang emas"
+      ]
+    },
+    {
+      "slug": "produk-virtual",
+      "keywords": [
+        "pulsa", "kuota", "paket data", "token pln", "topup", "voucher game", "mobile legends", "diamond ml",
+        "valorant", "free fire", "roblox", "steam wallet", "spotify", "netflix", "vidio", "youtube premium"
+      ]
+    },
+    {
+      "slug": "pemesanan-voucher",
+      "keywords": [
+        "voucher makan", "voucher resto", "map voucher", "hotel", "tiket pesawat", "tiket kereta", "klook",
+        "traveloka", "agoda", "tikettok"
+      ]
+    },
+    {
+      "slug": "peralatan-rumah-tangga",
+      "keywords": [
+        "kulkas", "mesin cuci", "ac", "air conditioner", "kipas angin", "dispenser", "tv", "smart tv",
+        "android tv", "sharp", "polytron", "lg", "samsung tv", "panasonic", "toshiba", "miyako", "cosmo",
+        "aqua", "coocaa", "tcl", "vacuum cleaner", "air purifier", "strika", "setrika"
+      ]
+    },
+    {
+      "slug": "makanan-minuman",
+      "keywords": [
+        "snack", "kopi", "teh", "biskuit", "frozen food", "makanan", "minuman", "beras", "minyak goreng",
+        "cokelat", "mie instan", "indomie", "samyang", "kapal api", "nescafe", "ultra milk", "hydro coco",
+        "silverqueen", "oreo", "nutrijell", "susu", "sirup", "keju", "sosis", "nugget"
+      ]
+    },
+    {
+      "slug": "kesehatan",
+      "keywords": [
+        "masker", "vitamin", "obat", "suplemen", "tensimeter", "medis", "oximeter", "termometer", "blackmores",
+        "enervon c", "cdr", "sangobion", "betadine", "dettol", "handsanitizer", "minyak kayu putih", "cap lang",
+        "panadol", "bodrex", "stimuno", "tolak angin"
+      ]
+    },
+    {
+      "slug": "olahraga-aktivitas-luar-ruangan",
+      "keywords": [
+        "sepeda", "matras yoga", "jersey", "tenda", "raket", "bola", "dumbbell", "treadmill", "polygon",
+        "united", "element", "yonex", "li-ning", "mikasa", "specs", "ortuseight", "decathlon", "eiger",
+        "consina", "naturehike", "kacamata renang", "kacamata gowes"
+      ]
+    },
+    {
+      "slug": "furnitur",
+      "keywords": [
+        "meja", "kursi", "lemari", "kasur", "sofa", "rak", "springbed", "buffet", "ikea", "olympic",
+        "informa", "zinus", "meja kerja", "kursi kerja", "meja makan", "kursi gaming"
+      ]
+    },
+    {
+      "slug": "perkakas-perangkat-keras",
+      "keywords": [
+        "bor", "obeng", "tang", "palu", "meteran", "tangga", "mesin las", "gerinda", "bosch", "makita",
+        "tekiro", "krisbow", "kenmaster", "solder", "kunci pas", "pompa air"
+      ]
+    },
+    {
+      "slug": "kecantikan-perawatan-pribadi",
+      "keywords": [
+        "skincare", "serum", "lipstik", "parfum", "shampo", "sabun", "moisturizer", "sunscreen", "somethinc",
+        "skintific", "wardah", "make over", "avoskin", "azarine", "garnier", "l'oreal", "nivea", "vaseline",
+        "maybelline", "kahf", "ms glow", "hnm", "toner", "micellar water", "cushion", "eyeliner", "mascara"
+      ]
+    },
+    {
+      "slug": "bayi-ibu-hamil",
+      "keywords": [
+        "popok", "pampers", "susu bayi", "baju bayi", "stroller", "empeng", "botol susu", "gendongan",
+        "sweety", "merries", "mamypoko", "chil kid", "pediasure", "pigeon", "baby safe", "cussons", "baby oil"
+      ]
+    },
+    {
+      "slug": "otomotif-sepeda-motor",
+      "keywords": [
+        "oli", "helm", "ban", "aki", "knalpot", "aksesoris mobil", "aksesoris motor", "spion", "wiper",
+        "intercom", "shell", "motul", "yamalube", "fdr", "irc", "maxxis", "kyt", "nhk", "ink", "rcb", "ahm",
+        "dashcam", "cover mobil", "karpet mobil"
+      ]
+    },
+    {
+      "slug": "perbaikan-rumah",
+      "keywords": [
+        "cat", "kuas", "kran", "keramik", "lampu", "saklar", "stopkontak", "pipa", "bohlam", "dulux",
+        "avian", "nippon paint", "toto", "onda", "philips", "lampu led", "shower"
+      ]
+    },
+    {
+      "slug": "aksesoris-fesyen",
+      "keywords": [
+        "kacamata", "topi", "ikat pinggang", "dompet", "jam tangan", "syal", "sabuk", "casio", "g-shock",
+        "fossil", "daniel wellington", "ray-ban", "jam pria", "jam wanita", "dompet pria", "dompet wanita"
+      ]
+    },
+    {
+      "slug": "busana-anak-anak",
+      "keywords": [
+        "baju anak", "kaos anak", "celana anak", "gaun anak", "jaket anak", "bohopanna", "velvet junior",
+        "libby", "pyjamas anak", "setelan anak"
+      ]
+    },
+    {
+      "slug": "perlengkapan-rumah-tangga",
+      "keywords": [
+        "sapu", "pel", "tempat sampah", "rak piring", "gantungan baju", "jemuran", "lion star",
+        "locknlock", "tupperware", "kotak makan", "botol minum", "tumbler", "timbangan dapur"
+      ]
+    },
+    {
+      "slug": "perlengkapan-hewan-peliharaan",
+      "keywords": [
+        "makanan kucing", "cat food", "dog food", "kandang", "pasir kucing", "aquarium", "whiskas",
+        "royal canin", "me-o", "bolt", "pedigree", "snack kucing", "shampo kucing"
+      ]
+    },
+    {
+      "slug": "mainan-hobi",
+      "keywords": [
+        "lego", "gundam", "hot wheels", "boneka", "puzzle", "kartu", "board game", "diecast", "rubik",
+        "bandai", "nerf", "barbie", "pop mart", "labubu", "tamiya", "remote control", "rc car"
+      ]
+    },
+    {
+      "slug": "peralatan-dapur",
+      "keywords": [
+        "wajan", "panci", "pisau dapur", "piring", "gelas", "teflon", "air fryer", "sutil", "oxone",
+        "maxim", "stein cookware", "cosmos", "philips airfryer", "blender dapur", "oven", "rice cooker"
+      ]
+    },
+    {
+      "slug": "pakaian-pria-pakaian-dalam",
+      "keywords": [
+        "kaos pria", "kemeja pria", "celana pria", "boxer", "jaket pria", "hoodie", "sweater", "uniqlo",
+        "erigo", "roughneck", "screamous", "h&m", "zara", "nevada", "celana jeans pria", "kaos polos"
+      ]
+    },
+    {
+      "slug": "koper-tas",
+      "keywords": [
+        "koper", "ransel", "backpack", "tas selempang", "totebag", "tas wanita", "tas pria", "waistbag",
+        "eiger", "exsport", "president", "samsonite", "torch", "les catino", "charles & keith", "tas laptop"
+      ]
+    },
+    {
+      "slug": "sepatu",
+      "keywords": [
+        "sepatu", "sneakers", "sandal", "pantofel", "heels", "sepatu wanita", "sepatu pria", "boots",
+        "nike", "adidas", "puma", "converse", "vans", "new balance", "ventela", "compass", "aerostreet", "bata",
+        "crocs", "sepatu lari", "sepatu kerja"
+      ]
+    },
+    {
+      "slug": "pakaian-wanita-pakaian-dalam",
+      "keywords": [
+        "daster", "baju wanita", "dress", "tunik", "blouse", "bra", "celana wanita", "kulot", "rok",
+        "uniqlo", "executive", "mango", "cotton on", "this is april", "lingerie", "kaos wanita", "outer wanita"
+      ]
+    },
+    {
+      "slug": "tekstil-perabot-rumah-tangga",
+      "keywords": [
+        "sprei", "bedcover", "selimut", "handuk", "gorden", "bantal", "karpet", "guling", "kintakun",
+        "lady rose", "my love", "terry palmer", "bantal leher", "keset"
+      ]
+    },
+    {
+      "slug": "buku-majalah-audio",
+      "keywords": [
+        "buku", "novel", "komik", "kamus", "cd", "piringan hitam", "majalah", "gramedia", "mizan",
+        "erlangga", "buku pelajaran", "buku resep"
+      ]
+    },
+    {
+      "slug": "barang-koleksi",
+      "keywords": [
+        "perangko", "koin", "barang antik", "photocard", "action figure", "pc kpop", "funko pop",
+        "koleksi anime", "album kpop"
+      ]
+    },
+    {
+      "slug": "busana-muslim",
+      "keywords": [
+        "hijab", "jilbab", "mukena", "gamis", "baju koko", "sarung", "pashmina", "khimar", "abaya",
+        "rabbani", "zoya", "elzatta", "buttonscarves", "inara", "shafira", "atlas", "gajah duduk", "ciput"
+      ]
+    },
+    {
+      "slug": "peralatan-perlengkapan-kantor",
+      "keywords": [
+        "kertas a4", "pulpen", "pensil", "binder", "map", "amplop", "cutter", "kalkulator", "stapler",
+        "paperone", "joyko", "kenko", "pilot", "faber-castell", "snowman", "spidol", "buku tulis"
+      ]
+    }
+  ]
+}

@@ -13,19 +13,34 @@ interface TutorialModalProps {
   steps: TutorialStep[];
   title: string;
   badge: string;
+  theme?: 'orange' | 'emerald';
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-export default function TutorialModal({ storageKey, steps, title, badge }: TutorialModalProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function TutorialModal({
+  storageKey,
+  steps,
+  title,
+  badge,
+  theme = 'orange',
+  isOpen: controlledIsOpen,
+  onClose: controlledOnClose
+}: TutorialModalProps) {
+  const [localIsOpen, setLocalIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
 
   useEffect(() => {
-    const hasSeen = localStorage.getItem(storageKey);
-    if (!hasSeen) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsOpen(true);
+    if (controlledIsOpen === undefined) {
+      const hasSeen = localStorage.getItem(storageKey);
+      if (!hasSeen) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setLocalIsOpen(true);
+      }
     }
-  }, [storageKey]);
+  }, [storageKey, controlledIsOpen]);
+
+  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : localIsOpen;
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
@@ -43,12 +58,32 @@ export default function TutorialModal({ storageKey, steps, title, badge }: Tutor
 
   const handleClose = () => {
     localStorage.setItem(storageKey, "true");
-    setIsOpen(false);
+    if (controlledOnClose) {
+      controlledOnClose();
+    } else {
+      setLocalIsOpen(false);
+    }
+    setCurrentStep(0);
   };
 
   if (!isOpen) return null;
 
   const step = steps[currentStep];
+  const isEmerald = theme === 'emerald';
+
+  const badgeColor = isEmerald
+    ? "bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400"
+    : "bg-orange-100 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400";
+
+  const iconBorderColor = isEmerald
+    ? "bg-emerald-50 dark:bg-zinc-900 border border-emerald-100 dark:border-zinc-800"
+    : "bg-orange-50 dark:bg-zinc-900 border border-orange-100 dark:border-zinc-800";
+
+  const activeDotColor = isEmerald ? "w-6 bg-emerald-600" : "w-6 bg-orange-600";
+
+  const submitButtonColor = isEmerald
+    ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-100"
+    : "bg-orange-600 hover:bg-orange-700 text-white shadow-orange-100";
 
   return (
     <div className="fixed inset-0 z-50 bg-black/70 dark:bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300">
@@ -67,7 +102,7 @@ export default function TutorialModal({ storageKey, steps, title, badge }: Tutor
 
         {/* Header */}
         <div className="flex flex-col items-center text-center gap-1.5 mt-2 select-none">
-          <span className="text-[9px] bg-orange-100 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 px-2 py-0.5 rounded-md font-black uppercase tracking-wider">
+          <span className={`text-[9px] px-2 py-0.5 rounded-md font-black uppercase tracking-wider ${badgeColor}`}>
             {badge}
           </span>
           <h2 className="text-lg font-black tracking-tight text-neutral-900 dark:text-zinc-100 mt-1.5">
@@ -77,7 +112,7 @@ export default function TutorialModal({ storageKey, steps, title, badge }: Tutor
 
         {/* Step Content */}
         <div className="flex flex-col items-center text-center gap-4 py-2 select-none min-h-[170px]">
-          <div className="w-16 h-16 rounded-2xl bg-orange-50 dark:bg-zinc-900 border border-orange-100 dark:border-zinc-800 flex items-center justify-center text-3xl shadow-sm">
+          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-sm ${iconBorderColor}`}>
             {step.icon}
           </div>
           <div className="flex flex-col gap-1.5 max-w-sm">
@@ -97,7 +132,7 @@ export default function TutorialModal({ storageKey, steps, title, badge }: Tutor
               key={i}
               className={`h-1.5 rounded-full transition-all duration-200 ${
                 i === currentStep
-                  ? "w-6 bg-orange-600"
+                  ? activeDotColor
                   : "w-1.5 bg-neutral-200 dark:bg-zinc-800"
               }`}
             />
@@ -126,7 +161,7 @@ export default function TutorialModal({ storageKey, steps, title, badge }: Tutor
           <button
             onClick={handleNext}
             type="button"
-            className="flex-1 py-3 bg-orange-600 hover:bg-orange-700 text-white font-extrabold text-xs rounded-xl shadow-md shadow-orange-100 dark:shadow-none transition-all uppercase tracking-wider cursor-pointer text-center"
+            className={`flex-1 py-3 text-white font-extrabold text-xs rounded-xl shadow-md dark:shadow-none transition-all uppercase tracking-wider cursor-pointer text-center ${submitButtonColor}`}
           >
             {currentStep === steps.length - 1 ? "Mulai Sekarang" : "Lanjut"}
           </button>
