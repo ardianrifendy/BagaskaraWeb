@@ -626,7 +626,7 @@ function CalculatorTokopediaContent() {
                         type="button"
                         onClick={() => {
                           setIsLogisticOverridden(true);
-                          if (logisticCost === '') setLogisticCost(0);
+                          setLogisticCost(0);
                         }}
                         className={`px-2 py-0.5 rounded-md text-[9px] font-black cursor-pointer transition-all ${
                           isLogisticOverridden
