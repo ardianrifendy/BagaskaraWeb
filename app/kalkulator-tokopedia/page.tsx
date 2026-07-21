@@ -35,16 +35,26 @@ function CalculatorTokopediaContent() {
   const [sellerDiscount, setSellerDiscount] = useState(0);
   const [qty, setQty] = useState(1);
 
-  // Opsi Lanjutan terbuka secara default agar Komisi Platform % & Biaya Logistik langsung terlihat
+  // Fisik Paket
+  const [weightGram, setWeightGram] = useState(1000); // Default 1.000 gram (1 kg)
+
+  // Opsi Lanjutan
   const [showOptions, setShowOptions] = useState(true);
   const [manualPlatformRate, setManualPlatformRate] = useState<number | null>(null);
   const [affiliateRate, setAffiliateRate] = useState<number>(0);
   const [gmvMaxDiscountRate, setGmvMaxDiscountRate] = useState<number>(0);
   const [enableRisk, setEnableRisk] = useState(false);
   const [riskyOrderPct, setRiskyOrderPct] = useState<number>(0);
-  const [logisticCost, setLogisticCost] = useState<number>(0);
+  const [logisticCost, setLogisticCost] = useState<number>(560); // Terhitung otomatis dari 1kg default
 
   const [isPickerOpen, setIsPickerOpen] = useState(false);
+
+  // Auto-hitung estimasi biaya logistik dari berat paket (bisa di-override manual oleh user)
+  useEffect(() => {
+    // Rumus logistik standard TikTok Shop: Rp300 + (Rp260 per kg) dengan batas max Rp5.055
+    const computedLogistics = Math.min(5055, 300 + Math.ceil(weightGram / 1000) * 260);
+    setLogisticCost(computedLogistics);
+  }, [weightGram]);
 
   // Read URL query params jika diakses via shared URL
   useEffect(() => {
@@ -75,7 +85,10 @@ function CalculatorTokopediaContent() {
     if (platformParam) setManualPlatformRate(parseFloat(platformParam) || null);
 
     const logistikParam = searchParams.get('log');
-    if (logistikParam) setLogisticCost(parseInt(logistikParam, 10) || 0);
+    if (logistikParam) setLogisticCost(parseInt(logistikParam, 10) || 560);
+
+    const beratParam = searchParams.get('berat');
+    if (beratParam) setWeightGram(parseInt(beratParam, 10) || 1000);
   }, [searchParams]);
 
   // Sync state ke URL secara debounced
@@ -93,11 +106,12 @@ function CalculatorTokopediaContent() {
     if (qty > 1) params.set('qty', qty.toString());
     if (manualPlatformRate && manualPlatformRate > 0) params.set('plat', manualPlatformRate.toString());
     if (logisticCost > 0) params.set('log', logisticCost.toString());
+    if (weightGram !== 1000) params.set('berat', weightGram.toString());
 
     const queryString = params.toString();
     const newUrl = queryString ? `?${queryString}` : window.location.pathname;
     router.replace(newUrl, { scroll: false });
-  }, [categorySlug, mode, cost, targetProfit, hargaJualInput, qty, productName, manualPlatformRate, logisticCost, router]);
+  }, [categorySlug, mode, cost, targetProfit, hargaJualInput, qty, productName, manualPlatformRate, logisticCost, weightGram, router]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -229,24 +243,41 @@ function CalculatorTokopediaContent() {
 
           <div className="grid grid-cols-2 gap-4">
             <MoneyInput label="Diskon seller per unit" value={sellerDiscount} onChange={setSellerDiscount} placeholder="0" />
-            <div className="flex flex-col gap-1 w-full">
-              <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Jumlah (QTY)</label>
-              <div className="flex items-center justify-between rounded-xl border border-neutral-200 px-3 py-2 bg-neutral-50 h-[46px]">
-                <button
-                  type="button"
-                  onClick={() => setQty(Math.max(1, qty - 1))}
-                  className="font-bold text-neutral-400 text-lg hover:text-emerald-600 h-full w-8 flex items-center justify-center transition-colors cursor-pointer"
-                >
-                  -
-                </button>
-                <span className="text-sm font-extrabold text-neutral-800">{qty}</span>
-                <button
-                  type="button"
-                  onClick={() => setQty(qty + 1)}
-                  className="font-bold text-neutral-400 text-lg hover:text-emerald-600 h-full w-8 flex items-center justify-center transition-colors cursor-pointer"
-                >
-                  +
-                </button>
+            
+            {/* Input Berat Paket & Jumlah QTY */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex flex-col gap-1 w-full">
+                <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Berat (Gram)</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="100000"
+                  value={weightGram || ''}
+                  onChange={(e) => setWeightGram(Math.max(1, parseInt(e.target.value, 10) || 0))}
+                  placeholder="1000"
+                  className="w-full bg-neutral-50 border border-neutral-200 text-sm font-extrabold text-neutral-850 rounded-xl px-3.5 h-[46px] focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1 w-full">
+                <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Jumlah (QTY)</label>
+                <div className="flex items-center justify-between rounded-xl border border-neutral-200 px-3 py-2 bg-neutral-50 h-[46px]">
+                  <button
+                    type="button"
+                    onClick={() => setQty(Math.max(1, qty - 1))}
+                    className="font-bold text-neutral-400 text-lg hover:text-emerald-600 h-full w-8 flex items-center justify-center transition-colors cursor-pointer"
+                  >
+                    -
+                  </button>
+                  <span className="text-sm font-extrabold text-neutral-800">{qty}</span>
+                  <button
+                    type="button"
+                    onClick={() => setQty(qty + 1)}
+                    className="font-bold text-neutral-400 text-lg hover:text-emerald-600 h-full w-8 flex items-center justify-center transition-colors cursor-pointer"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
             </div>
           </div>
