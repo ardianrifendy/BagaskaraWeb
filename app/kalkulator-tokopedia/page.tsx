@@ -46,19 +46,23 @@ function CalculatorTokopediaContent() {
   const [gmvMaxDiscountRate, setGmvMaxDiscountRate] = useState<number>(0);
   const [enableRisk, setEnableRisk] = useState(false);
   const [riskyOrderPct, setRiskyOrderPct] = useState<number>(0);
+  
   const [logisticCost, setLogisticCost] = useState<number>(0);
+  const [isLogisticOverridden, setIsLogisticOverridden] = useState(false);
 
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
-  // Auto-hitung estimasi biaya logistik dari berat paket jika berat > 0
+  // Auto-hitung estimasi biaya logistik dari berat paket jika berat > 0 dan belum di-override manual
   useEffect(() => {
-    if (weightGram > 0) {
-      const computedLogistics = Math.min(5055, 300 + Math.ceil(weightGram / 1000) * 260);
-      setLogisticCost(computedLogistics);
-    } else {
-      setLogisticCost(0);
+    if (!isLogisticOverridden) {
+      if (weightGram > 0) {
+        const computedLogistics = Math.min(5055, 300 + Math.ceil(weightGram / 1000) * 260);
+        setLogisticCost(computedLogistics);
+      } else {
+        setLogisticCost(0);
+      }
     }
-  }, [weightGram]);
+  }, [weightGram, isLogisticOverridden]);
 
   // Sinkronisasi otomatis komisi platform berdasarkan kategori dan tipe toko
   useEffect(() => {
@@ -107,7 +111,10 @@ function CalculatorTokopediaContent() {
     }
 
     const logistikParam = searchParams.get('log');
-    if (logistikParam) setLogisticCost(parseInt(logistikParam, 10) || 0);
+    if (logistikParam) {
+      setLogisticCost(parseInt(logistikParam, 10) || 0);
+      setIsLogisticOverridden(true);
+    }
 
     const beratParam = searchParams.get('berat');
     if (beratParam) setWeightGram(parseInt(beratParam, 10) || 0);
@@ -128,13 +135,13 @@ function CalculatorTokopediaContent() {
     }
     if (qty > 1) params.set('qty', qty.toString());
     if (isPlatformOverridden && manualPlatformRate > 0) params.set('plat', manualPlatformRate.toString());
-    if (logisticCost > 0) params.set('log', logisticCost.toString());
+    if (isLogisticOverridden && logisticCost > 0) params.set('log', logisticCost.toString());
     if (weightGram > 0) params.set('berat', weightGram.toString());
 
     const queryString = params.toString();
     const newUrl = queryString ? `?${queryString}` : window.location.pathname;
     router.replace(newUrl, { scroll: false });
-  }, [categorySlug, mode, storeType, cost, targetProfit, hargaJualInput, qty, productName, manualPlatformRate, isPlatformOverridden, logisticCost, weightGram, router]);
+  }, [categorySlug, mode, storeType, cost, targetProfit, hargaJualInput, qty, productName, manualPlatformRate, isPlatformOverridden, logisticCost, isLogisticOverridden, weightGram, router]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -331,10 +338,10 @@ function CalculatorTokopediaContent() {
                     </label>
                     <span className={`text-[9px] font-black px-1.5 py-0.5 rounded select-none ${
                       isPlatformOverridden
-                        ? 'bg-orange-50 text-orange-650 border border-orange-100'
-                        : 'bg-emerald-50 text-emerald-650 border border-emerald-100'
+                        ? 'bg-orange-50 text-orange-600 border border-orange-100'
+                        : 'bg-emerald-50 text-emerald-600 border border-emerald-100'
                     }`}>
-                      {isPlatformOverridden ? 'Kustom (Manual)' : 'Otomatis Kategori'}
+                      {isPlatformOverridden ? 'Kustom (Manual)' : 'Mengikuti Kategori'}
                     </span>
                   </div>
                   <input
@@ -384,8 +391,13 @@ function CalculatorTokopediaContent() {
                 </div>
 
                 {/* Order Handling Fee */}
-                <div className="flex flex-col gap-1.5 justify-center">
-                  <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Order Handling Fee</span>
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">Order Handling Fee</span>
+                    <span className="text-[9px] font-black px-1.5 py-0.5 rounded select-none bg-neutral-100 text-neutral-600 border border-neutral-200">
+                      Paten Tokopedia
+                    </span>
+                  </div>
                   <div className="text-xs font-bold text-neutral-700 bg-neutral-50 px-3.5 py-2.5 rounded-xl border border-neutral-200 h-[40px] flex items-center">
                     ✔ Rp 1.250 / pesanan
                   </div>
@@ -393,10 +405,31 @@ function CalculatorTokopediaContent() {
 
                 {/* Logistik */}
                 <div className="flex flex-col gap-1.5 col-span-1 md:col-span-2">
+                  <div className="flex justify-between items-center">
+                    <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">
+                      Estimasi Biaya Layanan Logistik (Pengiriman)
+                    </label>
+                    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded select-none ${
+                      isLogisticOverridden
+                        ? 'bg-orange-50 text-orange-600 border border-orange-100'
+                        : weightGram > 0
+                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
+                        : 'bg-neutral-100 text-neutral-500 border border-neutral-200'
+                    }`}>
+                      {isLogisticOverridden
+                        ? 'Kustom (Manual)'
+                        : weightGram > 0
+                        ? 'Mengikuti Berat Paket'
+                        : 'Belum diisi'}
+                    </span>
+                  </div>
                   <MoneyInput
-                    label="Estimasi Biaya Layanan Logistik (Pengiriman)"
+                    label=""
                     value={logisticCost}
-                    onChange={setLogisticCost}
+                    onChange={(val) => {
+                      setLogisticCost(val);
+                      setIsLogisticOverridden(true);
+                    }}
                     placeholder="cth. 1.520 (sesuai berat paket)"
                   />
                 </div>
