@@ -1,0 +1,220 @@
+{
+  "schemaVersion": "2026-05-18",
+  "berlakuMulai": "2026-05-18",
+  "sumberResmi": "https://seller-id.tokopedia.com/university/essay?knowledge_id=5411650459305729",
+  "capKomisiPerItem": 650000,
+  "orderHandlingFee": 1250,
+  "catatan": "Tarif default per 18 Mei 2026. Belum termasuk diskon GMV Max / Growth Xtra.",
+  "kategori": [
+    {
+      "slug": "telepon-elektronik",
+      "nama": "Telepon & Elektronik",
+      "rateDinamis": 3.0,
+      "rateDinamisLama": 4.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "komputer-peralatan-kantor",
+      "nama": "Komputer & Peralatan Kantor",
+      "rateDinamis": 4.0,
+      "rateDinamisLama": 4.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "aksesoris-perhiasan-turunannya",
+      "nama": "Aksesoris Perhiasan & Turunannya",
+      "rateDinamis": 4.5,
+      "rateDinamisLama": 4.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "produk-virtual",
+      "nama": "Produk Virtual",
+      "rateDinamis": 6.0,
+      "rateDinamisLama": 4.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "pemesanan-voucher",
+      "nama": "Pemesanan & Voucher",
+      "rateDinamis": 6.0,
+      "rateDinamisLama": 4.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "peralatan-rumah-tangga",
+      "nama": "Peralatan Rumah Tangga",
+      "rateDinamis": 6.0,
+      "rateDinamisLama": 4.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "makanan-minuman",
+      "nama": "Makanan & Minuman",
+      "rateDinamis": 6.5,
+      "rateDinamisLama": 5.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "kesehatan",
+      "nama": "Kesehatan",
+      "rateDinamis": 6.5,
+      "rateDinamisLama": 4.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "olahraga-aktivitas-luar-ruangan",
+      "nama": "Olahraga & Aktivitas Luar Ruangan",
+      "rateDinamis": 6.5,
+      "rateDinamisLama": 6.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "furnitur",
+      "nama": "Furnitur",
+      "rateDinamis": 6.5,
+      "rateDinamisLama": 5.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "perkakas-perangkat-keras",
+      "nama": "Perkakas & Perangkat Keras",
+      "rateDinamis": 7.0,
+      "rateDinamisLama": 5.5,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "kecantikan-perawatan-pribadi",
+      "nama": "Kecantikan & Perawatan Pribadi",
+      "rateDinamis": 7.0,
+      "rateDinamisLama": 4.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "bayi-ibu-hamil",
+      "nama": "Bayi & Ibu Hamil",
+      "rateDinamis": 7.0,
+      "rateDinamisLama": 4.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "otomotif-sepeda-motor",
+      "nama": "Otomotif & Sepeda Motor",
+      "rateDinamis": 7.5,
+      "rateDinamisLama": 5.5,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "perbaikan-rumah",
+      "nama": "Perbaikan Rumah",
+      "rateDinamis": 7.5,
+      "rateDinamisLama": 5.5,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "aksesoris-fesyen",
+      "nama": "Aksesoris Fesyen",
+      "rateDinamis": 7.5,
+      "rateDinamisLama": 6.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "busana-anak-anak",
+      "nama": "Busana Anak-Anak",
+      "rateDinamis": 7.5,
+      "rateDinamisLama": 4.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "perlengkapan-rumah-tangga",
+      "nama": "Perlengkapan Rumah Tangga",
+      "rateDinamis": 8.0,
+      "rateDinamisLama": 6.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "perlengkapan-hewan-peliharaan",
+      "nama": "Perlengkapan Hewan Peliharaan",
+      "rateDinamis": 8.0,
+      "rateDinamisLama": 6.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "mainan-hobi",
+      "nama": "Mainan & Hobi",
+      "rateDinamis": 8.0,
+      "rateDinamisLama": 6.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "peralatan-dapur",
+      "nama": "Peralatan Dapur",
+      "rateDinamis": 8.0,
+      "rateDinamisLama": 6.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "pakaian-pria-pakaian-dalam",
+      "nama": "Pakaian Pria & Pakaian Dalam",
+      "rateDinamis": 8.0,
+      "rateDinamisLama": 5.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "koper-tas",
+      "nama": "Koper & Tas",
+      "rateDinamis": 8.0,
+      "rateDinamisLama": 5.5,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "sepatu",
+      "nama": "Sepatu",
+      "rateDinamis": 8.0,
+      "rateDinamisLama": 5.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "pakaian-wanita-pakaian-dalam",
+      "nama": "Pakaian Wanita & Pakaian Dalam",
+      "rateDinamis": 8.0,
+      "rateDinamisLama": 5.5,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "tekstil-perabot-rumah-tangga",
+      "nama": "Tekstil & Perabot Rumah Tangga",
+      "rateDinamis": 8.0,
+      "rateDinamisLama": 5.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "buku-majalah-audio",
+      "nama": "Buku, Majalah & Audio",
+      "rateDinamis": 8.0,
+      "rateDinamisLama": 5.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "barang-koleksi",
+      "nama": "Barang Koleksi",
+      "rateDinamis": 8.0,
+      "rateDinamisLama": 6.0,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "busana-muslim",
+      "nama": "Busana Muslim",
+      "rateDinamis": 8.0,
+      "rateDinamisLama": 5.5,
+      "ratePlatformDefault": null
+    },
+    {
+      "slug": "peralatan-perlengkapan-kantor",
+      "nama": "Peralatan dan Perlengkapan Kantor",
+      "rateDinamis": 8.0,
+      "rateDinamisLama": 4.0,
+      "ratePlatformDefault": null
+    }
+  ]
+}
